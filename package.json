@@ -1,0 +1,27 @@
+{
+    "name": "dotenv-conversion",
+    "version": "1.0.0",
+    "description": "An extension for dotenv is to help to convert environment variables to anything you want.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/linhntaim/dotenv-conversion.git"
+    },
+    "keywords": [
+        "dotenv",
+        "conversion",
+        "variables"
+    ],
+    "author": "Nguyen Tuan Linh <contact@linhntaim.com> (https://linhntaim.com)",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/linhntaim/dotenv-conversion/issues"
+    },
+    "homepage": "https://github.com/linhntaim/dotenv-conversion#readme",
+    "devDependencies": {
+        "dotenv": "^8.2.0"
+    }
+}
