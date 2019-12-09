@@ -213,7 +213,6 @@ const dotenvConversion = require('dotenv-conversion')
 const myEnv = dotenv.config()
 dotenvConversion(myEnv, {
     prevents: ['VARIABLE_1', 'VARIABLE_2'],
-    // prevents: '*', // this will prevent all attributes from conversion
 })
 
 console.log(process.env.VARIABLE_1) // output: 'bool:1'

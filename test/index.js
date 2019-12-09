@@ -333,11 +333,3 @@ describe('dotenv-conversion', function () {
         })
     })
 })
-
-
-// console.log(process.env.RAW)
-// console.log(process.env.BOOL)
-// console.log(process.env.NUMBER)
-// console.log(process.env.ARRAY_1)
-// console.log(process.env.ARRAY_2)
-// console.log(process.env.JSON)
