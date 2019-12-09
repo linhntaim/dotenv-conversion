@@ -4,7 +4,7 @@
     "description": "An extension for dotenv is to help to convert environment variables to anything you want.",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "./node_modules/.bin/mocha"
     },
     "repository": {
         "type": "git",
@@ -22,6 +22,9 @@
     },
     "homepage": "https://github.com/linhntaim/dotenv-conversion#readme",
     "devDependencies": {
-        "dotenv": "^8.2.0"
+        "chai": "^4.2.0",
+        "dotenv": "^8.2.0",
+        "dotenv-expand": "^5.1.0",
+        "mocha": "^6.2.2"
     }
 }
