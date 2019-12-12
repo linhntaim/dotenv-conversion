@@ -1,4 +1,4 @@
-const NUMBER_REGEX = /^(\+|\-)?\d+(\.\d+)?(e(\+|\-)?\d+)?$/i
+const NUMBER_REGEX = /^(\+|-)?\d+(\.\d+)?(e(\+|-)?\d+)?$/i
 
 class DotEnvConversion {
     constructor() {
@@ -86,27 +86,26 @@ class DotEnvConversion {
         return this
     }
 
-    make(dotenvConfig, config = {}) {
+    make(dotenvConfig = {}, config = {}) {
         this.setConfig(config)
 
         this.env = {}
 
-        for (let name in dotenvConfig.parsed) {
-            dotenvConfig.parsed[name] = this.convert(name, dotenvConfig.parsed[name])
+        const parsed = dotenvConfig.hasOwnProperty('parsed') ? dotenvConfig.parsed : {}
+        for (const name in parsed) {
+            parsed[name] = this.convert(name, parsed[name])
         }
 
         const ignoreProcessEnv = dotenvConfig.hasOwnProperty('ignoreProcessEnv')
         const environment = process.env
         if (ignoreProcessEnv) {
-            for (let name in environment) {
-                const value = dotenvConfig.parsed.hasOwnProperty(name) ?
-                    dotenvConfig.parsed[name] : this.convert(name, environment[name])
+            for (const name in environment) {
+                const value = parsed.hasOwnProperty(name) ? parsed[name] : this.convert(name, environment[name])
                 this.env[name] = value
             }
         } else {
-            for (let name in environment) {
-                const value = dotenvConfig.parsed.hasOwnProperty(name) ?
-                    dotenvConfig.parsed[name] : this.convert(name, environment[name])
+            for (const name in environment) {
+                const value = parsed.hasOwnProperty(name) ? parsed[name] : this.convert(name, environment[name])
                 this.env[name] = value
                 environment[name] = ['boolean', 'number', 'string'].includes(typeof value) ? value : JSON.stringify(value)
             }
@@ -134,8 +133,8 @@ class DotEnvConversion {
         }
     }
 
-    getenv(name) {
-        return this.env.hasOwnProperty(name) ? this.env[name] : ''
+    getenv(name = null) {
+        return name ? (this.env.hasOwnProperty(name) ? this.env[name] : '') : this.env
     }
 }
 

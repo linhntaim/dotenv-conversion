@@ -1,4 +1,7 @@
 # dotenv-conversion
+
+[![NPM version](https://img.shields.io/npm/v/dotenv-conversion.svg?style=flat-square)](https://www.npmjs.com/package/dotenv-conversion)
+
 An extension for dotenv is to help converting environment variables to anything you want.
 
 ## Installation
@@ -12,22 +15,40 @@ npm install dotenv-conversion
 - Basic:
 
 ```javascript
+// javascript
+
 const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
 
+// Parse variables from .env file
 const myEnv = dotenv.config()
-dotenvConversion.make(myEnv)
+// Convert parsed variables from .env file with auto-conversion method
+const myConvertedEnv = dotenvConversion.make(myEnv)
+// Get converted variables from process.env (which has already added - but has been not overwritten by - parsed variables from .env file)
+const myAllConvertedEnv = dotenvConversion.getenv()
+// Get a converted variable from process.env by its name
+const variable = dotenvConversion.getenv('VARIABLE_NAME')
+const variable = dotenvConversion.env.VARIABLE_NAME
 ```
 
-- Along with `dotenv-expand`:
+- Along with `dotenv-expand` (https://github.com/motdotla/dotenv-expand):
 
 ```javascript
+// javascript
+
 const dotenv = require('dotenv')
 const dotenvExpand = require('dotenv-expand')
 const dotenvConversion = require('dotenv-conversion')
 
+// Parse variables from .env file
 const myEnv = dotenv.config()
-dotenvConversion.make(dotenvExpand(myEnv))
+// Convert parsed variables from .env file with auto-conversion method
+const myConvertedEnv = dotenvConversion.make(dotenvExpand(myEnv))
+// Get converted variables from process.env (which has already added - but has been not overwritten by - parsed variables from .env file)
+const myAllConvertedEnv = dotenvConversion.getenv()
+// Get a converted variable from process.env by its name
+const variable = dotenvConversion.getenv('VARIABLE_NAME')
+const variable = dotenvConversion.env.VARIABLE_NAME
 ```
 
 ## Features
@@ -40,14 +61,14 @@ Currently, auto-conversion supports:
 
 - **raw**
 
-```
-# env
+```smartyconfig
+# .env file
 VARIABLE_1=text
 VARIABLE_2=raw:any
 ```
 
 ```javascript
-// js
+// .js file
 const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
 dotenvConversion.make(dotenv.config())
@@ -60,13 +81,13 @@ console.log(dotenvConversion.env.VARIABLE_2) // output: 'any'
 
 - **null**
 
-```
-# env
+```smartyconfig
+# .env file
 VARIABLE=null
 ```
 
 ```javascript
-// js
+// .js file
 const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
 dotenvConversion.make(dotenv.config())
@@ -77,8 +98,8 @@ console.log(dotenvConversion.env.VARIABLE) // output: ''
 
 - **bool**
 
-```
-# env
+```smartyconfig
+# .env file
 VARIABLE_1=true
 VARIABLE_2=false
 VARIABLE_3=bool:any
@@ -87,7 +108,7 @@ VARIABLE_4=bool:0
 ```
 
 ```javascript
-// js
+// .js file
 const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
 dotenvConversion.make(dotenv.config())
@@ -104,8 +125,8 @@ console.log(dotenvConversion.env.VARIABLE_4) // output: false
 
 - **number**
 
-```
-# env
+```smartyconfig
+# .env file
 VARIABLE_1=0123456789
 VARIABLE_2=01.23456789
 VARIABLE_3=-02.2e123
@@ -114,7 +135,7 @@ VARIABLE_4=number:123any
 ```
 
 ```javascript
-// js
+// .js file
 const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
 dotenvConversion.make(dotenv.config())
@@ -131,8 +152,8 @@ console.log(dotenvConversion.env.VARIABLE_4) // output: 123
 
 - **array**
 
-```
-# env
+```smartyconfig
+# .env file
 VARIABLE_1='[1,"2,3","4,5",6]'
 VARIABLE_2=array:1,2,3,4,5,6
 VARIABLE_2=array:1,2\\,3,4\\,5,6
@@ -140,7 +161,7 @@ VARIABLE_2=array:1,2\\,3,4\\,5,6
 ```
 
 ```javascript
-// js
+// .js file
 const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
 dotenvConversion.make(dotenv.config())
@@ -155,15 +176,15 @@ console.log(dotenvConversion.env.VARIABLE_3) // output: ['1', '2,3', '4,5', '6']
 
 - **json**
 
-```
-# env
+```smartyconfig
+# .env file
 VARIABLE_1='{"foo":"bar"}'
 VARIABLE_2='json:{"foo":"bar"}'
 ...
 ```
 
 ```javascript
-// js
+// .js file
 const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
 dotenvConversion.make(dotenv.config())
@@ -177,13 +198,14 @@ console.log(dotenvConversion.env.VARIABLE_2) // output: {foo: 'bar'}
 ### Custom Conversion on Specific Attribute
 
 #### Using existed conversion
-```
-# env
+
+```smartyconfig
+# .env file
 VARIABLE=1
 ```
 
 ```javascript
-// js
+// .js file
 const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
 dotenvConversion.make(dotenv.config(), {
@@ -198,13 +220,13 @@ console.log(dotenvConversion.env.VARIABLE) // output: true
 
 #### Define a customized conversion
 
-```
-# env
+```smartyconfig
+# .env file
 VARIABLE=text
 ```
 
 ```javascript
-// js
+// .js file
 const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
 dotenvConversion.make(dotenv.config(), {
@@ -221,13 +243,13 @@ console.log(dotenvConversion.env.VARIABLE) // output: 'TEXT'
 
 ### Override an existed Conversion
 
-```
-# env
+```smartyconfig
+# .env file
 VARIABLE='{"foo":"bar"}'
 ```
 
 ```javascript
-// js
+// .js file
 const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
 dotenvConversion.make(dotenv.config(), {
@@ -252,14 +274,14 @@ console.log(dotenvConversion.env.VARIABLE) // output: '{original: '{"foo":"bar"}
 
 ### Prevent Attributes from Conversion
 
-```
-# env
+```smartyconfig
+# .env file
 VARIABLE_1=bool:1
 VARIABLE_2='{"foo":"bar"}'
 ```
 
 ```javascript
-// js
+// .js file
 const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
 dotenvConversion.make(dotenv.config(), {
