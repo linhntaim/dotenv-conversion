@@ -1,7 +1,7 @@
 {
     "name": "dotenv-conversion",
     "version": "1.3.0",
-    "description": "An extension for dotenv is to help to convert environment variables to anything you want.",
+    "description": "An extension for dotenv is to help converting environment variables to anything you want.",
     "main": "index.js",
     "scripts": {
         "test": "./node_modules/.bin/mocha"
