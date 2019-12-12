@@ -16,7 +16,7 @@ const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
 
 const myEnv = dotenv.config()
-dotenvConversion(myEnv)
+dotenvConversion.make(myEnv)
 ```
 
 - Along with `dotenv-expand`:
@@ -27,7 +27,7 @@ const dotenvExpand = require('dotenv-expand')
 const dotenvConversion = require('dotenv-conversion')
 
 const myEnv = dotenv.config()
-dotenvConversion(dotenvConversion(myEnv))
+dotenvConversion.make(dotenvExpand(myEnv))
 ```
 
 ### Features
@@ -48,8 +48,14 @@ VARIABLE_2=raw:any
 
 ```javascript
 // js
+const dotenv = require('dotenv')
+const dotenvConversion = require('dotenv-conversion')
+dotenvConversion.make(dotenv.config())
+
 console.log(process.env.VARIABLE_1) // output: 'text'
 console.log(process.env.VARIABLE_2) // output: 'any'
+console.log(dotenvConversion.env.VARIABLE_1) // output: 'text'
+console.log(dotenvConversion.env.VARIABLE_2) // output: 'any'
 ```
 
 - **null**
@@ -61,7 +67,12 @@ VARIABLE=null
 
 ```javascript
 // js
+const dotenv = require('dotenv')
+const dotenvConversion = require('dotenv-conversion')
+dotenvConversion.make(dotenv.config())
+
 console.log(process.env.VARIABLE) // output: ''
+console.log(dotenvConversion.env.VARIABLE) // output: ''
 ```
 
 - **bool**
@@ -77,10 +88,18 @@ VARIABLE_4=bool:0
 
 ```javascript
 // js
-console.log(process.env.VARIABLE_1) // output: true
-console.log(process.env.VARIABLE_2) // output: false
-console.log(process.env.VARIABLE_3) // output: true
-console.log(process.env.VARIABLE_4) // output: false
+const dotenv = require('dotenv')
+const dotenvConversion = require('dotenv-conversion')
+dotenvConversion.make(dotenv.config())
+
+console.log(process.env.VARIABLE_1) // output: 'true'
+console.log(process.env.VARIABLE_2) // output: 'false'
+console.log(process.env.VARIABLE_3) // output: 'true'
+console.log(process.env.VARIABLE_4) // output: 'false'
+console.log(dotenvConversion.env.VARIABLE_1) // output: true
+console.log(dotenvConversion.env.VARIABLE_2) // output: false
+console.log(dotenvConversion.env.VARIABLE_3) // output: true
+console.log(dotenvConversion.env.VARIABLE_4) // output: false
 ```
 
 - **number**
@@ -96,10 +115,18 @@ VARIABLE_4=number:123any
 
 ```javascript
 // js
-console.log(process.env.VARIABLE_1) // output: 123456789
-console.log(process.env.VARIABLE_2) // output: 1.23456789
-console.log(process.env.VARIABLE_3) // output: -2.2e+123
-console.log(process.env.VARIABLE_4) // output: 123
+const dotenv = require('dotenv')
+const dotenvConversion = require('dotenv-conversion')
+dotenvConversion.make(dotenv.config())
+
+console.log(process.env.VARIABLE_1) // output: '123456789'
+console.log(process.env.VARIABLE_2) // output: '1.23456789'
+console.log(process.env.VARIABLE_3) // output: '-2.2e+123'
+console.log(process.env.VARIABLE_4) // output: '123'
+console.log(dotenvConversion.env.VARIABLE_1) // output: 123456789
+console.log(dotenvConversion.env.VARIABLE_2) // output: 1.23456789
+console.log(dotenvConversion.env.VARIABLE_3) // output: -2.2e+123
+console.log(dotenvConversion.env.VARIABLE_4) // output: 123
 ```
 
 - **array**
@@ -114,9 +141,16 @@ VARIABLE_2=array:1,2\\,3,4\\,5,6
 
 ```javascript
 // js
-console.log(process.env.VARIABLE_1) // output: [1, '2,3', '4,5', 6]
-console.log(process.env.VARIABLE_2) // output: ['1', '2', '3', '4', '5', '6']
-console.log(process.env.VARIABLE_3) // output: ['1', '2,3', '4,5', '6']
+const dotenv = require('dotenv')
+const dotenvConversion = require('dotenv-conversion')
+dotenvConversion.make(dotenv.config())
+
+console.log(process.env.VARIABLE_1) // output: '[1,"2,3","4,5",6]'
+console.log(process.env.VARIABLE_2) // output: '[1,2,3,4,5,6]'
+console.log(process.env.VARIABLE_3) // output: '["1","2,3","4,5","6"]'
+console.log(dotenvConversion.env.VARIABLE_1) // output: [1, '2,3', '4,5', 6]
+console.log(dotenvConversion.env.VARIABLE_2) // output: ['1', '2', '3', '4', '5', '6']
+console.log(dotenvConversion.env.VARIABLE_3) // output: ['1', '2,3', '4,5', '6']
 ```
 
 - **json**
@@ -130,8 +164,14 @@ VARIABLE_2='json:{"foo":"bar"}'
 
 ```javascript
 // js
-console.log(process.env.VARIABLE_1) // output: {foor: 'bar'}
-console.log(process.env.VARIABLE_2) // output: {foor: 'bar'}
+const dotenv = require('dotenv')
+const dotenvConversion = require('dotenv-conversion')
+dotenvConversion.make(dotenv.config())
+
+console.log(process.env.VARIABLE_1) // output: '{"foor":"bar"}'
+console.log(process.env.VARIABLE_2) // output: '{"foor":"bar"}'
+console.log(dotenvConversion.env.VARIABLE_1) // output: {foor: 'bar'}
+console.log(dotenvConversion.env.VARIABLE_2) // output: {foor: 'bar'}
 ```
 
 #### Custom Conversion on Specific Attribute
@@ -155,6 +195,7 @@ dotenvConversion(myEnv, {
 })
 
 console.log(process.env.VARIABLE) // output: true
+console.log(dotenvConversion.env.VARIABLE) // output: 'true'
 ```
 
 ##### Define a customized conversion
@@ -178,7 +219,8 @@ dotenvConversion(myEnv, {
     },
 })
 
-console.log(process.env.VARIABLE) // output: TEXT
+console.log(process.env.VARIABLE) // output: 'TEXT'
+console.log(dotenvConversion.env.VARIABLE) // output: 'TEXT'
 ```
 
 #### Override an existed Conversion on Specific Attribute
@@ -210,7 +252,8 @@ dotenvConversion(myEnv, {
     },
 })
 
-console.log(process.env.VARIABLE) // output: {original: '{"foo":"bar"}', parsed: {foo: 'bar'}}
+console.log(process.env.VARIABLE) // output: '{"original":"{\\"foo\\":\\"bar\\"}","parsed":{"foo":"bar"}}
+console.log(dotenvConversion.env.VARIABLE) // output: '{original: '{"foo":"bar"}', parsed: {foo: 'bar'}}
 ```
 
 #### Prevent Attributes from Conversion
@@ -233,4 +276,6 @@ dotenvConversion(myEnv, {
 
 console.log(process.env.VARIABLE_1) // output: 'bool:1'
 console.log(process.env.VARIABLE_2) // output: '{"foo":"bar"}'
+console.log(dotenvConversion.env.VARIABLE_1) // output: 'bool:1'
+console.log(dotenvConversion.env.VARIABLE_2) // output: '{"foo":"bar"}'
 ```

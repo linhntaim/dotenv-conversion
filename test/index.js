@@ -11,7 +11,7 @@ describe('dotenv-conversion', function () {
     describe('unit tests', function () {
         it('return object', function (done) {
             const dotenvConfig = {parsed: {}}
-            const dotenvConfigParsed = dotenvConversion(dotenvConfig).parsed
+            const dotenvConfigParsed = dotenvConversion.make(dotenvConfig).parsed
 
             dotenvConfigParsed.should.be.a('object')
             done()
@@ -32,9 +32,10 @@ describe('dotenv-conversion', function () {
                 parsed: input,
             }
 
-            const dotenvConfigParsed = dotenvConversion(dotenvConfig).parsed
+            const dotenvConfigParsed = dotenvConversion.make(dotenvConfig).parsed
 
             dotenvConfigParsed.should.deep.include(expected)
+            dotenvConversion.env.should.deep.include(expected)
             process.env.should.deep.include(expected)
             done()
         })
@@ -52,9 +53,10 @@ describe('dotenv-conversion', function () {
                 parsed: input,
             }
 
-            const dotenvConfigParsed = dotenvConversion(dotenvConfig).parsed
+            const dotenvConfigParsed = dotenvConversion.make(dotenvConfig).parsed
 
             dotenvConfigParsed.should.deep.include(expected)
+            dotenvConversion.env.should.deep.include(expected)
             process.env.should.deep.include(expected)
             done()
         })
@@ -78,15 +80,26 @@ describe('dotenv-conversion', function () {
                 BOOL_6: false,
                 BOOL_7: false,
             }
+            const expectedForEnv = {
+                BOOL_1: 'true',
+                BOOL_2: 'false',
+                BOOL_3: 'true',
+                BOOL_4: 'false',
+                BOOL_5: 'false',
+                BOOL_6: 'false',
+                BOOL_7: 'false',
+            }
 
             Object.assign(process.env, input)
             const dotenvConfig = {
                 parsed: input,
             }
 
-            const dotenvConfigParsed = dotenvConversion(dotenvConfig).parsed
+            const dotenvConfigParsed = dotenvConversion.make(dotenvConfig).parsed
 
             dotenvConfigParsed.should.deep.include(expected)
+            dotenvConversion.env.should.deep.include(expected)
+            process.env.should.deep.include(expectedForEnv)
             done()
         })
 
@@ -157,15 +170,50 @@ describe('dotenv-conversion', function () {
                 NUMBER_115: -2.2e-123,
                 NUMBER_1001: 0,
             }
+            const expectedForEnv = {
+                NUMBER_1: '2',
+                NUMBER_2: '2',
+                NUMBER_3: '-2',
+                NUMBER_4: '2.2',
+                NUMBER_5: '2.2',
+                NUMBER_6: '-2.2',
+                NUMBER_7: '2.2e+123',
+                NUMBER_8: '2.2e+123',
+                NUMBER_9: '2.2e-123',
+                NUMBER_10: '2.2e+123',
+                NUMBER_11: '2.2e+123',
+                NUMBER_12: '2.2e-123',
+                NUMBER_13: '-2.2e+123',
+                NUMBER_14: '-2.2e+123',
+                NUMBER_15: '-2.2e-123',
+                NUMBER_101: '2',
+                NUMBER_102: '2',
+                NUMBER_103: '-2',
+                NUMBER_104: '2.2',
+                NUMBER_105: '2.2',
+                NUMBER_106: '-2.2',
+                NUMBER_107: '2.2e+123',
+                NUMBER_108: '2.2e+123',
+                NUMBER_109: '2.2e-123',
+                NUMBER_110: '2.2e+123',
+                NUMBER_111: '2.2e+123',
+                NUMBER_112: '2.2e-123',
+                NUMBER_113: '-2.2e+123',
+                NUMBER_114: '-2.2e+123',
+                NUMBER_115: '-2.2e-123',
+                NUMBER_1001: '0',
+            }
 
             Object.assign(process.env, input)
             const dotenvConfig = {
                 parsed: input,
             }
 
-            const dotenvConfigParsed = dotenvConversion(dotenvConfig).parsed
+            const dotenvConfigParsed = dotenvConversion.make(dotenvConfig).parsed
 
             dotenvConfigParsed.should.deep.include(expected)
+            dotenvConversion.env.should.deep.include(expected)
+            process.env.should.deep.include(expectedForEnv)
             done()
         })
 
@@ -178,15 +226,21 @@ describe('dotenv-conversion', function () {
                 ARRAY_1: [1, '2,3', '4,5', 6],
                 ARRAY_2: ['1', '2,3', '4,5', '6'],
             }
+            const expectedForEnv = {
+                ARRAY_1: '[1,"2,3","4,5",6]',
+                ARRAY_2: '["1","2,3","4,5","6"]',
+            }
 
             Object.assign(process.env, input)
             const dotenvConfig = {
                 parsed: input,
             }
 
-            const dotenvConfigParsed = dotenvConversion(dotenvConfig).parsed
+            const dotenvConfigParsed = dotenvConversion.make(dotenvConfig).parsed
 
             dotenvConfigParsed.should.deep.include(expected)
+            dotenvConversion.env.should.deep.include(expected)
+            process.env.should.deep.include(expectedForEnv)
             done()
         })
 
@@ -199,15 +253,21 @@ describe('dotenv-conversion', function () {
                 JSON_1: {foo: 'bar'},
                 JSON_2: {foo: 'bar'},
             }
+            const expectedForEnv = {
+                JSON_1: '{"foo":"bar"}',
+                JSON_2: '{"foo":"bar"}',
+            }
 
             Object.assign(process.env, input)
             const dotenvConfig = {
                 parsed: input,
             }
 
-            const dotenvConfigParsed = dotenvConversion(dotenvConfig).parsed
+            const dotenvConfigParsed = dotenvConversion.make(dotenvConfig).parsed
 
             dotenvConfigParsed.should.deep.include(expected)
+            dotenvConversion.env.should.deep.include(expected)
+            process.env.should.deep.include(expectedForEnv)
             done()
         })
 
@@ -218,19 +278,24 @@ describe('dotenv-conversion', function () {
             const expected = {
                 NUMBER: true,
             }
+            const expectedForEnv = {
+                NUMBER: 'true',
+            }
 
             Object.assign(process.env, input)
             const dotenvConfig = {
                 parsed: input,
             }
 
-            const dotenvConfigParsed = dotenvConversion(dotenvConfig, {
+            const dotenvConfigParsed = dotenvConversion.make(dotenvConfig, {
                 specs: {
                     NUMBER: 'bool',
                 },
             }).parsed
 
             dotenvConfigParsed.should.deep.include(expected)
+            dotenvConversion.env.should.deep.include(expected)
+            process.env.should.deep.include(expectedForEnv)
             done()
         })
 
@@ -246,13 +311,16 @@ describe('dotenv-conversion', function () {
                     },
                 },
             }
+            const expectedForEnv = {
+                JSON: '{"original":"{\\"foo\\":\\"bar\\"}","parsed":{"foo":"bar"}}',
+            }
 
             Object.assign(process.env, input)
             const dotenvConfig = {
                 parsed: input,
             }
 
-            const dotenvConfigParsed = dotenvConversion(dotenvConfig, {
+            const dotenvConfigParsed = dotenvConversion.make(dotenvConfig, {
                 specs: {
                     JSON(value) {
                         return {
@@ -264,6 +332,8 @@ describe('dotenv-conversion', function () {
             }).parsed
 
             dotenvConfigParsed.should.deep.include(expected)
+            dotenvConversion.env.should.deep.include(expected)
+            process.env.should.deep.include(expectedForEnv)
             done()
         })
 
@@ -286,13 +356,17 @@ describe('dotenv-conversion', function () {
                     },
                 },
             }
+            const expectedForEnv = {
+                JSON_1: '{"original":"{\\"foo\\":\\"bar\\"}","parsed":{"foo":"bar"}}',
+                JSON_2: '{"original":"{\\"a\\":\\"b\\"}","parsed":{"a":"b"}}',
+            }
 
             Object.assign(process.env, input)
             const dotenvConfig = {
                 parsed: input,
             }
 
-            const dotenvConfigParsed = dotenvConversion(dotenvConfig, {
+            const dotenvConfigParsed = dotenvConversion.make(dotenvConfig, {
                 override: {
                     json(value) {
                         try {
@@ -308,6 +382,8 @@ describe('dotenv-conversion', function () {
             }).parsed
 
             dotenvConfigParsed.should.deep.include(expected)
+            dotenvConversion.env.should.deep.include(expected)
+            process.env.should.deep.include(expectedForEnv)
             done()
         })
 
@@ -324,11 +400,13 @@ describe('dotenv-conversion', function () {
                 parsed: input,
             }
 
-            const dotenvConfigParsed = dotenvConversion(dotenvConfig, {
+            const dotenvConfigParsed = dotenvConversion.make(dotenvConfig, {
                 prevents: ['BOOL'],
             }).parsed
 
             dotenvConfigParsed.should.deep.include(expected)
+            dotenvConversion.env.should.deep.include(expected)
+            process.env.should.deep.include(expected)
             done()
         })
     })
