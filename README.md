@@ -1,5 +1,5 @@
 # dotenv-conversion
-An extension for dotenv is to help to convert environment variables to anything you want.
+An extension for dotenv is to help converting environment variables to anything you want.
 
 ## Installation
 
@@ -30,9 +30,9 @@ const myEnv = dotenv.config()
 dotenvConversion.make(dotenvExpand(myEnv))
 ```
 
-### Features
+## Features
 
-#### Auto-Conversion
+### Auto-Conversion
 
 Environment variables will be converted automatically based on some detection.
 
@@ -168,15 +168,15 @@ const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
 dotenvConversion.make(dotenv.config())
 
-console.log(process.env.VARIABLE_1) // output: '{"foor":"bar"}'
-console.log(process.env.VARIABLE_2) // output: '{"foor":"bar"}'
-console.log(dotenvConversion.env.VARIABLE_1) // output: {foor: 'bar'}
-console.log(dotenvConversion.env.VARIABLE_2) // output: {foor: 'bar'}
+console.log(process.env.VARIABLE_1) // output: '{"foo":"bar"}'
+console.log(process.env.VARIABLE_2) // output: '{"foo":"bar"}'
+console.log(dotenvConversion.env.VARIABLE_1) // output: {foo: 'bar'}
+console.log(dotenvConversion.env.VARIABLE_2) // output: {foo: 'bar'}
 ```
 
-#### Custom Conversion on Specific Attribute
+### Custom Conversion on Specific Attribute
 
-##### Using existed conversion
+#### Using existed conversion
 ```
 # env
 VARIABLE=1
@@ -186,19 +186,17 @@ VARIABLE=1
 // js
 const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
-
-const myEnv = dotenv.config()
-dotenvConversion(myEnv, {
+dotenvConversion.make(dotenv.config(), {
     specs: {
         VARIABLE: 'bool', // apply 'bool' conversion to VARIABLE
     },
 })
 
-console.log(process.env.VARIABLE) // output: true
-console.log(dotenvConversion.env.VARIABLE) // output: 'true'
+console.log(process.env.VARIABLE) // output: 'true'
+console.log(dotenvConversion.env.VARIABLE) // output: true
 ```
 
-##### Define a customized conversion
+#### Define a customized conversion
 
 ```
 # env
@@ -209,9 +207,7 @@ VARIABLE=text
 // js
 const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
-
-const myEnv = dotenv.config()
-dotenvConversion(myEnv, {
+dotenvConversion.make(dotenv.config(), {
     specs: {
         VARIABLE(value) { // customize the conversion applied to VARIABLE
             return value.toUpperCase() 
@@ -223,7 +219,7 @@ console.log(process.env.VARIABLE) // output: 'TEXT'
 console.log(dotenvConversion.env.VARIABLE) // output: 'TEXT'
 ```
 
-#### Override an existed Conversion on Specific Attribute
+### Override an existed Conversion on Specific Attribute
 
 ```
 # env
@@ -234,9 +230,7 @@ VARIABLE='{"foo":"bar"}'
 // js
 const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
-
-const myEnv = dotenv.config()
-dotenvConversion(myEnv, {
+dotenvConversion.make(dotenv.config(), {
     override: {
         json(value) { // override the existed 'json' conversion
             try {
@@ -256,7 +250,7 @@ console.log(process.env.VARIABLE) // output: '{"original":"{\\"foo\\":\\"bar\\"}
 console.log(dotenvConversion.env.VARIABLE) // output: '{original: '{"foo":"bar"}', parsed: {foo: 'bar'}}
 ```
 
-#### Prevent Attributes from Conversion
+### Prevent Attributes from Conversion
 
 ```
 # env
@@ -268,9 +262,7 @@ VARIABLE_2='{"foo":"bar"}'
 // js
 const dotenv = require('dotenv')
 const dotenvConversion = require('dotenv-conversion')
-
-const myEnv = dotenv.config()
-dotenvConversion(myEnv, {
+dotenvConversion.make(dotenv.config(), {
     prevents: ['VARIABLE_1', 'VARIABLE_2'],
 })
 
