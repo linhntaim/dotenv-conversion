@@ -219,7 +219,7 @@ console.log(process.env.VARIABLE) // output: 'TEXT'
 console.log(dotenvConversion.env.VARIABLE) // output: 'TEXT'
 ```
 
-### Override an existed Conversion on Specific Attribute
+### Override an existed Conversion
 
 ```
 # env
