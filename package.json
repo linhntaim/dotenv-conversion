@@ -5,7 +5,8 @@
     "main": "dist/index.js",
     "scripts": {
         "build": "babel index.js --out-dir ./dist --delete-dir-on-start --minified --source-maps && babel src --out-dir ./dist/src --minified --source-maps",
-        "test": "mocha --require @babel/register"
+        "test": "nyc mocha --require @babel/register",
+        "coverage": "nyc report --reporter=text-lcov | coveralls"
     },
     "repository": {
         "type": "git",
@@ -28,7 +29,9 @@
         "@babel/preset-env": "^7.7.6",
         "@babel/register": "^7.7.4",
         "chai": "^4.2.0",
+        "coveralls": "^3.0.9",
         "dotenv": "^8.2.0",
-        "mocha": "^6.2.2"
+        "mocha": "^6.2.2",
+        "nyc": "^14.1.1"
     }
 }

@@ -94,7 +94,7 @@ export default class DotEnvConversion {
             parsed[name] = this.convert(name, parsed[name])
         }
 
-        const ignoreProcessEnv = dotenvConfig.hasOwnProperty('ignoreProcessEnv')
+        const ignoreProcessEnv = dotenvConfig.hasOwnProperty('ignoreProcessEnv') ? dotenvConfig.ignoreProcessEnv : false
         const environment = process.env
         if (ignoreProcessEnv) {
             for (const name in environment) {

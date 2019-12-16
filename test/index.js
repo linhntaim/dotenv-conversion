@@ -17,6 +17,20 @@ describe('dotenv-conversion', function () {
             done()
         })
 
+        it('return object 2', function (done) {
+            const convertedDotenvConfig = dotenvConversion.make()
+
+            convertedDotenvConfig.should.be.a('object')
+            done()
+        })
+
+        it('set config', function (done) {
+            dotenvConversion.setConfig()
+
+            dotenvConversion.config.should.be.a('object')
+            done()
+        })
+
         it('conversion: raw', function (done) {
             const input = {
                 RAW_1: 'raw',
@@ -160,6 +174,7 @@ describe('dotenv-conversion', function () {
                 NUMBER_114: 'number:-02.2e+123',
                 NUMBER_115: 'number:-02.2e-123',
                 NUMBER_1001: 'number:any',
+                NUMBER_1002: 'number:',
             }
             const expected = {
                 NUMBER_1: 2,
@@ -193,6 +208,7 @@ describe('dotenv-conversion', function () {
                 NUMBER_114: -2.2e+123,
                 NUMBER_115: -2.2e-123,
                 NUMBER_1001: 0,
+                NUMBER_1002: 0,
             }
             const expectedForEnv = {
                 NUMBER_1: '2',
@@ -226,6 +242,7 @@ describe('dotenv-conversion', function () {
                 NUMBER_114: '-2.2e+123',
                 NUMBER_115: '-2.2e-123',
                 NUMBER_1001: '0',
+                NUMBER_1002: '0',
             }
 
             Object.assign(process.env, input)
@@ -245,14 +262,17 @@ describe('dotenv-conversion', function () {
             const input = {
                 ARRAY_1: '[1,"2,3","4,5",6]',
                 ARRAY_2: 'array:1,2\\,3,4\\,5,6',
+                ARRAY_3: 'array:',
             }
             const expected = {
                 ARRAY_1: [1, '2,3', '4,5', 6],
                 ARRAY_2: ['1', '2,3', '4,5', '6'],
+                ARRAY_3: [],
             }
             const expectedForEnv = {
                 ARRAY_1: '[1,"2,3","4,5",6]',
                 ARRAY_2: '["1","2,3","4,5","6"]',
+                ARRAY_3: '[]',
             }
 
             Object.assign(process.env, input)
@@ -272,14 +292,17 @@ describe('dotenv-conversion', function () {
             const input = {
                 JSON_1: '{"foo":"bar"}',
                 JSON_2: 'json:{"foo":"bar"}',
+                JSON_3: 'json:',
             }
             const expected = {
                 JSON_1: {foo: 'bar'},
                 JSON_2: {foo: 'bar'},
+                JSON_3: {},
             }
             const expectedForEnv = {
                 JSON_1: '{"foo":"bar"}',
                 JSON_2: '{"foo":"bar"}',
+                JSON_3: '{}',
             }
 
             Object.assign(process.env, input)
@@ -314,6 +337,62 @@ describe('dotenv-conversion', function () {
             const dotenvConfigParsed = dotenvConversion.make(dotenvConfig, {
                 specs: {
                     NUMBER: 'bool',
+                },
+            }).parsed
+
+            dotenvConfigParsed.should.deep.include(expected)
+            dotenvConversion.env.should.deep.include(expected)
+            process.env.should.deep.include(expectedForEnv)
+            done()
+        })
+
+        it('conversion: custom (native supported => not-existed conversion : number => object)', function (done) {
+            const input = {
+                NUMBER: '1',
+            }
+            const expected = {
+                NUMBER: '1',
+            }
+            const expectedForEnv = {
+                NUMBER: '1',
+            }
+
+            Object.assign(process.env, input)
+            const dotenvConfig = {
+                parsed: input,
+            }
+
+            const dotenvConfigParsed = dotenvConversion.make(dotenvConfig, {
+                specs: {
+                    NUMBER: 'object',
+                },
+            }).parsed
+
+            dotenvConfigParsed.should.deep.include(expected)
+            dotenvConversion.env.should.deep.include(expected)
+            process.env.should.deep.include(expectedForEnv)
+            done()
+        })
+
+        it('conversion: custom (native supported => not-allowed format : number => defined object)', function (done) {
+            const input = {
+                NUMBER: '1',
+            }
+            const expected = {
+                NUMBER: '1',
+            }
+            const expectedForEnv = {
+                NUMBER: '1',
+            }
+
+            Object.assign(process.env, input)
+            const dotenvConfig = {
+                parsed: input,
+            }
+
+            const dotenvConfigParsed = dotenvConversion.make(dotenvConfig, {
+                specs: {
+                    NUMBER: {method: 'bool'},
                 },
             }).parsed
 
@@ -431,6 +510,61 @@ describe('dotenv-conversion', function () {
             dotenvConfigParsed.should.deep.include(expected)
             dotenvConversion.env.should.deep.include(expected)
             process.env.should.deep.include(expected)
+            done()
+        })
+
+        it('getenv', function (done) {
+            const input = {
+                RAW: 'raw',
+                BOOL: 'yes',
+            }
+            const expected = {
+                RAW: 'raw',
+                BOOL: true,
+            }
+            const expectedEnv = {
+                RAW: 'raw',
+                BOOL: 'true',
+            }
+
+            Object.assign(process.env, input)
+            const dotenvConfig = {parsed: input}
+            dotenvConversion.make(dotenvConfig)
+
+            dotenvConversion.getenv('RAW').should.deep.equal('raw')
+            dotenvConversion.getenv('BOOL').should.deep.equal(true)
+            dotenvConversion.getenv('UNKNOWN').should.deep.equal('')
+            dotenvConversion.getenv().should.deep.include(expected)
+            process.env.should.deep.include(expectedEnv)
+            done()
+        })
+
+        it('getenv and ignore process.env', function (done) {
+            const input = {
+                RAW: 'raw',
+                BOOL: 'yes',
+            }
+            const expected = {
+                RAW: 'raw',
+                BOOL: true,
+            }
+            const expectedEnv = {
+                RAW: 'raw',
+                BOOL: 'yes',
+            }
+
+            Object.assign(process.env, input)
+            const dotenvConfig = {
+                ignoreProcessEnv: true,
+                parsed: input,
+            }
+            dotenvConversion.make(dotenvConfig)
+
+            dotenvConversion.getenv('RAW').should.deep.equal('raw')
+            dotenvConversion.getenv('BOOL').should.deep.equal(true)
+            dotenvConversion.getenv('UNKNOWN').should.deep.equal('')
+            dotenvConversion.getenv().should.deep.include(expected)
+            process.env.should.deep.include(expectedEnv)
             done()
         })
     })
