@@ -1,0 +1,1 @@
+{"version":3,"sources":["../index.js"],"names":["dotEnvConversion"],"mappings":"gGAAA,wD,iGAEeA,gB","sourcesContent":["import dotEnvConversion from './src/main'\r\n\r\nexport default dotEnvConversion"],"file":"index.js"}

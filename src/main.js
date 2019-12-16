@@ -1,3 +1,3 @@
-const DotEnvConversion = require('./classes/dotenv-conversion')
+import DotEnvConversion from './classes/dotenv-conversion'
 
-module.exports = new DotEnvConversion()
+export default new DotEnvConversion()

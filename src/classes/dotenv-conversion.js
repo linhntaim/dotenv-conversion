@@ -1,18 +1,18 @@
 const NUMBER_REGEX = /^(\+|-)?\d+(\.\d+)?(e(\+|-)?\d+)?$/i
 
-class DotEnvConversion {
+export default class DotEnvConversion {
     constructor() {
         this.defaultConfig = {
             methods: {
                 auto(value) {
                     if (!value) return value
 
-                    const vCased = value.toLowerCase()
+                    const vCased = value.toLowerCase().trim()
 
                     if (vCased === 'null') {
                         return this.null()
                     }
-                    if (vCased === 'true' || vCased === 'false') {
+                    if (vCased === 'true' || vCased === 'false' || vCased === 'yes' || vCased === 'no') {
                         return this.bool(value)
                     }
                     if (NUMBER_REGEX.test(vCased)) {
@@ -43,10 +43,8 @@ class DotEnvConversion {
                 },
                 bool(value) {
                     if (!value) return false
-                    value = value.toLowerCase()
-                    return value !== 'false'
-                        && value !== ''
-                        && value !== 'null'
+                    value = value.toLowerCase().trim()
+                    return !['', 'false', 'nan', 'no', 'not', 'none', 'null', 'undefined'].includes(value)
                         && (!NUMBER_REGEX.test(value) || parseFloat(value) !== 0)
                 },
                 number(value) {
@@ -137,5 +135,3 @@ class DotEnvConversion {
         return name ? (this.env.hasOwnProperty(name) ? this.env[name] : '') : this.env
     }
 }
-
-module.exports = DotEnvConversion

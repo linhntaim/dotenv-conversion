@@ -102,8 +102,10 @@ console.log(dotenvConversion.env.VARIABLE) // output: ''
 # .env file
 VARIABLE_1=true
 VARIABLE_2=false
-VARIABLE_3=bool:any
-VARIABLE_4=bool:0
+VARIABLE_3=yes
+VARIABLE_4=no
+VARIABLE_5=bool:any
+VARIABLE_6=bool:0 # Accepted: <empty>, false, NaN, no, not, none, null, undefined, 0000
 ...
 ```
 
@@ -117,10 +119,14 @@ console.log(process.env.VARIABLE_1) // output: 'true'
 console.log(process.env.VARIABLE_2) // output: 'false'
 console.log(process.env.VARIABLE_3) // output: 'true'
 console.log(process.env.VARIABLE_4) // output: 'false'
+console.log(process.env.VARIABLE_5) // output: 'true'
+console.log(process.env.VARIABLE_6) // output: 'false'
 console.log(dotenvConversion.env.VARIABLE_1) // output: true
 console.log(dotenvConversion.env.VARIABLE_2) // output: false
 console.log(dotenvConversion.env.VARIABLE_3) // output: true
 console.log(dotenvConversion.env.VARIABLE_4) // output: false
+console.log(dotenvConversion.env.VARIABLE_5) // output: true
+console.log(dotenvConversion.env.VARIABLE_6) // output: false
 ```
 
 - **number**

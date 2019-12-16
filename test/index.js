@@ -1,11 +1,11 @@
-const mocha = require('mocha')
-const chai = require('chai')
+import dotenvConversion from '../index'
+import mocha from 'mocha'
+import chai from 'chai'
+
+const JsonHandler = JSON
 const describe = mocha.describe
 const it = mocha.it
 chai.should()
-
-const dotenvConversion = require('../src/main')
-const JsonHandler = JSON
 
 describe('dotenv-conversion', function () {
     describe('unit tests', function () {
@@ -65,29 +65,53 @@ describe('dotenv-conversion', function () {
             const input = {
                 BOOL_1: 'true',
                 BOOL_2: 'false',
-                BOOL_3: 'bool:any',
-                BOOL_4: 'bool:',
-                BOOL_5: 'bool:null',
-                BOOL_6: 'bool:0',
-                BOOL_7: 'bool:00',
+                BOOL_3: 'yes',
+                BOOL_4: 'no',
+                BOOL_5: 'bool:any',
+                BOOL_6: 'bool:',
+                BOOL_7: 'bool:false',
+                BOOL_8: 'bool:NaN',
+                BOOL_9: 'bool:no',
+                BOOL_10: 'bool:not',
+                BOOL_11: 'bool:none',
+                BOOL_12: 'bool:null',
+                BOOL_13: 'bool:undefined',
+                BOOL_14: 'bool:0',
+                BOOL_15: 'bool:00',
             }
             const expected = {
                 BOOL_1: true,
                 BOOL_2: false,
                 BOOL_3: true,
                 BOOL_4: false,
-                BOOL_5: false,
+                BOOL_5: true,
                 BOOL_6: false,
                 BOOL_7: false,
+                BOOL_8: false,
+                BOOL_9: false,
+                BOOL_10: false,
+                BOOL_11: false,
+                BOOL_12: false,
+                BOOL_13: false,
+                BOOL_14: false,
+                BOOL_15: false,
             }
             const expectedForEnv = {
                 BOOL_1: 'true',
                 BOOL_2: 'false',
                 BOOL_3: 'true',
                 BOOL_4: 'false',
-                BOOL_5: 'false',
+                BOOL_5: 'true',
                 BOOL_6: 'false',
                 BOOL_7: 'false',
+                BOOL_8: 'false',
+                BOOL_9: 'false',
+                BOOL_10: 'false',
+                BOOL_11: 'false',
+                BOOL_12: 'false',
+                BOOL_13: 'false',
+                BOOL_14: 'false',
+                BOOL_15: 'false',
             }
 
             Object.assign(process.env, input)

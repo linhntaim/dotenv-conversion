@@ -1,10 +1,11 @@
 {
     "name": "dotenv-conversion",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "description": "An extension for dotenv is to help converting environment variables to anything you want.",
-    "main": "index.js",
+    "main": "dist/index.js",
     "scripts": {
-        "test": "./node_modules/.bin/mocha"
+        "build": "babel index.js --out-dir ./dist --delete-dir-on-start --minified --source-maps && babel src --out-dir ./dist/src --minified --source-maps",
+        "test": "mocha --require @babel/register"
     },
     "repository": {
         "type": "git",
@@ -22,9 +23,12 @@
     },
     "homepage": "https://github.com/linhntaim/dotenv-conversion#readme",
     "devDependencies": {
+        "@babel/cli": "^7.7.5",
+        "@babel/core": "^7.7.5",
+        "@babel/preset-env": "^7.7.6",
+        "@babel/register": "^7.7.4",
         "chai": "^4.2.0",
         "dotenv": "^8.2.0",
-        "dotenv-expand": "^5.1.0",
         "mocha": "^6.2.2"
     }
 }
