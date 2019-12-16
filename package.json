@@ -18,7 +18,7 @@
         "variables"
     ],
     "author": "Nguyen Tuan Linh <contact@linhntaim.com> (https://linhntaim.com)",
-    "license": "ISC",
+    "license": "MIT",
     "bugs": {
         "url": "https://github.com/linhntaim/dotenv-conversion/issues"
     },

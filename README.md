@@ -2,6 +2,8 @@
 
 [![NPM version](https://img.shields.io/npm/v/dotenv-conversion.svg?style=flat-square)](https://www.npmjs.com/package/dotenv-conversion)
 [![Travis (.org)](https://img.shields.io/travis/linhntaim/dotenv-conversion?style=flat-square)](https://travis-ci.org/linhntaim/dotenv-conversion)
+[![Coveralls github](https://img.shields.io/coveralls/github/linhntaim/dotenv-conversion?style=flat-square)](https://coveralls.io/github/linhntaim/dotenv-conversion)
+[![NPM](https://img.shields.io/npm/l/dotenv-conversion?style=flat-square)](https://github.com/linhntaim/dotenv-conversion/blob/master/LICENSE)
 
 An extension for dotenv is to help converting environment variables to anything you want.
 
