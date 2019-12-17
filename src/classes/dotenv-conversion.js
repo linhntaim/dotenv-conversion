@@ -2,7 +2,7 @@ const NUMBER_REGEX = /^(\+|-)?\d+(\.\d+)?(e(\+|-)?\d+)?$/i
 
 export default class DotEnvConversion {
     constructor() {
-        this.defaultConfig = {
+        this.defaultOptions = {
             methods: {
                 auto(value) {
                     if (!value) return value
@@ -68,33 +68,33 @@ export default class DotEnvConversion {
             specs: {},
             prevents: [],
         }
-        this.config = {}
+        this.options = {}
         this.env = {}
     }
 
-    setConfig(config = {}) {
-        const override = config.override ? config.override : null
-        delete config.override
+    setOptions(options = {}) {
+        const override = options.override ? options.override : null
+        delete options.override
 
-        this.config = Object.assign({}, this.defaultConfig, config)
+        this.options = Object.assign({}, this.defaultOptions, options)
         if (override) {
-            Object.assign(this.config.methods, override)
+            Object.assign(this.options.methods, override)
         }
 
         return this
     }
 
-    make(dotenvConfig = {}, config = {}) {
-        this.setConfig(config)
+    make(dotenvConfigOutput = {}, options = {}) {
+        this.setOptions(options)
 
         this.env = {}
 
-        const parsed = dotenvConfig.hasOwnProperty('parsed') ? dotenvConfig.parsed : {}
+        const parsed = dotenvConfigOutput.hasOwnProperty('parsed') ? dotenvConfigOutput.parsed : {}
         for (const name in parsed) {
             parsed[name] = this.convert(name, parsed[name])
         }
 
-        const ignoreProcessEnv = dotenvConfig.hasOwnProperty('ignoreProcessEnv') ? dotenvConfig.ignoreProcessEnv : false
+        const ignoreProcessEnv = dotenvConfigOutput.hasOwnProperty('ignoreProcessEnv') ? dotenvConfigOutput.ignoreProcessEnv : false
         const environment = process.env
         if (ignoreProcessEnv) {
             for (const name in environment) {
@@ -109,19 +109,19 @@ export default class DotEnvConversion {
             }
         }
 
-        return dotenvConfig
+        return dotenvConfigOutput
     }
 
     convert(name, value) {
-        if (this.config.prevents.includes(name)) {
+        if (this.options.prevents.includes(name)) {
             return value
         }
 
-        const method = this.config.specs.hasOwnProperty(name) ? this.config.specs[name] : 'auto'
+        const method = this.options.specs.hasOwnProperty(name) ? this.options.specs[name] : 'auto'
         switch (typeof method) {
             case 'string':
-                if (this.config.methods.hasOwnProperty(method)) {
-                    return this.config.methods[method](value)
+                if (this.options.methods.hasOwnProperty(method)) {
+                    return this.options.methods[method](value)
                 }
                 return value
             case 'function':

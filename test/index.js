@@ -1,4 +1,4 @@
-import dotenvConversion from '../index'
+import dotenvConversion from '../src'
 import mocha from 'mocha'
 import chai from 'chai'
 
@@ -25,9 +25,9 @@ describe('dotenv-conversion', function () {
         })
 
         it('set config', function (done) {
-            dotenvConversion.setConfig()
+            dotenvConversion.setOptions()
 
-            dotenvConversion.config.should.be.a('object')
+            dotenvConversion.options.should.be.a('object')
             done()
         })
 

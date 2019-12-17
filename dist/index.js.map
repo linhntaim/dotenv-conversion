@@ -1,1 +1,1 @@
-{"version":3,"sources":["../index.js"],"names":["dotEnvConversion"],"mappings":"gGAAA,wD,iGAEeA,gB","sourcesContent":["import dotEnvConversion from './src/main'\r\n\r\nexport default dotEnvConversion"],"file":"index.js"}
+{"version":3,"sources":["../src/index.js"],"names":["dotEnvConversion","DotEnvConversion"],"mappings":"gGAAA,qF,oFAEA,GAAMA,CAAAA,gBAAgB,CAAG,GAAIC,6BAA7B,C,aAEeD,gB","sourcesContent":["import DotEnvConversion from './classes/dotenv-conversion'\r\n\r\nconst dotEnvConversion = new DotEnvConversion()\r\n\r\nexport default dotEnvConversion"],"file":"index.js"}
