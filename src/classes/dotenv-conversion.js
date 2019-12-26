@@ -131,7 +131,7 @@ export default class DotEnvConversion {
         }
     }
 
-    getenv(name = null) {
-        return name ? (this.env.hasOwnProperty(name) ? this.env[name] : '') : this.env
+    getenv(name = null, def = null) {
+        return name ? (this.env.hasOwnProperty(name) ? this.env[name] : def) : this.env
     }
 }

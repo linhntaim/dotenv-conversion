@@ -314,3 +314,16 @@ console.log(process.env.VARIABLE_2) // (string) '{"foo":"bar"}'
 console.log(dotenvConversion.env.VARIABLE_1) // (string) 'bool:1'
 console.log(dotenvConversion.env.VARIABLE_2) // (string) '{"foo":"bar"}'
 ```
+
+### Default Value when Getting Environtment Variables
+
+```javascript
+// .js file
+const dotenv = require('dotenv')
+const dotenvConversion = require('dotenv-conversion')
+dotenvConversion.make(dotenv.config())
+
+console.log(process.env.NOT_SET) // undefined
+console.log(dotenvConversion.env.NOT_SET) // undefined
+console.log(dotenvConversion.getenv('NOT_SET', 'default_value')) // (string) 'default_value'
+```

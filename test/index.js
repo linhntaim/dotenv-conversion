@@ -5,6 +5,7 @@ import chai from 'chai'
 const JsonHandler = JSON
 const describe = mocha.describe
 const it = mocha.it
+const expect = chai.expect
 chai.should()
 
 describe('dotenv-conversion', function () {
@@ -533,7 +534,8 @@ describe('dotenv-conversion', function () {
 
             dotenvConversion.getenv('RAW').should.deep.equal('raw')
             dotenvConversion.getenv('BOOL').should.deep.equal(true)
-            dotenvConversion.getenv('UNKNOWN').should.deep.equal('')
+            expect(dotenvConversion.getenv('UNKNOWN')).to.be.a('null')
+            dotenvConversion.getenv('UNKNOWN', '').should.deep.equal('')
             dotenvConversion.getenv().should.deep.include(expected)
             process.env.should.deep.include(expectedEnv)
             done()
@@ -562,7 +564,8 @@ describe('dotenv-conversion', function () {
 
             dotenvConversion.getenv('RAW').should.deep.equal('raw')
             dotenvConversion.getenv('BOOL').should.deep.equal(true)
-            dotenvConversion.getenv('UNKNOWN').should.deep.equal('')
+            expect(dotenvConversion.getenv('UNKNOWN')).to.be.a('null')
+            dotenvConversion.getenv('UNKNOWN', '').should.deep.equal('')
             dotenvConversion.getenv().should.deep.include(expected)
             process.env.should.deep.include(expectedEnv)
             done()
