@@ -1,0 +1,32 @@
+{
+    "name": "@dsquare-gbu/node-js-module-starter",
+    "version": "1.0.0",
+    "description": "To develop a Node.js module from the scratch",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "babel src --out-dir ./dist --delete-dir-on-start --minified --source-maps",
+        "test": "nyc mocha --require @babel/register",
+        "coverage": "nyc report --reporter=text-lcov | coveralls"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@git-gbu.japaneast.cloudapp.azure.com:base/node-js-module-starter.git"
+    },
+    "keywords": [
+        "node.js",
+        "module",
+        "starter"
+    ],
+    "author": "Nguyen Tuan Linh <tuanlinh.nguyen@dsquare.com.vn>",
+    "license": "MIT",
+    "devDependencies": {
+        "@babel/cli": "^7.10.5",
+        "@babel/core": "^7.11.1",
+        "@babel/preset-env": "^7.11.0",
+        "@babel/register": "^7.10.5",
+        "chai": "^4.2.0",
+        "coveralls": "^3.1.0",
+        "mocha": "^8.1.1",
+        "nyc": "^15.1.0"
+    }
+}
