@@ -54,7 +54,17 @@ export default class DotEnvConversion {
                 },
                 array(value) {
                     if (!value) return []
-                    return value.split(/(?<!\\),/).map(v => v.replace(/\\,/, ','))
+                    return (() => {
+                        const values = []
+                        let c = 0
+                        value.split('\\,').map(v => v.split(',')).forEach(vs => {
+                            vs.forEach((v, i) => {
+                                i ? values.push(v) : (c && !i ? values[values.length - 1] += ',' + v : values.push(v))
+                            })
+                            c = values.length
+                        })
+                        return values
+                    })()
                 },
                 json(value) {
                     if (!value) return {}
