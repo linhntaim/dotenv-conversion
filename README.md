@@ -5,7 +5,7 @@
 [![Coveralls github](https://img.shields.io/coveralls/github/linhntaim/dotenv-conversion?style=flat-square)](https://coveralls.io/github/linhntaim/dotenv-conversion)
 [![NPM](https://img.shields.io/npm/l/dotenv-conversion?style=flat-square)](https://github.com/linhntaim/dotenv-conversion/blob/master/LICENSE)
 
-An extension for dotenv is to help converting environment variables to anything you want.
+An extension for dotenv is to help convert environment variables to anything you want.
 
 ## Installation
 
@@ -35,7 +35,7 @@ const variable = dotenvConversion.getenv('VARIABLE_NAME')
 // .. or: const variable = dotenvConversion.env.VARIABLE_NAME
 ```
 
-- Along with `dotenv-expand` (https://github.com/motdotla/dotenv-expand):
+- Along with [`dotenv-expand`](https://github.com/motdotla/dotenv-expand):
 
 ```javascript
 // javascript
@@ -66,7 +66,7 @@ Currently, auto-conversion supports:
 
 - **raw**
 
-```smartyconfig
+```dotenv
 # .env file
 VARIABLE_1=text
 VARIABLE_2=raw:any
@@ -86,7 +86,7 @@ console.log(dotenvConversion.env.VARIABLE_2) // (string) 'any'
 
 - **null**
 
-```smartyconfig
+```dotenv
 # .env file
 VARIABLE=null
 ```
@@ -103,7 +103,7 @@ console.log(dotenvConversion.env.VARIABLE) // (string) ''
 
 - **bool**
 
-```smartyconfig
+```dotenv
 # .env file
 VARIABLE_1=true
 VARIABLE_2=false
@@ -136,7 +136,7 @@ console.log(dotenvConversion.env.VARIABLE_6) // (boolean) false
 
 - **number**
 
-```smartyconfig
+```dotenv
 # .env file
 VARIABLE_1=0123456789
 VARIABLE_2=01.23456789
@@ -166,7 +166,7 @@ console.log(dotenvConversion.env.VARIABLE_5) // (number) 0
 
 - **array**
 
-```smartyconfig
+```dotenv
 # .env file
 VARIABLE_1='[1,"2,3","4,5",6]'
 VARIABLE_2=array:1,2,3,4,5,6
@@ -194,7 +194,7 @@ console.log(dotenvConversion.env.VARIABLE_4) // (array) []
 
 - **json**
 
-```smartyconfig
+```dotenv
 # .env file
 VARIABLE_1='{"foo":"bar"}'
 VARIABLE_2='json:{"foo":"bar"}'
@@ -220,7 +220,7 @@ console.log(dotenvConversion.env.VARIABLE_3) // (object) {}
 
 #### Using existed conversion
 
-```smartyconfig
+```dotenv
 # .env file
 VARIABLE=1
 ```
@@ -241,7 +241,7 @@ console.log(dotenvConversion.env.VARIABLE) // (boolean) true
 
 #### Define a customized conversion
 
-```smartyconfig
+```dotenv
 # .env file
 VARIABLE=text
 ```
@@ -264,7 +264,7 @@ console.log(dotenvConversion.env.VARIABLE) // (string) 'TEXT'
 
 ### Override an existed Conversion
 
-```smartyconfig
+```dotenv
 # .env file
 VARIABLE='{"foo":"bar"}'
 ```
@@ -295,7 +295,7 @@ console.log(dotenvConversion.env.VARIABLE) // (object) {original: '{"foo":"bar"}
 
 ### Prevent Attributes from Conversion
 
-```smartyconfig
+```dotenv
 # .env file
 VARIABLE_1=bool:1
 VARIABLE_2='{"foo":"bar"}'
@@ -315,7 +315,7 @@ console.log(dotenvConversion.env.VARIABLE_1) // (string) 'bool:1'
 console.log(dotenvConversion.env.VARIABLE_2) // (string) '{"foo":"bar"}'
 ```
 
-### Default Value when Getting Environtment Variables
+### Default Value when Getting Environment Variables
 
 ```javascript
 // .js file
