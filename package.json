@@ -1,6 +1,6 @@
 {
     "name": "dotenv-conversion",
-    "version": "1.6.2",
+    "version": "1.6.3",
     "description": "An extension for dotenv is to help converting environment variables to anything you want.",
     "main": "dist/index.js",
     "scripts": {
@@ -33,5 +33,9 @@
         "dotenv": "^8.2.0",
         "mocha": "^8.3.2",
         "nyc": "^15.1.0"
+    },
+    "dependencies": {
+        "core-js": "^3.10.0",
+        "regenerator-runtime": "^0.13.7"
     }
 }
