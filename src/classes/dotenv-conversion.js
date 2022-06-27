@@ -1,4 +1,4 @@
-const NUMBER_REGEX = /^(\+|-)?\d+(\.\d+)?(e(\+|-)?\d+)?$/i
+const NUMBER_REGEX = /^[+-]?\d+(\.\d+)?(e[+-]?\d+)?$/i
 
 export default class DotEnvConversion
 {
