@@ -1,5 +1,5 @@
 {
-    "name": "@dsquare-gbu/node-js-module-starter",
+    "name": "node-js-module-starter",
     "version": "1.0.0",
     "description": "To develop a Node.js module from the scratch",
     "main": "dist/index.js",
@@ -10,15 +10,19 @@
     },
     "repository": {
         "type": "git",
-        "url": "git@git-gbu.japaneast.cloudapp.azure.com:base/node-js-module-starter.git"
+        "url": "git+https://github.com/linhntaim/node-js-module-starter.git"
     },
     "keywords": [
         "node.js",
         "module",
         "starter"
     ],
-    "author": "Nguyen Tuan Linh <tuanlinh.nguyen@dsquare.com.vn>",
+    "author": "Nguyen Tuan Linh <contact@linhntaim.com> (https://linhntaim.com)",
     "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/linhntaim/node-js-module-starter/issues"
+    },
+    "homepage": "https://github.com/linhntaim/node-js-module-starter#readme",
     "devDependencies": {
         "@babel/cli": "^7.13.14",
         "@babel/core": "^7.13.14",
