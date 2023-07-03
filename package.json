@@ -24,13 +24,13 @@
     },
     "homepage": "https://github.com/linhntaim/node-js-module-starter#readme",
     "devDependencies": {
-        "@babel/cli": "^7.13.14",
-        "@babel/core": "^7.13.14",
-        "@babel/preset-env": "^7.13.12",
-        "@babel/register": "^7.13.14",
-        "chai": "^4.3.4",
-        "coveralls": "^3.1.0",
-        "mocha": "^8.3.2",
+        "@babel/cli": "^7.22.5",
+        "@babel/core": "^7.22.5",
+        "@babel/preset-env": "^7.22.5",
+        "@babel/register": "^7.22.5",
+        "chai": "^4.3.7",
+        "coveralls": "^3.1.1",
+        "mocha": "^8.4.0",
         "nyc": "^15.1.0"
     }
 }
