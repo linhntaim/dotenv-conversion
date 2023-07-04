@@ -4,7 +4,7 @@
     "description": "To develop a Node.js module from the scratch",
     "main": "dist/index.js",
     "scripts": {
-        "build": "babel src --out-dir ./dist --delete-dir-on-start --minified --source-maps",
+        "build": "babel src --out-dir ./dist --delete-dir-on-start --minified --source-maps --copy-files",
         "test": "nyc mocha --require @babel/register",
         "coverage": "nyc report --reporter=text-lcov | coveralls"
     },
@@ -17,7 +17,7 @@
         "module",
         "starter"
     ],
-    "author": "Nguyen Tuan Linh <contact@linhntaim.com> (https://linhntaim.com)",
+    "author": "Nguyen Tuan Linh <contact@linhntaim.com> (https://www.linhntaim.com)",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/linhntaim/node-js-module-starter/issues"
