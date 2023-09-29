@@ -6,7 +6,7 @@ const it = mocha.it
 const expect = chai.expect
 chai.should()
 
-describe('node-js-module-starter', function () {
+describe('node-js-package-starter', function () {
     describe('unit tests', function () {
     })
 })

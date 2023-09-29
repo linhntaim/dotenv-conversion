@@ -1,7 +1,7 @@
 {
-    "name": "node-js-module-starter",
+    "name": "node-js-package-starter",
     "version": "1.0.0",
-    "description": "To develop a Node.js module from the scratch",
+    "description": "To develop a Node.js package from the scratch",
     "main": "dist/index.js",
     "scripts": {
         "build": "babel src --out-dir ./dist --delete-dir-on-start --minified --source-maps --copy-files",
@@ -10,27 +10,26 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/linhntaim/node-js-module-starter.git"
+        "url": "git+https://github.com/linhntaim/node-js-package-starter.git"
     },
     "keywords": [
-        "node.js",
-        "module",
+        "package",
         "starter"
     ],
     "author": "Nguyen Tuan Linh <contact@linhntaim.com> (https://www.linhntaim.com)",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/linhntaim/node-js-module-starter/issues"
+        "url": "https://github.com/linhntaim/node-js-package-starter/issues"
     },
-    "homepage": "https://github.com/linhntaim/node-js-module-starter#readme",
+    "homepage": "https://github.com/linhntaim/node-js-package-starter#readme",
     "devDependencies": {
-        "@babel/cli": "^7.22.5",
-        "@babel/core": "^7.22.5",
-        "@babel/preset-env": "^7.22.5",
-        "@babel/register": "^7.22.5",
-        "chai": "^4.3.7",
+        "@babel/cli": "^7.23.0",
+        "@babel/core": "^7.23.0",
+        "@babel/preset-env": "^7.22.20",
+        "@babel/register": "^7.22.15",
+        "chai": "^4.3.10",
         "coveralls": "^3.1.1",
-        "mocha": "^8.4.0",
+        "mocha": "^10.2.0",
         "nyc": "^15.1.0"
     }
 }
