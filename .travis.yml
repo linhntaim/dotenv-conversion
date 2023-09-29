@@ -1,4 +1,7 @@
+os: linux
+dist: jammy
 language: node_js
 node_js:
   - "node"
+if: tag IS present
 after_success: npm run coverage
