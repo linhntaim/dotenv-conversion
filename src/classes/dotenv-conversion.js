@@ -19,15 +19,15 @@ export default class DotEnvConversion
                         case NUMBER_REGEX.test(vCased):
                             return this.number(value)
                         case vCased.startsWith('raw:'):
-                            return this.raw(value.substr(4))
+                            return this.raw(value.substring(4))
                         case vCased.startsWith('bool:'):
-                            return this.bool(value.substr(5))
+                            return this.bool(value.substring(5))
                         case vCased.startsWith('number:'):
-                            return this.number(value.substr(7))
+                            return this.number(value.substring(7))
                         case vCased.startsWith('array:'):
-                            return this.array(value.substr(6))
+                            return this.array(value.substring(6))
                         case vCased.startsWith('json:'):
-                            return this.json(value.substr(5))
+                            return this.json(value.substring(5))
                         default:
                             return this.json(value)
                     }

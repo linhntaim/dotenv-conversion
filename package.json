@@ -1,6 +1,6 @@
 {
     "name": "dotenv-conversion",
-    "version": "1.6.6",
+    "version": "1.6.7",
     "description": "An extension for dotenv is to help converting environment variables to anything you want.",
     "main": "dist/index.js",
     "scripts": {
@@ -10,28 +10,28 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/linhntaim/dotenv-conversion.git"
+        "url": "https://github.com/linhntaim/dotenv-conversion.git"
     },
     "keywords": [
         "dotenv",
         "conversion",
         "variables"
     ],
-    "author": "Nguyen Tuan Linh <contact@linhntaim.com> (https://linhntaim.com)",
+    "author": "Nguyen Tuan Linh <contact@linhntaim.com> (https://www.linhntaim.com)",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/linhntaim/dotenv-conversion/issues"
     },
     "homepage": "https://github.com/linhntaim/dotenv-conversion#readme",
     "devDependencies": {
-        "@babel/cli": "^7.17.10",
-        "@babel/core": "^7.18.5",
-        "@babel/preset-env": "^7.18.2",
-        "@babel/register": "^7.17.7",
-        "chai": "^4.3.6",
+        "@babel/cli": "^7.23.0",
+        "@babel/core": "^7.23.0",
+        "@babel/preset-env": "^7.22.20",
+        "@babel/register": "^7.22.15",
+        "chai": "^4.3.10",
         "coveralls": "^3.1.1",
-        "dotenv": "^16.0.1",
-        "mocha": "^10.0.0",
+        "dotenv": "^16.3.1",
+        "mocha": "^10.2.0",
         "nyc": "^15.1.0"
     }
 }

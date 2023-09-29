@@ -1,2 +1,2 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _dotenvConversion=_interopRequireDefault(require("./classes/dotenv-conversion"));function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj}}var dotEnvConversion=new _dotenvConversion["default"];var _default=dotEnvConversion;exports["default"]=_default;
+"use strict";Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _dotenvConversion=_interopRequireDefault(require("./classes/dotenv-conversion"));function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj}}var dotEnvConversion=new _dotenvConversion["default"];var _default=exports["default"]=dotEnvConversion;
 //# sourceMappingURL=index.js.map
