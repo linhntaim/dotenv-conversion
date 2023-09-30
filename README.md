@@ -5,7 +5,8 @@
 [![Coveralls github](https://img.shields.io/coveralls/github/linhntaim/dotenv-conversion?style=flat-square)](https://coveralls.io/github/linhntaim/dotenv-conversion)
 [![NPM](https://img.shields.io/npm/l/dotenv-conversion?style=flat-square)](https://github.com/linhntaim/dotenv-conversion/blob/master/LICENSE)
 
-An extension for dotenv is to help convert environment variables to anything you want.
+Dotenv-conversion adds variable conversion on top of dotenv. 
+If you find yourself needing to convert/transform environment variables to anything you want, then dotenv-conversion is your tool.
 
 ## Installation
 
@@ -15,7 +16,7 @@ npm install dotenv-conversion
 
 ## Usage
 
-- Basic:
+- Basic with [`dotenv`](https://github.com/motdotla/dotenv):
 
 ```javascript
 // javascript
@@ -47,7 +48,7 @@ const dotenvConversion = require('dotenv-conversion')
 // Parse variables from .env file
 const myEnv = dotenv.config()
 // Convert parsed variables from .env file with auto-conversion method
-const myConvertedEnv = dotenvConversion.make(dotenvExpand(myEnv))
+const myConvertedEnv = dotenvConversion.make(dotenvExpand.expand(myEnv))
 // Get converted variables from process.env (which has already added - but has been not overwritten by - parsed variables from .env file)
 const myAllConvertedEnv = dotenvConversion.getenv()
 // .. or: const myAllConvertedEnv = dotenvConversion.env

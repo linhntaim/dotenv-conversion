@@ -25,5 +25,7 @@ coverage
 node_modules
 .DS_Store
 *.local
+*.local.*
+.env
 
 # Others
