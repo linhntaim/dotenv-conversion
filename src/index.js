@@ -9,16 +9,26 @@ function defaultConfig() {
         specs: {},
         prevents: [],
         methods: {
-            auto(value) {
+            auto(value, name, config) {
                 if (value.startsWith('auto:')) {
                     value = value.substring(5)
                 }
                 value = envUtils.restoreValue(value)
                 if (typeof value === 'string') {
-                    const availableMethod = Object.keys(this).find(method => value.startsWith(`${method}:`))
-                    if (availableMethod) {
-                        value = this[availableMethod](value.substring(availableMethod.length + 1))
+                    const findMethod = methods => methods.find(method => value.startsWith(`${method}:`))
+                    // find in available
+                    let foundMethod = findMethod(Object.keys(this))
+                    let refMethod = foundMethod
+                    if (!foundMethod) {
+                        // find in aliases
+                        foundMethod = findMethod(Object.keys(config.methodAliases))
+                        if (foundMethod) {
+                            refMethod = (method => method in this ? method : undefined)(config.methodAliases[foundMethod])
+                        }
                     }
+                    return refMethod
+                        ? this[refMethod](value.substring(foundMethod.length + 1))
+                        : this.string(value)
                 }
                 return value
             },
@@ -41,9 +51,6 @@ function defaultConfig() {
                             || (isBigInt && BigInt(value.slice(0, -1)) !== 0n)
                     })(envUtils.NUMBER_REGEX.test(value), envUtils.BIGINT_REGEX.test(value))
             },
-            num(value) {
-                return this.number(value)
-            },
             number(value) {
                 value = value.trim()
                 if (!value) {
@@ -51,9 +58,6 @@ function defaultConfig() {
                 }
                 value = parseFloat(value)
                 return Number.isNaN(value) ? 0 : value
-            },
-            big(value) {
-                return this.bigint(value)
             },
             bigint(value) {
                 value = value.trim()
@@ -76,54 +80,63 @@ function defaultConfig() {
                         return BigInt(parseInt(value))
                 }
             },
-            raw(value) {
+            string(value) {
                 return value
             },
             symbol(value) {
-                value = value.trim()
-                if (!value) {
+                const trimmed = value.trim()
+                if (!trimmed) {
                     return Symbol()
                 }
-                const symbol = envUtils.SYMBOL_REGEX.test(value) ? value.slice(7, -1) : value
                 try {
-                    return Symbol(symbol)
+                    return Symbol(
+                        envUtils.SYMBOL_REGEX.test(trimmed)
+                            ? trimmed.slice(7, -1)
+                            : trimmed,
+                    )
                 }
                 catch (e) {
-                    return value
+                    return this.string(value)
                 }
-            },
-            arr(value) {
-                return this.array(value)
             },
             array(value) {
-                value = value.trim()
-                if (!value) {
+                const trimmed = value.trim()
+                if (!trimmed) {
                     return []
                 }
-                const arr = envUtils.ARRAY_REGEX.test(value) ? value : `[${value}]`
                 try {
-                    return JSON.parse(arr)
+                    return JSON.parse(
+                        envUtils.ARRAY_REGEX.test(trimmed)
+                            ? trimmed
+                            : `[${trimmed}]`,
+                    )
                 }
                 catch (e) {
-                    return [value]
+                    return this.string(value)
                 }
-            },
-            obj(value) {
-                return this.json(value)
             },
             json(value) {
-                value = value.trim()
-                if (!value) {
+                const trimmed = value.trim()
+                if (!trimmed) {
                     return {}
                 }
-                const json = envUtils.JSON_REGEX.test(value) ? value : `{${value}}`
                 try {
-                    return JSON.parse(json)
+                    return JSON.parse(
+                        envUtils.JSON_REGEX.test(trimmed)
+                            ? trimmed
+                            : `{${trimmed}}`,
+                    )
                 }
                 catch (e) {
-                    return value
+                    return this.string(value)
                 }
             },
+        },
+        methodAliases: {
+            num: 'number',
+            big: 'bigint',
+            str: 'string',
+            obj: 'json',
         },
     }
 }
@@ -136,6 +149,9 @@ function mergeConfig(config = {}) {
                 case 'merge':
                     Object.assign(mergingConfig[name], config[name])
                     break
+                case 'insert':
+                    mergingConfig[name] = Object.assign({}, config[name], mergingConfig[name])
+                    break
                 default:
                     mergingConfig[name] = config[name]
                     break
@@ -147,10 +163,11 @@ function mergeConfig(config = {}) {
     update('specs')
     update('prevents')
     update('methods', 'merge')
+    update('methodAliases', 'insert')
     return mergingConfig
 }
 
-function interpolate(name, value, config) {
+function convertValue(value, name, config) {
     if (config.prevents.includes(name)) {
         return value
     }
@@ -159,13 +176,19 @@ function interpolate(name, value, config) {
     switch (typeof method) {
         case 'string':
             if (method in config.methods) {
-                return config.methods[method](value)
+                return config.methods[method](value, name, config)
             }
-            return value
+            if (method in config.methodAliases) {
+                const refMethod = config.methodAliases[method]
+                if (refMethod in config.methods) {
+                    return config.methods[refMethod](value, name, config)
+                }
+            }
+            return config.methods.string(value, name, config)
         case 'function':
-            return method(value)
+            return method(value, name, config)
         default:
-            return value
+            return config.methods.string(value, name, config)
     }
 }
 
@@ -179,7 +202,7 @@ function convert(config = {}) {
             ? environment[configKey]
             : config.parsed[configKey]
 
-        config.parsed[configKey] = interpolate(configKey, value, config)
+        config.parsed[configKey] = convertValue(value, configKey, config)
     }
 
     for (const processKey in config.parsed) {
