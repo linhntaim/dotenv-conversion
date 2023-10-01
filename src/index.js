@@ -17,18 +17,18 @@ function defaultConfig() {
                 if (typeof value === 'string') {
                     const findMethod = methods => methods.find(method => value.startsWith(`${method}:`))
                     // find in available
-                    let foundMethod = findMethod(Object.keys(this))
-                    let refMethod = foundMethod
-                    if (!foundMethod) {
-                        // find in aliases
-                        foundMethod = findMethod(Object.keys(config.methodAliases))
-                        if (foundMethod) {
-                            refMethod = (method => method in this ? method : undefined)(config.methodAliases[foundMethod])
-                        }
+                    let foundMethod
+                    // find in methods
+                    foundMethod = findMethod(Object.keys(this))
+                    if (foundMethod) {
+                        return this[foundMethod](value.substring(foundMethod.length + 1))
                     }
-                    return refMethod
-                        ? this[refMethod](value.substring(foundMethod.length + 1))
-                        : this.string(value)
+                    // find in aliases
+                    foundMethod = findMethod(Object.keys(config.methodAliases))
+                    if (foundMethod) {
+                        return this[config.methodAliases[foundMethod]](value.substring(foundMethod.length + 1))
+                    }
+                    return this.string(value)
                 }
                 return value
             },
@@ -136,6 +136,7 @@ function defaultConfig() {
             num: 'number',
             big: 'bigint',
             str: 'string',
+            arr: 'array',
             obj: 'json',
         },
     }
@@ -143,27 +144,34 @@ function defaultConfig() {
 
 function mergeConfig(config = {}) {
     const mergingConfig = defaultConfig()
-    const update = (name, type = null) => {
-        if (name in config) {
-            switch (type) {
-                case 'merge':
-                    Object.assign(mergingConfig[name], config[name])
-                    break
-                case 'insert':
-                    mergingConfig[name] = Object.assign({}, config[name], mergingConfig[name])
-                    break
-                default:
-                    mergingConfig[name] = config[name]
-                    break
+    if ('parsed' in config) {
+        mergingConfig.parsed = config.parsed
+    }
+    if ('ignoreProcessEnv' in config) {
+        mergingConfig.ignoreProcessEnv = config.ignoreProcessEnv
+    }
+    if ('specs' in config) {
+        mergingConfig.specs = config.specs
+    }
+    if ('prevents' in config) {
+        mergingConfig.prevents = config.prevents
+    }
+    if ('methods' in config) {
+        Object.assign(mergingConfig.methods, config.methods)
+    }
+    if ('methodAliases' in config) {
+        for (const alias in config.methodAliases) {
+            // not override existing alias
+            if (alias in mergingConfig.methodAliases) {
+                continue
+            }
+            // only add alias to existing methods
+            const method = config.methodAliases[alias]
+            if (method in mergingConfig.methods) {
+                mergingConfig.methodAliases[alias] = method
             }
         }
     }
-    update('parsed')
-    update('ignoreProcessEnv')
-    update('specs')
-    update('prevents')
-    update('methods', 'merge')
-    update('methodAliases', 'insert')
     return mergingConfig
 }
 
@@ -179,10 +187,7 @@ function convertValue(value, name, config) {
                 return config.methods[method](value, name, config)
             }
             if (method in config.methodAliases) {
-                const refMethod = config.methodAliases[method]
-                if (refMethod in config.methods) {
-                    return config.methods[refMethod](value, name, config)
-                }
+                return config.methods[config.methodAliases[method]](value, name, config)
             }
             return config.methods.string(value, name, config)
         case 'function':

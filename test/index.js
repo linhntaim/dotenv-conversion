@@ -10,40 +10,139 @@ const expect = chai.expect
 chai.should()
 
 describe('dotenv-conversion', function () {
-    describe('convert', function () {
-        it('empty+trim', function (done) {
+    describe('convert:config', function () {
+        it('default', function (done) {
             // input
-            fs.copyFileSync('./test/inputs/convert/empty+trim.env', './.env')
 
             // output
-            const expected = {
-                EMPTY: '',
-
-                TRIM_1: '',
-                TRIM_2: 'a',
-                TRIM_3: ' ',
-                TRIM_4: ' a ',
-            }
-            const expectedForEnv = {
-                EMPTY: '',
-
-                TRIM_1: '',
-                TRIM_2: 'a',
-                TRIM_3: ' ',
-                TRIM_4: ' a ',
+            const expectedParsed = {}
+            const expectedIgnoreProcessEnv = false
+            const expectedSpecs = {}
+            const expectedPrevents = []
+            const expectedMethods = ['auto', 'bool', 'number', 'bigint', 'string', 'symbol', 'array', 'json']
+            const expectedMethodAliases = {
+                num: 'number',
+                big: 'bigint',
+                str: 'string',
+                arr: 'array',
+                obj: 'json',
             }
 
-            const dotenvConfig = dotenv.config()
-            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+            const dotenvConversionConfig = dotenvConversion.convert()
 
-            dotenvConversionConfig.parsed.should.deep.include(expected)
-            process.env.should.deep.include(expectedForEnv)
+            dotenvConversionConfig.should.be.an('object')
+            dotenvConversionConfig.should.have.property('parsed')
+            dotenvConversionConfig.should.have.property('ignoreProcessEnv')
+            dotenvConversionConfig.should.have.property('specs')
+            dotenvConversionConfig.should.have.property('prevents')
+            dotenvConversionConfig.should.have.property('methods')
+            dotenvConversionConfig.should.have.property('methodAliases')
+
+            dotenvConversionConfig.parsed.should.deep.equal(expectedParsed)
+
+            dotenvConversionConfig.ignoreProcessEnv.should.equal(expectedIgnoreProcessEnv)
+
+            dotenvConversionConfig.specs.should.deep.equal(expectedSpecs)
+
+            dotenvConversionConfig.prevents.should.deep.equal(expectedPrevents)
+
+            expectedMethods.forEach(method => dotenvConversionConfig.methods.should.have.property(method))
+
+            dotenvConversionConfig.methodAliases.should.deep.equal(expectedMethodAliases)
+
             done()
         })
 
+        it('set', function (done) {
+            // input
+            const inputConfig = {
+                parsed: {},
+                ignoreProcessEnv: true,
+                specs: {
+                    BASIC(value) {
+                        return 'BASIC'
+                    },
+                },
+                prevents: ['BASIC'],
+                methods: {
+                    auto(value) {
+                        return 'auto'
+                    },
+                    basic(value) {
+                        return 'basic'
+                    },
+                },
+                methodAliases: {
+                    str: 'basic',
+                    raw: 'string',
+                    notAdded: 'notExistingMethod',
+                },
+            }
+
+            // output
+            const expectedParsed = inputConfig.parsed
+            const expectedIgnoreProcessEnv = inputConfig.ignoreProcessEnv
+            const expectedSpecs = inputConfig.specs
+            const expectedPrevents = inputConfig.prevents
+            const expectedMethods = inputConfig.methods
+            const expectedMethodAutoReturn = 'auto'
+            const expectedMethodBasicReturn = 'basic'
+            const expectedMethodAliases = {
+                str: 'string', // cannot override existing built-in alias
+                raw: 'string', // ok with new override
+            }
+            const notExpectedMethodAlias = 'notAdded'
+
+            const dotenvConversionConfig = dotenvConversion.convert(inputConfig)
+
+            dotenvConversionConfig.should.be.an('object')
+            dotenvConversionConfig.should.have.property('parsed')
+            dotenvConversionConfig.should.have.property('ignoreProcessEnv')
+            dotenvConversionConfig.should.have.property('specs')
+            dotenvConversionConfig.should.have.property('prevents')
+            dotenvConversionConfig.should.have.property('methods')
+            dotenvConversionConfig.should.have.property('methodAliases')
+
+            dotenvConversionConfig.parsed.should.deep.equal(expectedParsed)
+
+            dotenvConversionConfig.ignoreProcessEnv.should.equal(expectedIgnoreProcessEnv)
+
+            dotenvConversionConfig.specs.should.deep.equal(expectedSpecs)
+
+            dotenvConversionConfig.prevents.should.deep.equal(expectedPrevents)
+
+            dotenvConversionConfig.methods.should.deep.include(expectedMethods)
+
+            // override existing built-in conversion method
+            dotenvConversionConfig.methods.auto('value').should.equal(expectedMethodAutoReturn)
+            // add new conversion method
+            dotenvConversionConfig.methods.basic('value').should.equal(expectedMethodBasicReturn)
+
+            dotenvConversionConfig.methodAliases.should.deep.include(expectedMethodAliases)
+            dotenvConversionConfig.methodAliases.should.not.have.property(notExpectedMethodAlias)
+
+            done()
+        })
+    })
+
+    describe('convert:standalone', function () {
+        function useEnv(env) {
+            return {
+                parsed: env,
+            }
+        }
+
         it('null', function (done) {
             // input
-            fs.copyFileSync('./test/inputs/convert/null.env', './.env')
+            const input = {
+                NULL_1: 'null',
+                NULL_2: 'Null',
+                NULL_3: 'NULL',
+
+                // No conversion
+                NULL_1001: 'NuLL',
+                NULL_1002: ' null ',
+            }
 
             // output
             const expected = {
@@ -65,17 +164,24 @@ describe('dotenv-conversion', function () {
                 NULL_1002: ' null ',
             }
 
-            const dotenvConfig = dotenv.config()
+            const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.include(expected)
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
             process.env.should.deep.include(expectedForEnv)
             done()
         })
 
         it('undefined', function (done) {
             // input
-            fs.copyFileSync('./test/inputs/convert/undefined.env', './.env')
+            const input = {
+                UNDEFINED_1: 'undefined',
+                UNDEFINED_2: 'UNDEFINED',
+
+                // No conversion
+                UNDEFINED_1001: 'Undefined',
+                UNDEFINED_1002: ' undefined ',
+            }
 
             // output
             const expected = {
@@ -95,17 +201,89 @@ describe('dotenv-conversion', function () {
                 UNDEFINED_1002: ' undefined ',
             }
 
-            const dotenvConfig = dotenv.config()
+            const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.include(expected)
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
             process.env.should.deep.include(expectedForEnv)
             done()
         })
 
         it('bool', function (done) {
             // input
-            fs.copyFileSync('./test/inputs/convert/bool.env', './.env')
+            const input = {
+                BOOL_1: 'true',
+                BOOL_2: 'True',
+                BOOL_3: 'TRUE',
+                BOOL_4: 'yes',
+                BOOL_5: 'Yes',
+                BOOL_6: 'YES',
+
+                BOOL_11: 'false',
+                BOOL_12: 'False',
+                BOOL_13: 'FALSE',
+                BOOL_14: 'no',
+                BOOL_15: 'No',
+                BOOL_16: 'NO',
+
+                BOOL_101: 'bool:',
+                BOOL_102: 'bool: ',
+                BOOL_103: 'bool:false',
+                BOOL_104: 'bool:False',
+                BOOL_105: 'bool:FALSE',
+                BOOL_106: 'bool:no',
+                BOOL_107: 'bool:No',
+                BOOL_108: 'bool:NO',
+                BOOL_109: 'bool:null',
+                BOOL_110: 'bool:Null',
+                BOOL_111: 'bool:NULL',
+                BOOL_112: 'bool:undefined',
+                BOOL_113: 'bool:UNDEFINED',
+                BOOL_114: 'bool:NaN',
+                BOOL_115: 'bool:not',
+                BOOL_116: 'bool:Not',
+                BOOL_117: 'bool:NOT',
+                BOOL_118: 'bool:none',
+                BOOL_119: 'bool:None',
+                BOOL_120: 'bool:NONE',
+                BOOL_121: 'bool: false ',
+
+                BOOL_201: 'bool:0',
+                BOOL_202: 'bool:+0',
+                BOOL_203: 'bool:-0',
+                BOOL_204: 'bool:00',
+                BOOL_205: 'bool:+00',
+                BOOL_206: 'bool:-00',
+                BOOL_207: 'bool:.00',
+                BOOL_208: 'bool:+.00',
+                BOOL_209: 'bool:-.00',
+                BOOL_210: 'bool:0.00',
+                BOOL_211: 'bool:+0.00',
+                BOOL_212: 'bool:-0.00',
+                BOOL_213: 'bool: 0.00 ',
+                BOOL_214: 'bool: +0.00 ',
+                BOOL_215: 'bool: -0.00 ',
+
+                BOOL_301: 'bool:0n',
+                BOOL_302: 'bool:+0n',
+                BOOL_303: 'bool:-0n',
+                BOOL_304: 'bool:00n',
+                BOOL_305: 'bool:+00n',
+                BOOL_306: 'bool:-00n',
+                BOOL_307: 'bool: 00n ',
+                BOOL_308: 'bool: +00n ',
+                BOOL_309: 'bool: -00n ',
+
+                BOOL_401: 'bool:any',
+                BOOL_402: 'bool: any ',
+
+                // No conversion
+                BOOL_1001: 'TruE',
+                BOOL_1002: 'YeS',
+                BOOL_1003: 'FalsE',
+                BOOL_1004: 'nO',
+                BOOL_1005: ' bool:any ',
+            }
 
             // output
             const expected = {
@@ -255,10 +433,239 @@ describe('dotenv-conversion', function () {
                 BOOL_1005: ' bool:any ',
             }
 
-            const dotenvConfig = dotenv.config()
+            const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.include(expected)
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+            done()
+        })
+    })
+
+    describe('convert:dotenv-integration', function () {
+        function useEnv(envBasename) {
+            fs.copyFileSync(`./test/inputs/convert/${envBasename}.env`, './.env')
+            return dotenv.config()
+        }
+
+        it('null', function (done) {
+            // input
+            const input = 'null'
+
+            // output
+            const expected = {
+                NULL_1: null,
+                NULL_2: null,
+                NULL_3: null,
+
+                // No conversion
+                NULL_1001: 'NuLL',
+                NULL_1002: ' null ',
+            }
+            const expectedForEnv = {
+                NULL_1: 'null',
+                NULL_2: 'null',
+                NULL_3: 'null',
+
+                // No conversion
+                NULL_1001: 'NuLL',
+                NULL_1002: ' null ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+            done()
+        })
+
+        it('undefined', function (done) {
+            // input
+            const input = 'undefined'
+
+            // output
+            const expected = {
+                UNDEFINED_1: undefined,
+                UNDEFINED_2: undefined,
+
+                // No conversion
+                UNDEFINED_1001: 'Undefined',
+                UNDEFINED_1002: ' undefined ',
+            }
+            const expectedForEnv = {
+                UNDEFINED_1: 'undefined',
+                UNDEFINED_2: 'undefined',
+
+                // No conversion
+                UNDEFINED_1001: 'Undefined',
+                UNDEFINED_1002: ' undefined ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+            done()
+        })
+
+        it('bool', function (done) {
+            // input
+            const input = 'bool'
+
+            // output
+            const expected = {
+                BOOL_1: true,
+                BOOL_2: true,
+                BOOL_3: true,
+                BOOL_4: true,
+                BOOL_5: true,
+                BOOL_6: true,
+
+                BOOL_11: false,
+                BOOL_12: false,
+                BOOL_13: false,
+                BOOL_14: false,
+                BOOL_15: false,
+                BOOL_16: false,
+
+                BOOL_101: false,
+                BOOL_102: false,
+                BOOL_103: false,
+                BOOL_104: false,
+                BOOL_105: false,
+                BOOL_106: false,
+                BOOL_107: false,
+                BOOL_108: false,
+                BOOL_109: false,
+                BOOL_110: false,
+                BOOL_111: false,
+                BOOL_112: false,
+                BOOL_113: false,
+                BOOL_114: false,
+                BOOL_115: false,
+                BOOL_116: false,
+                BOOL_117: false,
+                BOOL_118: false,
+                BOOL_119: false,
+                BOOL_120: false,
+                BOOL_121: false,
+
+                BOOL_201: false,
+                BOOL_202: false,
+                BOOL_203: false,
+                BOOL_204: false,
+                BOOL_205: false,
+                BOOL_206: false,
+                BOOL_207: false,
+                BOOL_208: false,
+                BOOL_209: false,
+                BOOL_210: false,
+                BOOL_211: false,
+                BOOL_212: false,
+                BOOL_213: false,
+                BOOL_214: false,
+                BOOL_215: false,
+
+                BOOL_301: false,
+                BOOL_302: false,
+                BOOL_303: false,
+                BOOL_304: false,
+                BOOL_305: false,
+                BOOL_306: false,
+                BOOL_307: false,
+                BOOL_308: false,
+                BOOL_309: false,
+
+                BOOL_401: true,
+                BOOL_402: true,
+
+                // No conversion
+                BOOL_1001: 'TruE',
+                BOOL_1002: 'YeS',
+                BOOL_1003: 'FalsE',
+                BOOL_1004: 'nO',
+                BOOL_1005: ' bool:any ',
+            }
+            const expectedForEnv = {
+                BOOL_1: 'true',
+                BOOL_2: 'true',
+                BOOL_3: 'true',
+                BOOL_4: 'true',
+                BOOL_5: 'true',
+                BOOL_6: 'true',
+
+                BOOL_11: 'false',
+                BOOL_12: 'false',
+                BOOL_13: 'false',
+                BOOL_14: 'false',
+                BOOL_15: 'false',
+                BOOL_16: 'false',
+
+                BOOL_101: 'false',
+                BOOL_102: 'false',
+                BOOL_103: 'false',
+                BOOL_104: 'false',
+                BOOL_105: 'false',
+                BOOL_106: 'false',
+                BOOL_107: 'false',
+                BOOL_108: 'false',
+                BOOL_109: 'false',
+                BOOL_110: 'false',
+                BOOL_111: 'false',
+                BOOL_112: 'false',
+                BOOL_113: 'false',
+                BOOL_114: 'false',
+                BOOL_115: 'false',
+                BOOL_116: 'false',
+                BOOL_117: 'false',
+                BOOL_118: 'false',
+                BOOL_119: 'false',
+                BOOL_120: 'false',
+                BOOL_121: 'false',
+
+                BOOL_201: 'false',
+                BOOL_202: 'false',
+                BOOL_203: 'false',
+                BOOL_204: 'false',
+                BOOL_205: 'false',
+                BOOL_206: 'false',
+                BOOL_207: 'false',
+                BOOL_208: 'false',
+                BOOL_209: 'false',
+                BOOL_210: 'false',
+                BOOL_211: 'false',
+                BOOL_212: 'false',
+                BOOL_213: 'false',
+                BOOL_214: 'false',
+                BOOL_215: 'false',
+
+                BOOL_301: 'false',
+                BOOL_302: 'false',
+                BOOL_303: 'false',
+                BOOL_304: 'false',
+                BOOL_305: 'false',
+                BOOL_306: 'false',
+                BOOL_307: 'false',
+                BOOL_308: 'false',
+                BOOL_309: 'false',
+
+                BOOL_401: 'true',
+                BOOL_402: 'true',
+
+                // No conversion
+                BOOL_1001: 'TruE',
+                BOOL_1002: 'YeS',
+                BOOL_1003: 'FalsE',
+                BOOL_1004: 'nO',
+                BOOL_1005: ' bool:any ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
             process.env.should.deep.include(expectedForEnv)
             done()
         })
