@@ -4,10 +4,16 @@ import dotenvConversion from '../src'
 import mocha from 'mocha'
 import fs from 'fs'
 
+const afterEach = mocha.afterEach
 const describe = mocha.describe
 const it = mocha.it
 const expect = chai.expect
 chai.should()
+
+const originEnv = {...process.env}
+afterEach(() => {
+    process.env = {...originEnv}
+})
 
 describe('dotenv-conversion', function () {
     describe('convert:config', function () {
@@ -438,6 +444,54 @@ describe('dotenv-conversion', function () {
 
             dotenvConversionConfig.parsed.should.deep.equal(expected)
             process.env.should.deep.include(expectedForEnv)
+            done()
+        })
+
+        it('config:ignoreProcessEnv:no', function (done) {
+            // input
+            const input = {
+                OK: 'bool:1',
+            }
+            const inputConfig = {
+                ignoreProcessEnv: false,
+            }
+
+            // output
+            const expected = {
+                OK: true,
+            }
+            const expectedForEnv = {
+                OK: 'true',
+            }
+
+            const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+            done()
+        })
+
+        it('config:ignoreProcessEnv:yes', function (done) {
+            // input
+            const input = {
+                OK: 'bool:1',
+            }
+            const inputConfig = {
+                ignoreProcessEnv: true,
+            }
+
+            // output
+            const expected = {
+                OK: true,
+            }
+            const notExpectedForEnv = 'OK'
+
+            const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.not.have.property(notExpectedForEnv)
             done()
         })
     })
@@ -1261,62 +1315,51 @@ describe('dotenv-conversion', function () {
         //     process.env.should.deep.include(expected)
         //     done()
         // })
-        //
-        // it('getenv', function (done) {
-        //     const input = {
-        //         RAW: 'raw',
-        //         BOOL: 'yes',
-        //     }
-        //     const expected = {
-        //         RAW: 'raw',
-        //         BOOL: true,
-        //     }
-        //     const expectedEnv = {
-        //         RAW: 'raw',
-        //         BOOL: 'true',
-        //     }
-        //
-        //     Object.assign(process.env, input)
-        //     const dotenvConfig = {parsed: input}
-        //     dotenvConversion.make(dotenvConfig)
-        //
-        //     dotenvConversion.getenv('RAW').should.deep.equal('raw')
-        //     dotenvConversion.getenv('BOOL').should.deep.equal(true)
-        //     expect(dotenvConversion.getenv('UNKNOWN')).to.be.a('null')
-        //     dotenvConversion.getenv('UNKNOWN', '').should.deep.equal('')
-        //     dotenvConversion.getenv().should.deep.include(expected)
-        //     process.env.should.deep.include(expectedEnv)
-        //     done()
-        // })
-        //
-        // it('getenv and ignore process.env', function (done) {
-        //     const input = {
-        //         RAW: 'raw',
-        //         BOOL: 'yes',
-        //     }
-        //     const expected = {
-        //         RAW: 'raw',
-        //         BOOL: true,
-        //     }
-        //     const expectedEnv = {
-        //         RAW: 'raw',
-        //         BOOL: 'yes',
-        //     }
-        //
-        //     Object.assign(process.env, input)
-        //     const dotenvConfig = {
-        //         ignoreProcessEnv: true,
-        //         parsed: input,
-        //     }
-        //     dotenvConversion.make(dotenvConfig)
-        //
-        //     dotenvConversion.getenv('RAW').should.deep.equal('raw')
-        //     dotenvConversion.getenv('BOOL').should.deep.equal(true)
-        //     expect(dotenvConversion.getenv('UNKNOWN')).to.be.a('null')
-        //     dotenvConversion.getenv('UNKNOWN', '').should.deep.equal('')
-        //     dotenvConversion.getenv().should.deep.include(expected)
-        //     process.env.should.deep.include(expectedEnv)
-        //     done()
-        // })
+
+        it('config:ignoreProcessEnv:no', function (done) {
+            // input
+            const input = 'ignore-process-env'
+            const inputConfig = {
+                ignoreProcessEnv: false,
+            }
+
+            // output
+            const expected = {
+                OK: true,
+            }
+            const expectedForEnv = {
+                OK: 'true',
+            }
+
+            const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+            done()
+        })
+
+        it('config:ignoreProcessEnv:yes', function (done) {
+            // input
+            const input = 'ignore-process-env'
+            const inputConfig = {
+                ignoreProcessEnv: true,
+            }
+
+            // output
+            const expected = {
+                OK: true,
+            }
+            const expectedForEnv = {
+                OK: 'bool:1',
+            }
+
+            const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+            done()
+        })
     })
 })
