@@ -1,4 +1,4 @@
-import fs from 'fs'
+import * as fs from 'fs'
 
 export function flattenValue(value) {
     const typeOf = typeof value
@@ -53,7 +53,7 @@ function escapeValue(value) {
     return value
 }
 
-export function flatten(values) {
+function flatten(values) {
     let content = ''
     for (const key in values) {
         content += `${key}=${escapeValue(flattenValue(values[key]))}\n`

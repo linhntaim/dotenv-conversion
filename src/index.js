@@ -1,50 +1,57 @@
 import envUtils from './env-utils'
 
 const INTEGER_REGEX = /^[+-]?\d+$/
+const TRUE_VALUES = envUtils.TRUE_VALUES
+const FALSE_VALUES = [
+    ...envUtils.FALSE_VALUES,
+    ...envUtils.NULL_VALUES,
+    ...envUtils.UNDEFINED_VALUES,
+    ...envUtils.NAN_VALUES,
+    'not', 'Not', 'NOT',
+    'none', 'None', 'NONE',
+]
 
 function defaultConfig() {
     return {
         parsed: {},
+        fromDotEnv: true,
         ignoreProcessEnv: false,
-        specs: {},
         prevents: [],
+        specs: {},
         methods: {
             auto(value, name, config) {
-                if (value.startsWith('auto:')) {
-                    value = value.substring(5)
-                }
-                value = envUtils.restoreValue(value)
+                value = envUtils.restoreValue(value, config.fromDotEnv)
                 if (typeof value === 'string') {
-                    const findMethod = methods => methods.find(method => value.startsWith(`${method}:`))
-                    // find in available
-                    let foundMethod
+                    const findPossibleMethod = methods => methods.find(method => value.startsWith(`${method}:`))
+                    let possibleMethod
                     // find in methods
-                    foundMethod = findMethod(Object.keys(this))
-                    if (foundMethod) {
-                        return this[foundMethod](value.substring(foundMethod.length + 1))
+                    possibleMethod = findPossibleMethod(Object.keys(this))
+                    if (possibleMethod) {
+                        return this[possibleMethod](
+                            value.substring(possibleMethod.length + 1),
+                            name,
+                            config,
+                        )
                     }
                     // find in aliases
-                    foundMethod = findMethod(Object.keys(config.methodAliases))
-                    if (foundMethod) {
-                        return this[config.methodAliases[foundMethod]](value.substring(foundMethod.length + 1))
+                    possibleMethod = findPossibleMethod(Object.keys(config.methodAliases))
+                    if (possibleMethod) {
+                        return this[config.methodAliases[possibleMethod]](
+                            value.substring(possibleMethod.length + 1),
+                            name,
+                            config,
+                        )
                     }
                     return this.string(value)
                 }
                 return value
             },
-            bool(value) {
+            boolean(value) {
                 value = value.trim()
                 if (!value) {
                     return false
                 }
-                return !['false', 'False', 'FALSE',
-                        'no', 'No', 'NO',
-                        'null', 'Null', 'NULL',
-                        'undefined', 'UNDEFINED',
-                        'NaN',
-                        'not', 'Not', 'NOT',
-                        'none', 'None', 'NONE']
-                        .includes(value)
+                return !FALSE_VALUES.includes(value)
                     && ((isNumber, isBigInt) => {
                         return (!isNumber && !isBigInt)
                             || (isNumber && Number(value) !== 0)
@@ -56,12 +63,24 @@ function defaultConfig() {
                 if (!value) {
                     return 0
                 }
+                if (TRUE_VALUES.includes(value)) {
+                    return 1
+                }
+                if (FALSE_VALUES.includes(value)) {
+                    return 0
+                }
                 value = parseFloat(value)
                 return Number.isNaN(value) ? 0 : value
             },
             bigint(value) {
                 value = value.trim()
                 if (!value) {
+                    return 0n
+                }
+                if (TRUE_VALUES.includes(value)) {
+                    return 1n
+                }
+                if (FALSE_VALUES.includes(value)) {
                     return 0n
                 }
                 if (INTEGER_REGEX.test(value)) {
@@ -88,16 +107,11 @@ function defaultConfig() {
                 if (!trimmed) {
                     return Symbol()
                 }
-                try {
-                    return Symbol(
-                        envUtils.SYMBOL_REGEX.test(trimmed)
-                            ? trimmed.slice(7, -1)
-                            : trimmed,
-                    )
-                }
-                catch (e) {
-                    return this.string(value)
-                }
+                return Symbol(
+                    envUtils.SYMBOL_REGEX.test(trimmed)
+                        ? trimmed.slice(7, -1)
+                        : trimmed,
+                )
             },
             array(value) {
                 const trimmed = value.trim()
@@ -133,6 +147,7 @@ function defaultConfig() {
             },
         },
         methodAliases: {
+            bool: 'boolean',
             num: 'number',
             big: 'bigint',
             str: 'string',
@@ -142,19 +157,22 @@ function defaultConfig() {
     }
 }
 
-function mergeConfig(config = {}) {
+function mergeConfig(config) {
     const mergingConfig = defaultConfig()
     if ('parsed' in config) {
         mergingConfig.parsed = config.parsed
     }
+    if ('fromDotEnv' in config) {
+        mergingConfig.fromDotEnv = config.fromDotEnv
+    }
     if ('ignoreProcessEnv' in config) {
         mergingConfig.ignoreProcessEnv = config.ignoreProcessEnv
     }
-    if ('specs' in config) {
-        mergingConfig.specs = config.specs
-    }
     if ('prevents' in config) {
         mergingConfig.prevents = config.prevents
+    }
+    if ('specs' in config) {
+        mergingConfig.specs = config.specs
     }
     if ('methods' in config) {
         Object.assign(mergingConfig.methods, config.methods)
@@ -163,6 +181,10 @@ function mergeConfig(config = {}) {
         for (const alias in config.methodAliases) {
             // not override existing alias
             if (alias in mergingConfig.methodAliases) {
+                continue
+            }
+            // not use name of existing methods or aliases
+            if (alias in mergingConfig.methods) {
                 continue
             }
             // only add alias to existing methods
@@ -180,21 +202,25 @@ function convertValue(value, name, config) {
         return value
     }
 
-    const method = name in config.specs ? config.specs[name] : 'auto'
-    switch (typeof method) {
-        case 'string':
-            if (method in config.methods) {
-                return config.methods[method](value, name, config)
-            }
-            if (method in config.methodAliases) {
-                return config.methods[config.methodAliases[method]](value, name, config)
-            }
-            return config.methods.string(value, name, config)
-        case 'function':
-            return method(value, name, config)
-        default:
-            return config.methods.string(value, name, config)
+    if (name in config.specs) {
+        const method = config.specs[name]
+        switch (typeof method) {
+            case 'string':
+                if (method in config.methods) {
+                    return config.methods[method](value, name, config)
+                }
+                if (method in config.methodAliases) {
+                    return config.methods[config.methodAliases[method]](value, name, config)
+                }
+                return config.methods.string(value, name, config)
+            case 'function':
+                return method(value, name, config)
+            default:
+                return config.methods.string(value, name, config)
+        }
     }
+
+    return config.methods.auto(value, name, config)
 }
 
 function convert(config = {}) {

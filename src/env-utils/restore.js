@@ -1,27 +1,33 @@
-export const NUMBER_REGEX = /^[+-]?(\d*\.)?\d+(e[+-]?\d+)?$/i
+export const NUMBER_REGEX = /^[+-]?((\d+(\.(\d*)?)?)|(\.\d+))(e[+-]?\d+)?$/i
 export const BIGINT_REGEX = /^[+-]?\d+n$/
 export const SYMBOL_REGEX = /^Symbol\(.*\)$/
 export const ARRAY_REGEX = /^\[.*\]$/
 export const JSON_REGEX = /^\{.*\}$/
+export const NULL_VALUES = ['null', 'Null', 'NULL']
+export const UNDEFINED_VALUES = ['undefined', 'UNDEFINED']
+export const TRUE_VALUES = ['true', 'True', 'TRUE', 'yes', 'Yes', 'YES']
+export const FALSE_VALUES = ['false', 'False', 'FALSE', 'no', 'No', 'NO']
+export const NAN_VALUES = ['NaN']
+export const INFINITY_VALUES = ['Infinity', '-Infinity', '+Infinity']
 
 function unescapeValue(value) {
     return value.replaceAll('\\"', '"').replaceAll('\\\\', '\\')
 }
 
-export function restoreValue(value) {
+export function restoreValue(value, fromDotEnv = true) {
     switch (true) {
-        case ['null', 'Null', 'NULL'].includes(value):
+        case NULL_VALUES.includes(value):
             return null
 
-        case ['undefined', 'UNDEFINED'].includes(value):
+        case UNDEFINED_VALUES.includes(value):
             return undefined
 
-        case ['true', 'True', 'TRUE', 'yes', 'Yes', 'YES'].includes(value):
+        case TRUE_VALUES.includes(value):
             return true
-        case ['false', 'False', 'FALSE', 'no', 'No', 'NO'].includes(value):
+        case FALSE_VALUES.includes(value):
             return false
 
-        case ['NaN', 'Infinity', '-Infinity', '+Infinity'].includes(value):
+        case [...NAN_VALUES, ...INFINITY_VALUES].includes(value):
         case NUMBER_REGEX.test(value):
             return Number(value)
 
@@ -29,16 +35,13 @@ export function restoreValue(value) {
             return BigInt(value.slice(0, -1))
 
         default:
-            value = unescapeValue(value)
+            if (fromDotEnv) {
+                value = unescapeValue(value)
+            }
 
             switch (true) {
                 case SYMBOL_REGEX.test(value):
-                    try {
-                        return Symbol(value.slice(7, -1))
-                    }
-                    catch (e) {
-                        return value
-                    }
+                    return Symbol(value.slice(7, -1))
 
                 case ARRAY_REGEX.test(value):
                 case JSON_REGEX.test(value):
@@ -55,10 +58,10 @@ export function restoreValue(value) {
     }
 }
 
-export function restoreValues(values) {
+export function restoreValues(values, fromDotEnv = true) {
     const restoringValues = {}
     for (const key in values) {
-        restoringValues[key] = restoreValue(values[key])
+        restoringValues[key] = restoreValue(values[key], fromDotEnv)
     }
     return restoringValues
 }
