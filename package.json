@@ -3,6 +3,13 @@
     "version": "2.0.0",
     "description": "An extension for dotenv is to help converting environment variables to anything you want.",
     "main": "dist/index.js",
+    "exports": {
+        ".": {
+            "require": "./dist/index.js",
+            "default": "./dist/index.js"
+        },
+        "./package.json": "./package.json"
+    },
     "scripts": {
         "build": "babel src --out-dir ./dist --delete-dir-on-start --minified --source-maps",
         "test": "nyc mocha --require @babel/register",
@@ -15,7 +22,9 @@
     "keywords": [
         "dotenv",
         "conversion",
-        "variables"
+        "variables",
+        "env",
+        ".env"
     ],
     "author": "Nguyen Tuan Linh <contact@linhntaim.com> (https://www.linhntaim.com)",
     "license": "MIT",

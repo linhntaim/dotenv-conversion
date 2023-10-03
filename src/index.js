@@ -1,12 +1,138 @@
-import envUtils from './env-utils'
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
+ */
+
+/* region env-utils */
+
+const NUMBER_REGEX = /^[+-]?((\d+(\.(\d*)?)?)|(\.\d+))(e[+-]?\d+)?$/i
+const BIGINT_REGEX = /^[+-]?\d+n$/
+const SYMBOL_REGEX = /^Symbol\(.*\)$/
+const ARRAY_REGEX = /^\[.*\]$/
+const JSON_REGEX = /^\{.*\}$/
+const NULL_VALUES = ['null', 'Null', 'NULL']
+const UNDEFINED_VALUES = ['undefined', 'UNDEFINED']
+const TRUE_VALUES = ['true', 'True', 'TRUE', 'yes', 'Yes', 'YES']
+const FALSE_VALUES = ['false', 'False', 'FALSE', 'no', 'No', 'NO']
+const NAN_VALUES = ['NaN']
+const INFINITY_VALUES = ['Infinity', '-Infinity', '+Infinity']
+
+function unescapeValue(value) {
+    return value.replaceAll('\\"', '"').replaceAll('\\\\', '\\')
+}
+
+/**
+ *
+ * @param {string} value
+ * @param {boolean} fromDotEnv
+ * @returns {null|undefined|boolean|number|bigint|string|symbol|array|object}
+ */
+function restoreValue(value, fromDotEnv) {
+    let trimmed = value.trim()
+    switch (true) {
+        case NULL_VALUES.includes(trimmed):
+            return null
+
+        case UNDEFINED_VALUES.includes(trimmed):
+            return undefined
+
+        case TRUE_VALUES.includes(trimmed):
+            return true
+        case FALSE_VALUES.includes(trimmed):
+            return false
+
+        case [...NAN_VALUES, ...INFINITY_VALUES].includes(trimmed):
+        case NUMBER_REGEX.test(trimmed):
+            return Number(trimmed)
+
+        case BIGINT_REGEX.test(trimmed):
+            return BigInt(trimmed.slice(0, -1))
+
+        default:
+            if (fromDotEnv) {
+                value = unescapeValue(value)
+                trimmed = value.trim()
+            }
+
+            switch (true) {
+                case SYMBOL_REGEX.test(trimmed):
+                    return Symbol(trimmed.slice(7, -1))
+
+                case ARRAY_REGEX.test(trimmed):
+                case JSON_REGEX.test(trimmed):
+                    try {
+                        return JSON.parse(trimmed)
+                    }
+                    catch (e) {
+                        return value
+                    }
+
+                default:
+                    let v
+                    v = `[${trimmed}]`
+                    if (ARRAY_REGEX.test(v)) {
+                        try {
+                            return JSON.parse(v)
+                        }
+                        catch (e) {
+                        }
+                    }
+                    v = `{${trimmed}}`
+                    if (JSON_REGEX.test(v)) {
+                        try {
+                            return JSON.parse(v)
+                        }
+                        catch (e) {
+                        }
+                    }
+                    return value
+            }
+    }
+}
+
+/**
+ *
+ * @param {null|undefined|boolean|number|bigint|string|symbol|array|object} value
+ * @returns {string}
+ */
+function flattenValue(value) {
+    const typeOf = typeof value
+
+    switch (true) {
+        case value === null:
+        case typeOf === 'function':
+            return 'null'
+
+        case typeOf === 'undefined':
+            return 'undefined'
+
+        case typeOf === 'string':
+            return value
+
+        case typeOf === 'number':
+        case value instanceof Number:
+        case typeOf === 'boolean':
+        case value instanceof Boolean:
+        case typeOf === 'symbol':
+        case value instanceof String:
+            return value.toString()
+
+        case typeOf === 'bigint':
+        case value instanceof BigInt:
+            return `${value.toString()}n`
+
+        default:
+            return JSON.stringify(value)
+    }
+}
+
+/* endregion */
 
 const INTEGER_REGEX = /^[+-]?\d+$/
-const TRUE_VALUES = envUtils.TRUE_VALUES
-const FALSE_VALUES = [
-    ...envUtils.FALSE_VALUES,
-    ...envUtils.NULL_VALUES,
-    ...envUtils.UNDEFINED_VALUES,
-    ...envUtils.NAN_VALUES,
+const FORCING_FALSE_VALUES = [
+    ...FALSE_VALUES,
+    ...NULL_VALUES,
+    ...UNDEFINED_VALUES,
+    ...NAN_VALUES,
     'not', 'Not', 'NOT',
     'none', 'None', 'NONE',
 ]
@@ -20,7 +146,7 @@ function defaultConfig() {
         specs: {},
         methods: {
             auto(value, name, config) {
-                value = envUtils.restoreValue(value, config.fromDotEnv)
+                value = restoreValue(value, config.fromDotEnv)
                 if (typeof value === 'string') {
                     const findPossibleMethod = methods => methods.find(method => value.startsWith(`${method}:`))
                     let possibleMethod
@@ -51,12 +177,12 @@ function defaultConfig() {
                 if (!value) {
                     return false
                 }
-                return !FALSE_VALUES.includes(value)
+                return !FORCING_FALSE_VALUES.includes(value)
                     && ((isNumber, isBigInt) => {
                         return (!isNumber && !isBigInt)
                             || (isNumber && Number(value) !== 0)
                             || (isBigInt && BigInt(value.slice(0, -1)) !== 0n)
-                    })(envUtils.NUMBER_REGEX.test(value), envUtils.BIGINT_REGEX.test(value))
+                    })(NUMBER_REGEX.test(value), BIGINT_REGEX.test(value))
             },
             number(value) {
                 value = value.trim()
@@ -66,7 +192,7 @@ function defaultConfig() {
                 if (TRUE_VALUES.includes(value)) {
                     return 1
                 }
-                if (FALSE_VALUES.includes(value)) {
+                if (FORCING_FALSE_VALUES.includes(value)) {
                     return 0
                 }
                 value = parseFloat(value)
@@ -80,13 +206,13 @@ function defaultConfig() {
                 if (TRUE_VALUES.includes(value)) {
                     return 1n
                 }
-                if (FALSE_VALUES.includes(value)) {
+                if (FORCING_FALSE_VALUES.includes(value)) {
                     return 0n
                 }
                 if (INTEGER_REGEX.test(value)) {
                     return BigInt(value)
                 }
-                if (envUtils.BIGINT_REGEX.test(value)) {
+                if (BIGINT_REGEX.test(value)) {
                     return BigInt(value.slice(0, -1))
                 }
                 value = parseFloat(value)
@@ -108,7 +234,7 @@ function defaultConfig() {
                     return Symbol()
                 }
                 return Symbol(
-                    envUtils.SYMBOL_REGEX.test(trimmed)
+                    SYMBOL_REGEX.test(trimmed)
                         ? trimmed.slice(7, -1)
                         : trimmed,
                 )
@@ -120,7 +246,7 @@ function defaultConfig() {
                 }
                 try {
                     return JSON.parse(
-                        envUtils.ARRAY_REGEX.test(trimmed)
+                        ARRAY_REGEX.test(trimmed)
                             ? trimmed
                             : `[${trimmed}]`,
                     )
@@ -136,7 +262,7 @@ function defaultConfig() {
                 }
                 try {
                     return JSON.parse(
-                        envUtils.JSON_REGEX.test(trimmed)
+                        JSON_REGEX.test(trimmed)
                             ? trimmed
                             : `{${trimmed}}`,
                     )
@@ -237,7 +363,7 @@ function convert(config = {}) {
     }
 
     for (const processKey in config.parsed) {
-        environment[processKey] = envUtils.flattenValue(config.parsed[processKey])
+        environment[processKey] = flattenValue(config.parsed[processKey])
     }
 
     return config
