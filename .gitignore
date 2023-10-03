@@ -29,3 +29,5 @@ node_modules
 .env
 
 # Others
+.env.*
+!/test/inputs/*.local

@@ -1,5 +1,7 @@
 import chai from 'chai'
 import dotenv from 'dotenv'
+import dotenvExpand from 'dotenv-expand'
+import dotenvFlow from 'dotenv-flow'
 import dotenvConversion from '../src'
 import fs from 'fs'
 import mocha from 'mocha'
@@ -4242,6 +4244,187 @@ describe('dotenv-conversion', function () {
 
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+    })
+
+    describe('convert:integration:dotenv-expand', function () {
+        function useEnv(env) {
+            return dotenvExpand.expand({
+                parsed: env,
+            })
+        }
+
+        it('expand', function (done) {
+            // input
+            const input = {
+                SIGNAL: '0',
+                OK: 'bool:$SIGNAL',
+            }
+
+            // output
+            const expected = {
+                SIGNAL: 0,
+                OK: false,
+            }
+            const expectedForEnv = {
+                SIGNAL: '0',
+                OK: 'false',
+            }
+
+            const dotenvExpandConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvExpandConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+    })
+
+    describe('convert:integration:dotenv&dotenv-expand', function () {
+        const dotEnvPath = './.env'
+        after(() => {
+            fs.rmSync(dotEnvPath)
+        })
+
+        function useEnv(envBasename) {
+            fs.copyFileSync(`./test/inputs/${envBasename}.env`, dotEnvPath)
+            return dotenvExpand.expand(dotenv.config())
+        }
+
+        it('expand', function (done) {
+            // input
+            const input = 'expand'
+
+            // output
+            const expected = {
+                SIGNAL: 0,
+                OK: false,
+            }
+            const expectedForEnv = {
+                SIGNAL: '0',
+                OK: 'false',
+            }
+
+            const dotenvExpandConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvExpandConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+    })
+
+    describe('convert:integration:dotenv-flow&dotenv-expand', function () {
+        const dotEnvPath = './.env'
+        after(() => {
+            fs.rmSync(dotEnvPath)
+            fs.rmSync(`${dotEnvPath}.local`)
+            fs.rmSync(`${dotEnvPath}.test`)
+            fs.rmSync(`${dotEnvPath}.test.local`)
+        })
+
+        function useEnv(level = 1) {
+            fs.copyFileSync(`./test/inputs/flow.env`, dotEnvPath)
+            level > 1 && fs.copyFileSync(`./test/inputs/flow.env.local`, `${dotEnvPath}.local`)
+            level > 2 && fs.copyFileSync(`./test/inputs/flow.env.test`, `${dotEnvPath}.test`)
+            level > 3 && fs.copyFileSync(`./test/inputs/flow.env.test.local`, `${dotEnvPath}.test.local`)
+            return dotenvExpand.expand(dotenvFlow.config())
+        }
+
+        it('flow:env', function (done) {
+            // input
+            const input = 1
+
+            // output
+            const expected = {
+                SIGNAL: 0,
+                OK: false,
+            }
+            const expectedForEnv = {
+                SIGNAL: '0',
+                OK: 'false',
+            }
+
+            const dotenvExpandConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvExpandConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('flow:env.local', function (done) {
+            // input
+            const input = 2
+
+            // output
+            const expected = {
+                SIGNAL: 1,
+                OK: true,
+            }
+            const expectedForEnv = {
+                SIGNAL: '1',
+                OK: 'true',
+            }
+
+            const dotenvExpandConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvExpandConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('flow:env.test', function (done) {
+            // input
+            process.env.NODE_ENV = 'test'
+            const input = 3
+
+            // output
+            const expected = {
+                SIGNAL: 1n,
+                OK: true,
+            }
+            const expectedForEnv = {
+                SIGNAL: '1n',
+                OK: 'true',
+            }
+
+            const dotenvExpandConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvExpandConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('flow:env.test.local', function (done) {
+            // input
+            process.env.NODE_ENV = 'test'
+            const input = 4
+
+            // output
+            const expected = {
+                SIGNAL: null,
+                OK: null,
+            }
+            const expectedForEnv = {
+                SIGNAL: 'null',
+                OK: 'null',
+            }
+
+            const dotenvExpandConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvExpandConfig)
 
             dotenvConversionConfig.parsed.should.deep.equal(expected)
             process.env.should.deep.include(expectedForEnv)
