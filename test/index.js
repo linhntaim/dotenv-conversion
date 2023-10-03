@@ -4,6 +4,7 @@ import dotenvConversion from '../src'
 import fs from 'fs'
 import mocha from 'mocha'
 
+const after = mocha.after
 const afterEach = mocha.afterEach
 const describe = mocha.describe
 const it = mocha.it
@@ -1012,8 +1013,8 @@ describe('dotenv-conversion', function () {
 
                 ARRAY_21: '[" ","\'\'","\\"\\"","``","\\\\\\\\","()","[]","{}"]',
 
-                ARRAY_102: 'null,true,4.5e+123," x y "',
-                ARRAY_101: ' [null, true, 4.5e+123, " x y "] ',
+                ARRAY_101: 'null,true,4.5e+123," x y "',
+                ARRAY_102: ' [null, true, 4.5e+123, " x y "] ',
                 ARRAY_103: ' null, true, 4.5e+123, " x y " ',
 
                 // No conversion
@@ -1045,8 +1046,8 @@ describe('dotenv-conversion', function () {
 
                 ARRAY_21: [' ', '\'\'', '""', '``', '\\\\', '()', '[]', '{}'],
 
-                ARRAY_102: [null, true, 4.5e+123, ' x y '],
                 ARRAY_101: [null, true, 4.5e+123, ' x y '],
+                ARRAY_102: [null, true, 4.5e+123, ' x y '],
                 ARRAY_103: [null, true, 4.5e+123, ' x y '],
 
                 // No conversion
@@ -1076,8 +1077,8 @@ describe('dotenv-conversion', function () {
 
                 ARRAY_21: '[" ","\'\'","\\"\\"","``","\\\\\\\\","()","[]","{}"]',
 
-                ARRAY_102: '[null,true,4.5e+123," x y "]',
                 ARRAY_101: '[null,true,4.5e+123," x y "]',
+                ARRAY_102: '[null,true,4.5e+123," x y "]',
                 ARRAY_103: '[null,true,4.5e+123," x y "]',
 
                 // No conversion
@@ -1834,6 +1835,113 @@ describe('dotenv-conversion', function () {
             done()
         })
 
+        it('method:string', function (done) {
+            // input
+            const input = {
+                STRING_1: 'string:null',
+                STRING_2: 'string:undefined',
+                STRING_3: 'string:true',
+                STRING_4: 'string:false',
+                STRING_5: 'string:NaN',
+                STRING_6: 'string:Infinity',
+                STRING_7: 'string:4.5e+1',
+                STRING_8: 'string:1n',
+                STRING_9: 'string:Symbol(a)',
+                STRING_10: 'string:[1,2,3]',
+                STRING_11: 'string:{"a":1,"b":2,"c":3}',
+
+                STRING_21: 'string:',
+                STRING_22: 'string:any',
+                STRING_23: ' string: ',
+                STRING_24: ' string: any ',
+
+                STRING_31: 'str:',
+                STRING_32: 'str:any',
+                STRING_33: ' str: ',
+                STRING_34: ' str: any ',
+
+                // No conversion
+                STRING_1001: 'STRING:any',
+                STRING_1002: 'STR:any',
+                STRING_1003: ' STRING: any ',
+                STRING_1004: ' STR: any ',
+                STRING_1005: ' string : any ',
+                STRING_1006: ' str : any ',
+            }
+
+            // output
+            const expected = {
+                STRING_1: 'null',
+                STRING_2: 'undefined',
+                STRING_3: 'true',
+                STRING_4: 'false',
+                STRING_5: 'NaN',
+                STRING_6: 'Infinity',
+                STRING_7: '4.5e+1',
+                STRING_8: '1n',
+                STRING_9: 'Symbol(a)',
+                STRING_10: '[1,2,3]',
+                STRING_11: '{"a":1,"b":2,"c":3}',
+
+                STRING_21: '',
+                STRING_22: 'any',
+                STRING_23: ' ',
+                STRING_24: ' any ',
+
+                STRING_31: '',
+                STRING_32: 'any',
+                STRING_33: ' ',
+                STRING_34: ' any ',
+
+                // No conversion
+                STRING_1001: 'STRING:any',
+                STRING_1002: 'STR:any',
+                STRING_1003: ' STRING: any ',
+                STRING_1004: ' STR: any ',
+                STRING_1005: ' string : any ',
+                STRING_1006: ' str : any ',
+            }
+            const expectedForEnv = {
+                STRING_1: 'null',
+                STRING_2: 'undefined',
+                STRING_3: 'true',
+                STRING_4: 'false',
+                STRING_5: 'NaN',
+                STRING_6: 'Infinity',
+                STRING_7: '4.5e+1',
+                STRING_8: '1n',
+                STRING_9: 'Symbol(a)',
+                STRING_10: '[1,2,3]',
+                STRING_11: '{"a":1,"b":2,"c":3}',
+
+                STRING_21: '',
+                STRING_22: 'any',
+                STRING_23: ' ',
+                STRING_24: ' any ',
+
+                STRING_31: '',
+                STRING_32: 'any',
+                STRING_33: ' ',
+                STRING_34: ' any ',
+
+                // No conversion
+                STRING_1001: 'STRING:any',
+                STRING_1002: 'STR:any',
+                STRING_1003: ' STRING: any ',
+                STRING_1004: ' STR: any ',
+                STRING_1005: ' string : any ',
+                STRING_1006: ' str : any ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+
         it('method:symbol', function (done) {
             // input
             const input = {
@@ -1909,161 +2017,324 @@ describe('dotenv-conversion', function () {
             done()
         })
 
-        // it('method:array', function (done) {
-        //     // input
-        //     const input = {
-        //         ARRAY_1: 'array:[null,true,false,1,"x",[-1,2.1,3e1,4.5e+123],{"y":"z"}]',
-        //
-        //         ARRAY_21: 'array:[" ","\'\'","\\"\\"","``","\\\\\\\\","()","[]","{}"]',
-        //
-        //         ARRAY_102: 'array:null,true,4.5e+123," x y "',
-        //         ARRAY_101: ' array: [null, true, 4.5e+123, " x y "] ',
-        //         ARRAY_103: ' array: null, true, 4.5e+123, " x y " ',
-        //
-        //         ARRAY_202: 'arr:null,true,4.5e+123," x y "',
-        //         ARRAY_201: ' arr: [null, true, 4.5e+123, " x y "] ',
-        //         ARRAY_203: ' arr: null, true, 4.5e+123, " x y " ',
-        //
-        //         // No conversion
-        //         ARRAY_1001: '["a","b","c"',
-        //         ARRAY_1002: '"a","b","c"]',
-        //         ARRAY_1003: '"a","b"],"c"',
-        //         ARRAY_1004: '["a","b","c",]',
-        //         ARRAY_1005: '["a","b","c"]any',
-        //         ARRAY_1006: '[\'a\',\'b\',\'c\']',
-        //         ARRAY_1007: '[a,b,c]',
-        //         ARRAY_1021: '[undefined]',
-        //         ARRAY_1022: '[UNDEFINED]',
-        //         ARRAY_1023: '[True]',
-        //         ARRAY_1024: '[TRUE]',
-        //         ARRAY_1025: '[False]',
-        //         ARRAY_1026: '[FALSE]',
-        //         ARRAY_1027: '[no]',
-        //         ARRAY_1028: '[No]',
-        //         ARRAY_1029: '[No]',
-        //         ARRAY_1030: '[NaN]',
-        //         ARRAY_1031: '[Infinity]',
-        //         ARRAY_1032: '[+Infinity]',
-        //         ARRAY_1033: '[-Infinity]',
-        //     }
-        //
-        //     // output
-        //     const expected = {
-        //         ARRAY_1: [],
-        //         ARRAY_2: [],
-        //         ARRAY_3: [1, 2, 3],
-        //         ARRAY_4: ['a', 'b', 'c'],
-        //         ARRAY_5: [null, true, false, 1, 'a'],
-        //
-        //         ARRAY_11: [],
-        //         ARRAY_12: [],
-        //         ARRAY_13: [1, 2, 3],
-        //         ARRAY_14: ['a', 'b', 'c'],
-        //         ARRAY_15: [null, true, false, 1, 'a'],
-        //
-        //         ARRAY_21: [1, 2, 3],
-        //         ARRAY_22: [1, 2, 3],
-        //         ARRAY_23: [1, 2, 3],
-        //
-        //         // No conversion
-        //         ARRAY_1001: 'a,b,c',
-        //         ARRAY_1002: ' array:any ',
-        //     }
-        //     const expectedForEnv = {
-        //         ARRAY_1: '[]',
-        //         ARRAY_2: '[]',
-        //         ARRAY_3: '[1,2,3]',
-        //         ARRAY_4: '["a","b","c"]',
-        //         ARRAY_5: '[null,true,false,1,"a"]',
-        //
-        //         ARRAY_11: '[]',
-        //         ARRAY_12: '[]',
-        //         ARRAY_13: '[1,2,3]',
-        //         ARRAY_14: '["a","b","c"]',
-        //         ARRAY_15: '[null,true,false,1,"a"]',
-        //
-        //         ARRAY_21: '[1,2,3]',
-        //         ARRAY_22: '[1,2,3]',
-        //         ARRAY_23: '[1,2,3]',
-        //
-        //         // No conversion
-        //         ARRAY_1001: 'a,b,c',
-        //         ARRAY_1002: ' array:any ',
-        //     }
-        //
-        //     const dotenvConfig = useEnv(input)
-        //     const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
-        //
-        //     dotenvConversionConfig.parsed.should.deep.equal(expected)
-        //     process.env.should.deep.include(expectedForEnv)
-        //
-        //     done()
-        // })
+        it('method:array', function (done) {
+            // input
+            const input = {
+                ARRAY_1: 'array:[null,true,false,1,"x",[-1,2.1,3e1,4.5e+123],{"y":"z"}]',
+                ARRAY_2: 'arr:[null,true,false,1,"x",[-1,2.1,3e1,4.5e+123],{"y":"z"}]',
 
-        // it('method:json', function (done) {
-        //     // input
-        //     const input = {
-        //         JSON_1: 'json:',
-        //         JSON_2: 'json: ',
-        //         JSON_3: 'json:"a":null,"b":true,"c":false,"d":1,"e":"f"',
-        //
-        //         JSON_11: 'json:{}',
-        //         JSON_12: 'json:{ }',
-        //         JSON_13: 'json:{"a":null,"b":true,"c":false,"d":1,"e":"f"}',
-        //
-        //         JSON_21: 'json: "a":1, "b":2, "c":3',
-        //         JSON_22: 'obj:"a":1,"b":2,"c":3',
-        //         JSON_23: 'obj: "a":1, "b":2, "c":3',
-        //
-        //         // No conversion
-        //         JSON_1001: 'json:a:1,b:2,c:3',
-        //         JSON_1002: ' array:any ',
-        //     }
-        //
-        //     // output
-        //     const expected = {
-        //         JSON_1: {},
-        //         JSON_2: {},
-        //         JSON_3: {'a': null, 'b': true, 'c': false, 'd': 1, 'e': 'f'},
-        //
-        //         JSON_11: {},
-        //         JSON_12: {},
-        //         JSON_13: {'a': null, 'b': true, 'c': false, 'd': 1, 'e': 'f'},
-        //
-        //         JSON_21: {'a': 1, 'b': 2, 'c': 3},
-        //         JSON_22: {'a': 1, 'b': 2, 'c': 3},
-        //         JSON_23: {'a': 1, 'b': 2, 'c': 3},
-        //
-        //         // No conversion
-        //         JSON_1001: 'a:1,b:2,c:3',
-        //         JSON_1002: ' array:any ',
-        //     }
-        //     const expectedForEnv = {
-        //         JSON_1: '{}',
-        //         JSON_2: '{}',
-        //         JSON_3: '{"a":null,"b":true,"c":false,"d":1,"e":"f"}',
-        //
-        //         JSON_11: '{}',
-        //         JSON_12: '{}',
-        //         JSON_13: '{"a":null,"b":true,"c":false,"d":1,"e":"f"}',
-        //
-        //         JSON_21: '{"a":1,"b":2,"c":3}',
-        //         JSON_22: '{"a":1,"b":2,"c":3}',
-        //         JSON_23: '{"a":1,"b":2,"c":3}',
-        //
-        //         // No conversion
-        //         JSON_1001: 'a:1,b:2,c:3',
-        //         JSON_1002: ' array:any ',
-        //     }
-        //
-        //     const dotenvConfig = useEnv(input)
-        //     const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
-        //
-        //     dotenvConversionConfig.parsed.should.deep.equal(expected)
-        //     process.env.should.deep.include(expectedForEnv)
-        //
-        //     done()
-        // })
+                ARRAY_21: 'array:[" ","\'\'","\\"\\"","``","\\\\\\\\","()","[]","{}"]',
+                ARRAY_22: 'arr:[" ","\'\'","\\"\\"","``","\\\\\\\\","()","[]","{}"]',
+
+                ARRAY_101: 'array:null,true,4.5e+123," x y "',
+                ARRAY_102: ' array: [null, true, 4.5e+123, " x y "] ',
+                ARRAY_103: ' array: null, true, 4.5e+123, " x y " ',
+
+                ARRAY_201: 'arr:null,true,4.5e+123," x y "',
+                ARRAY_202: ' arr: [null, true, 4.5e+123, " x y "] ',
+                ARRAY_203: ' arr: null, true, 4.5e+123, " x y " ',
+
+                ARRAY_301: 'array:',
+                ARRAY_302: ' array: ',
+                ARRAY_303: 'arr:',
+                ARRAY_304: 'arr:',
+
+                // No conversion
+                ARRAY_1001: 'array:["a","b","c"',
+                ARRAY_1002: 'array:"a","b","c"]',
+                ARRAY_1003: 'array:"a","b"],"c"',
+                ARRAY_1004: 'array:["a","b","c",]',
+                ARRAY_1005: 'array:["a","b","c"]any',
+                ARRAY_1006: 'array:[\'a\',\'b\',\'c\']',
+                ARRAY_1007: 'array:[a,b,c]',
+                ARRAY_1021: 'array:[undefined]',
+                ARRAY_1022: 'array:[UNDEFINED]',
+                ARRAY_1023: 'array:[True]',
+                ARRAY_1024: 'array:[TRUE]',
+                ARRAY_1025: 'array:[False]',
+                ARRAY_1026: 'array:[FALSE]',
+                ARRAY_1027: 'array:[no]',
+                ARRAY_1028: 'array:[No]',
+                ARRAY_1029: 'array:[No]',
+                ARRAY_1030: 'array:[NaN]',
+                ARRAY_1031: 'array:[Infinity]',
+                ARRAY_1032: 'array:[+Infinity]',
+                ARRAY_1033: 'array:[-Infinity]',
+                ARRAY_2001: 'ARRAY:',
+                ARRAY_2002: 'ARR:',
+                ARRAY_2003: ' ARRAY: ',
+                ARRAY_2004: ' ARR: ',
+                ARRAY_2005: ' array : ',
+                ARRAY_2006: ' arr : ',
+            }
+
+            // output
+            const expected = {
+                ARRAY_1: [null, true, false, 1, 'x', [-1, 2.1, 30, 4.5e+123], {'y': 'z'}],
+                ARRAY_2: [null, true, false, 1, 'x', [-1, 2.1, 30, 4.5e+123], {'y': 'z'}],
+
+                ARRAY_21: [' ', '\'\'', '""', '``', '\\\\', '()', '[]', '{}'],
+                ARRAY_22: [' ', '\'\'', '""', '``', '\\\\', '()', '[]', '{}'],
+
+                ARRAY_102: [null, true, 4.5e+123, ' x y '],
+                ARRAY_101: [null, true, 4.5e+123, ' x y '],
+                ARRAY_103: [null, true, 4.5e+123, ' x y '],
+
+                ARRAY_201: [null, true, 4.5e+123, ' x y '],
+                ARRAY_202: [null, true, 4.5e+123, ' x y '],
+                ARRAY_203: [null, true, 4.5e+123, ' x y '],
+
+                ARRAY_301: [],
+                ARRAY_302: [],
+                ARRAY_303: [],
+                ARRAY_304: [],
+
+                // No conversion
+                ARRAY_1001: '["a","b","c"',
+                ARRAY_1002: '"a","b","c"]',
+                ARRAY_1003: '"a","b"],"c"',
+                ARRAY_1004: '["a","b","c",]',
+                ARRAY_1005: '["a","b","c"]any',
+                ARRAY_1006: '[\'a\',\'b\',\'c\']',
+                ARRAY_1007: '[a,b,c]',
+                ARRAY_1021: '[undefined]',
+                ARRAY_1022: '[UNDEFINED]',
+                ARRAY_1023: '[True]',
+                ARRAY_1024: '[TRUE]',
+                ARRAY_1025: '[False]',
+                ARRAY_1026: '[FALSE]',
+                ARRAY_1027: '[no]',
+                ARRAY_1028: '[No]',
+                ARRAY_1029: '[No]',
+                ARRAY_1030: '[NaN]',
+                ARRAY_1031: '[Infinity]',
+                ARRAY_1032: '[+Infinity]',
+                ARRAY_1033: '[-Infinity]',
+                ARRAY_2001: 'ARRAY:',
+                ARRAY_2002: 'ARR:',
+                ARRAY_2003: ' ARRAY: ',
+                ARRAY_2004: ' ARR: ',
+                ARRAY_2005: ' array : ',
+                ARRAY_2006: ' arr : ',
+            }
+            const expectedForEnv = {
+                ARRAY_1: '[null,true,false,1,"x",[-1,2.1,30,4.5e+123],{"y":"z"}]',
+                ARRAY_2: '[null,true,false,1,"x",[-1,2.1,30,4.5e+123],{"y":"z"}]',
+
+                ARRAY_21: '[" ","\'\'","\\"\\"","``","\\\\\\\\","()","[]","{}"]',
+                ARRAY_22: '[" ","\'\'","\\"\\"","``","\\\\\\\\","()","[]","{}"]',
+
+                ARRAY_101: '[null,true,4.5e+123," x y "]',
+                ARRAY_102: '[null,true,4.5e+123," x y "]',
+                ARRAY_103: '[null,true,4.5e+123," x y "]',
+
+                ARRAY_201: '[null,true,4.5e+123," x y "]',
+                ARRAY_202: '[null,true,4.5e+123," x y "]',
+                ARRAY_203: '[null,true,4.5e+123," x y "]',
+
+                ARRAY_301: '[]',
+                ARRAY_302: '[]',
+                ARRAY_303: '[]',
+                ARRAY_304: '[]',
+
+                // No conversion
+                ARRAY_1001: '["a","b","c"',
+                ARRAY_1002: '"a","b","c"]',
+                ARRAY_1003: '"a","b"],"c"',
+                ARRAY_1004: '["a","b","c",]',
+                ARRAY_1005: '["a","b","c"]any',
+                ARRAY_1006: '[\'a\',\'b\',\'c\']',
+                ARRAY_1007: '[a,b,c]',
+                ARRAY_1021: '[undefined]',
+                ARRAY_1022: '[UNDEFINED]',
+                ARRAY_1023: '[True]',
+                ARRAY_1024: '[TRUE]',
+                ARRAY_1025: '[False]',
+                ARRAY_1026: '[FALSE]',
+                ARRAY_1027: '[no]',
+                ARRAY_1028: '[No]',
+                ARRAY_1029: '[No]',
+                ARRAY_1030: '[NaN]',
+                ARRAY_1031: '[Infinity]',
+                ARRAY_1032: '[+Infinity]',
+                ARRAY_1033: '[-Infinity]',
+                ARRAY_2001: 'ARRAY:',
+                ARRAY_2002: 'ARR:',
+                ARRAY_2003: ' ARRAY: ',
+                ARRAY_2004: ' ARR: ',
+                ARRAY_2005: ' array : ',
+                ARRAY_2006: ' arr : ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('method:json', function (done) {
+            // input
+            const input = {
+                JSON_1: 'json:{"a":null,"b":true,"c":false,"d":1,"e":"x","f":[-1,2.1,3e1,4.5e+123],"g":{"y":"z"}}',
+                JSON_2: 'obj:{"a":null,"b":true,"c":false,"d":1,"e":"x","f":[-1,2.1,3e1,4.5e+123],"g":{"y":"z"}}',
+
+                JSON_21: 'json:{"_":" ","a":"\'\'","b":"\\"\\"","c":"``","d":"\\\\\\\\","e":"()","f":"[]","g":"{}"}',
+                JSON_22: 'obj:{"_":" ","a":"\'\'","b":"\\"\\"","c":"``","d":"\\\\\\\\","e":"()","f":"[]","g":"{}"}',
+
+                JSON_101: 'json:"a":null,"b":true,"c":4.5e+123,"d":" x y "',
+                JSON_102: ' json: {"a": null, "b": true, "c": 4.5e+123, "d": " x y "} ',
+                JSON_103: ' json: "a": null, "b": true, "c": 4.5e+123, "d": " x y " ',
+
+                JSON_201: 'obj:"a":null,"b":true,"c":4.5e+123,"d":" x y "',
+                JSON_202: ' obj: {"a": null, "b": true, "c": 4.5e+123, "d": " x y "} ',
+                JSON_203: ' obj: "a": null, "b": true, "c": 4.5e+123, "d": " x y " ',
+
+                JSON_301: 'json:',
+                JSON_302: ' json: ',
+                JSON_303: 'obj:',
+                JSON_304: ' obj: ',
+
+                // No conversion
+                JSON_1001: 'json:{"a":1,"b":2,"c":3',
+                JSON_1002: 'json:"a":1,"b":2,"c":3}',
+                JSON_1003: 'json:"a":1,"b":2},"c":3',
+                JSON_1004: 'json:{"a":1,"b":2,"c":3,}',
+                JSON_1005: 'json:{"a":1,"b":2,"c":3}any',
+                JSON_1006: 'json:{\'a\':1,\'b\':2,\'c\':3}',
+                JSON_1007: 'json:{a:1,b:2,c:3}',
+                JSON_1008: 'json:{"a":a,"b":b,"c":c}',
+                JSON_1021: 'json:{"a":undefined}',
+                JSON_1022: 'json:{"a":UNDEFINED}',
+                JSON_1023: 'json:{"a":True}',
+                JSON_1024: 'json:{"a":TRUE}',
+                JSON_1025: 'json:{"a":False}',
+                JSON_1026: 'json:{"a":FALSE}',
+                JSON_1027: 'json:{"a":no}',
+                JSON_1028: 'json:{"a":No}',
+                JSON_1029: 'json:{"a":No}',
+                JSON_1030: 'json:{"a":NaN}',
+                JSON_1031: 'json:{"a":Infinity}',
+                JSON_1032: 'json:{"a":+Infinity}',
+                JSON_1033: 'json:{"a":-Infinity}',
+                JSON_2001: 'JSON:',
+                JSON_2002: 'OBJ:',
+                JSON_2003: ' JSON: ',
+                JSON_2004: ' OBJ: ',
+                JSON_2005: ' json : ',
+                JSON_2006: ' obj : ',
+            }
+
+            // output
+            const expected = {
+                JSON_1: {'a': null, 'b': true, 'c': false, 'd': 1, 'e': 'x', 'f': [-1, 2.1, 30, 4.5e+123], 'g': {'y': 'z'}},
+                JSON_2: {'a': null, 'b': true, 'c': false, 'd': 1, 'e': 'x', 'f': [-1, 2.1, 30, 4.5e+123], 'g': {'y': 'z'}},
+
+                JSON_21: {'_': ' ', 'a': '\'\'', 'b': '""', 'c': '``', 'd': '\\\\', 'e': '()', 'f': '[]', 'g': '{}'},
+                JSON_22: {'_': ' ', 'a': '\'\'', 'b': '""', 'c': '``', 'd': '\\\\', 'e': '()', 'f': '[]', 'g': '{}'},
+
+                JSON_101: {'a': null, 'b': true, 'c': 4.5e+123, 'd': ' x y '},
+                JSON_102: {'a': null, 'b': true, 'c': 4.5e+123, 'd': ' x y '},
+                JSON_103: {'a': null, 'b': true, 'c': 4.5e+123, 'd': ' x y '},
+
+                JSON_201: {'a': null, 'b': true, 'c': 4.5e+123, 'd': ' x y '},
+                JSON_202: {'a': null, 'b': true, 'c': 4.5e+123, 'd': ' x y '},
+                JSON_203: {'a': null, 'b': true, 'c': 4.5e+123, 'd': ' x y '},
+
+                JSON_301: {},
+                JSON_302: {},
+                JSON_303: {},
+                JSON_304: {},
+
+                // No conversion
+                JSON_1001: '{"a":1,"b":2,"c":3',
+                JSON_1002: '"a":1,"b":2,"c":3}',
+                JSON_1003: '"a":1,"b":2},"c":3',
+                JSON_1004: '{"a":1,"b":2,"c":3,}',
+                JSON_1005: '{"a":1,"b":2,"c":3}any',
+                JSON_1006: '{\'a\':1,\'b\':2,\'c\':3}',
+                JSON_1007: '{a:1,b:2,c:3}',
+                JSON_1008: '{"a":a,"b":b,"c":c}',
+                JSON_1021: '{"a":undefined}',
+                JSON_1022: '{"a":UNDEFINED}',
+                JSON_1023: '{"a":True}',
+                JSON_1024: '{"a":TRUE}',
+                JSON_1025: '{"a":False}',
+                JSON_1026: '{"a":FALSE}',
+                JSON_1027: '{"a":no}',
+                JSON_1028: '{"a":No}',
+                JSON_1029: '{"a":No}',
+                JSON_1030: '{"a":NaN}',
+                JSON_1031: '{"a":Infinity}',
+                JSON_1032: '{"a":+Infinity}',
+                JSON_1033: '{"a":-Infinity}',
+                JSON_2001: 'JSON:',
+                JSON_2002: 'OBJ:',
+                JSON_2003: ' JSON: ',
+                JSON_2004: ' OBJ: ',
+                JSON_2005: ' json : ',
+                JSON_2006: ' obj : ',
+            }
+            const expectedForEnv = {
+                JSON_1: '{"a":null,"b":true,"c":false,"d":1,"e":"x","f":[-1,2.1,30,4.5e+123],"g":{"y":"z"}}',
+                JSON_2: '{"a":null,"b":true,"c":false,"d":1,"e":"x","f":[-1,2.1,30,4.5e+123],"g":{"y":"z"}}',
+
+                JSON_21: '{"_":" ","a":"\'\'","b":"\\"\\"","c":"``","d":"\\\\\\\\","e":"()","f":"[]","g":"{}"}',
+                JSON_22: '{"_":" ","a":"\'\'","b":"\\"\\"","c":"``","d":"\\\\\\\\","e":"()","f":"[]","g":"{}"}',
+
+                JSON_101: '{"a":null,"b":true,"c":4.5e+123,"d":" x y "}',
+                JSON_102: '{"a":null,"b":true,"c":4.5e+123,"d":" x y "}',
+                JSON_103: '{"a":null,"b":true,"c":4.5e+123,"d":" x y "}',
+
+                JSON_201: '{"a":null,"b":true,"c":4.5e+123,"d":" x y "}',
+                JSON_202: '{"a":null,"b":true,"c":4.5e+123,"d":" x y "}',
+                JSON_203: '{"a":null,"b":true,"c":4.5e+123,"d":" x y "}',
+
+                JSON_301: '{}',
+                JSON_302: '{}',
+                JSON_303: '{}',
+                JSON_304: '{}',
+
+                // No conversion
+                JSON_1001: '{"a":1,"b":2,"c":3',
+                JSON_1002: '"a":1,"b":2,"c":3}',
+                JSON_1003: '"a":1,"b":2},"c":3',
+                JSON_1004: '{"a":1,"b":2,"c":3,}',
+                JSON_1005: '{"a":1,"b":2,"c":3}any',
+                JSON_1006: '{\'a\':1,\'b\':2,\'c\':3}',
+                JSON_1007: '{a:1,b:2,c:3}',
+                JSON_1008: '{"a":a,"b":b,"c":c}',
+                JSON_1021: '{"a":undefined}',
+                JSON_1022: '{"a":UNDEFINED}',
+                JSON_1023: '{"a":True}',
+                JSON_1024: '{"a":TRUE}',
+                JSON_1025: '{"a":False}',
+                JSON_1026: '{"a":FALSE}',
+                JSON_1027: '{"a":no}',
+                JSON_1028: '{"a":No}',
+                JSON_1029: '{"a":No}',
+                JSON_1030: '{"a":NaN}',
+                JSON_1031: '{"a":Infinity}',
+                JSON_1032: '{"a":+Infinity}',
+                JSON_1033: '{"a":-Infinity}',
+                JSON_2001: 'JSON:',
+                JSON_2002: 'OBJ:',
+                JSON_2003: ' JSON: ',
+                JSON_2004: ' OBJ: ',
+                JSON_2005: ' json : ',
+                JSON_2006: ' obj : ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
 
         it('method:custom:not-set(default)', function (done) {
             // input
@@ -2222,8 +2493,13 @@ describe('dotenv-conversion', function () {
     })
 
     describe('convert:integration:dotenv', function () {
+        const dotEnvPath = './.env'
+        after(() => {
+            fs.rmSync(dotEnvPath)
+        })
+
         function useEnv(envBasename) {
-            fs.copyFileSync(`./test/inputs/${envBasename}.env`, './.env')
+            fs.copyFileSync(`./test/inputs/${envBasename}.env`, dotEnvPath)
             return dotenv.config()
         }
 
@@ -3474,6 +3750,83 @@ describe('dotenv-conversion', function () {
             done()
         })
 
+        it('method:string', function (done) {
+            // input
+            const input = 'method.string'
+
+            // output
+            const expected = {
+                STRING_1: 'null',
+                STRING_2: 'undefined',
+                STRING_3: 'true',
+                STRING_4: 'false',
+                STRING_5: 'NaN',
+                STRING_6: 'Infinity',
+                STRING_7: '4.5e+1',
+                STRING_8: '1n',
+                STRING_9: 'Symbol(a)',
+                STRING_10: '[1,2,3]',
+                STRING_11: '{"a":1,"b":2,"c":3}',
+
+                STRING_21: '',
+                STRING_22: 'any',
+                STRING_23: ' ',
+                STRING_24: ' any ',
+
+                STRING_31: '',
+                STRING_32: 'any',
+                STRING_33: ' ',
+                STRING_34: ' any ',
+
+                // No conversion
+                STRING_1001: 'STRING:any',
+                STRING_1002: 'STR:any',
+                STRING_1003: ' STRING: any ',
+                STRING_1004: ' STR: any ',
+                STRING_1005: ' string : any ',
+                STRING_1006: ' str : any ',
+            }
+            const expectedForEnv = {
+                STRING_1: 'null',
+                STRING_2: 'undefined',
+                STRING_3: 'true',
+                STRING_4: 'false',
+                STRING_5: 'NaN',
+                STRING_6: 'Infinity',
+                STRING_7: '4.5e+1',
+                STRING_8: '1n',
+                STRING_9: 'Symbol(a)',
+                STRING_10: '[1,2,3]',
+                STRING_11: '{"a":1,"b":2,"c":3}',
+
+                STRING_21: '',
+                STRING_22: 'any',
+                STRING_23: ' ',
+                STRING_24: ' any ',
+
+                STRING_31: '',
+                STRING_32: 'any',
+                STRING_33: ' ',
+                STRING_34: ' any ',
+
+                // No conversion
+                STRING_1001: 'STRING:any',
+                STRING_1002: 'STR:any',
+                STRING_1003: ' STRING: any ',
+                STRING_1004: ' STR: any ',
+                STRING_1005: ' string : any ',
+                STRING_1006: ' str : any ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+
         it('method:symbol', function (done) {
             // input
             const input = 'method.symbol'
@@ -3534,111 +3887,229 @@ describe('dotenv-conversion', function () {
             done()
         })
 
-        // it('method:array', function (done) {
-        //     // input
-        //     const input = 'method.array'
-        //
-        //     // output
-        //     const expected = {
-        //         ARRAY_1: [],
-        //         ARRAY_2: [],
-        //         ARRAY_3: [1, 2, 3],
-        //         ARRAY_4: ['a', 'b', 'c'],
-        //         ARRAY_5: [null, true, false, 1, 'a'],
-        //
-        //         ARRAY_11: [],
-        //         ARRAY_12: [],
-        //         ARRAY_13: [1, 2, 3],
-        //         ARRAY_14: ['a', 'b', 'c'],
-        //         ARRAY_15: [null, true, false, 1, 'a'],
-        //
-        //         ARRAY_21: [1, 2, 3],
-        //         ARRAY_22: [1, 2, 3],
-        //         ARRAY_23: [1, 2, 3],
-        //
-        //         // No conversion
-        //         ARRAY_1001: 'a,b,c',
-        //         ARRAY_1002: ' array:any ',
-        //     }
-        //     const expectedForEnv = {
-        //         ARRAY_1: '[]',
-        //         ARRAY_2: '[]',
-        //         ARRAY_3: '[1,2,3]',
-        //         ARRAY_4: '["a","b","c"]',
-        //         ARRAY_5: '[null,true,false,1,"a"]',
-        //
-        //         ARRAY_11: '[]',
-        //         ARRAY_12: '[]',
-        //         ARRAY_13: '[1,2,3]',
-        //         ARRAY_14: '["a","b","c"]',
-        //         ARRAY_15: '[null,true,false,1,"a"]',
-        //
-        //         ARRAY_21: '[1,2,3]',
-        //         ARRAY_22: '[1,2,3]',
-        //         ARRAY_23: '[1,2,3]',
-        //
-        //         // No conversion
-        //         ARRAY_1001: 'a,b,c',
-        //         ARRAY_1002: ' array:any ',
-        //     }
-        //
-        //     const dotenvConfig = useEnv(input)
-        //     const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
-        //
-        //     dotenvConversionConfig.parsed.should.deep.equal(expected)
-        //     process.env.should.deep.include(expectedForEnv)
-        //
-        //     done()
-        // })
+        it('method:array', function (done) {
+            // input
+            const input = 'method.array'
 
-        // it('method:json', function (done) {
-        //     // input
-        //     const input = 'method.json'
-        //
-        //     // output
-        //     const expected = {
-        //         JSON_1: {},
-        //         JSON_2: {},
-        //         JSON_3: {'a': null, 'b': true, 'c': false, 'd': 1, 'e': 'f'},
-        //
-        //         JSON_11: {},
-        //         JSON_12: {},
-        //         JSON_13: {'a': null, 'b': true, 'c': false, 'd': 1, 'e': 'f'},
-        //
-        //         JSON_21: {'a': 1, 'b': 2, 'c': 3},
-        //         JSON_22: {'a': 1, 'b': 2, 'c': 3},
-        //         JSON_23: {'a': 1, 'b': 2, 'c': 3},
-        //
-        //         // No conversion
-        //         JSON_1001: 'a:1,b:2,c:3',
-        //         JSON_1002: ' array:any ',
-        //     }
-        //     const expectedForEnv = {
-        //         JSON_1: '{}',
-        //         JSON_2: '{}',
-        //         JSON_3: '{"a":null,"b":true,"c":false,"d":1,"e":"f"}',
-        //
-        //         JSON_11: '{}',
-        //         JSON_12: '{}',
-        //         JSON_13: '{"a":null,"b":true,"c":false,"d":1,"e":"f"}',
-        //
-        //         JSON_21: '{"a":1,"b":2,"c":3}',
-        //         JSON_22: '{"a":1,"b":2,"c":3}',
-        //         JSON_23: '{"a":1,"b":2,"c":3}',
-        //
-        //         // No conversion
-        //         JSON_1001: 'a:1,b:2,c:3',
-        //         JSON_1002: ' array:any ',
-        //     }
-        //
-        //     const dotenvConfig = useEnv(input)
-        //     const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
-        //
-        //     dotenvConversionConfig.parsed.should.deep.equal(expected)
-        //     process.env.should.deep.include(expectedForEnv)
-        //
-        //     done()
-        // })
+            // output
+            const expected = {
+                ARRAY_1: [null, true, false, 1, 'x', [-1, 2.1, 30, 4.5e+123], {'y': 'z'}],
+                ARRAY_2: [null, true, false, 1, 'x', [-1, 2.1, 30, 4.5e+123], {'y': 'z'}],
+
+                ARRAY_21: [' ', '\'\'', '""', '``', '\\\\', '()', '[]', '{}'],
+                ARRAY_22: [' ', '\'\'', '""', '``', '\\\\', '()', '[]', '{}'],
+
+                ARRAY_102: [null, true, 4.5e+123, ' x y '],
+                ARRAY_101: [null, true, 4.5e+123, ' x y '],
+                ARRAY_103: [null, true, 4.5e+123, ' x y '],
+
+                ARRAY_201: [null, true, 4.5e+123, ' x y '],
+                ARRAY_202: [null, true, 4.5e+123, ' x y '],
+                ARRAY_203: [null, true, 4.5e+123, ' x y '],
+
+                ARRAY_301: [],
+                ARRAY_302: [],
+                ARRAY_303: [],
+                ARRAY_304: [],
+
+                // No conversion
+                ARRAY_1001: '["a","b","c"',
+                ARRAY_1002: '"a","b","c"]',
+                ARRAY_1003: '"a","b"],"c"',
+                ARRAY_1004: '["a","b","c",]',
+                ARRAY_1005: '["a","b","c"]any',
+                ARRAY_1006: '[\'a\',\'b\',\'c\']',
+                ARRAY_1007: '[a,b,c]',
+                ARRAY_1021: '[undefined]',
+                ARRAY_1022: '[UNDEFINED]',
+                ARRAY_1023: '[True]',
+                ARRAY_1024: '[TRUE]',
+                ARRAY_1025: '[False]',
+                ARRAY_1026: '[FALSE]',
+                ARRAY_1027: '[no]',
+                ARRAY_1028: '[No]',
+                ARRAY_1029: '[No]',
+                ARRAY_1030: '[NaN]',
+                ARRAY_1031: '[Infinity]',
+                ARRAY_1032: '[+Infinity]',
+                ARRAY_1033: '[-Infinity]',
+                ARRAY_2001: 'ARRAY:',
+                ARRAY_2002: 'ARR:',
+                ARRAY_2003: ' ARRAY: ',
+                ARRAY_2004: ' ARR: ',
+                ARRAY_2005: ' array : ',
+                ARRAY_2006: ' arr : ',
+            }
+            const expectedForEnv = {
+                ARRAY_1: '[null,true,false,1,"x",[-1,2.1,30,4.5e+123],{"y":"z"}]',
+                ARRAY_2: '[null,true,false,1,"x",[-1,2.1,30,4.5e+123],{"y":"z"}]',
+
+                ARRAY_21: '[" ","\'\'","\\"\\"","``","\\\\\\\\","()","[]","{}"]',
+                ARRAY_22: '[" ","\'\'","\\"\\"","``","\\\\\\\\","()","[]","{}"]',
+
+                ARRAY_101: '[null,true,4.5e+123," x y "]',
+                ARRAY_102: '[null,true,4.5e+123," x y "]',
+                ARRAY_103: '[null,true,4.5e+123," x y "]',
+
+                ARRAY_201: '[null,true,4.5e+123," x y "]',
+                ARRAY_202: '[null,true,4.5e+123," x y "]',
+                ARRAY_203: '[null,true,4.5e+123," x y "]',
+
+                ARRAY_301: '[]',
+                ARRAY_302: '[]',
+                ARRAY_303: '[]',
+                ARRAY_304: '[]',
+
+                // No conversion
+                ARRAY_1001: '["a","b","c"',
+                ARRAY_1002: '"a","b","c"]',
+                ARRAY_1003: '"a","b"],"c"',
+                ARRAY_1004: '["a","b","c",]',
+                ARRAY_1005: '["a","b","c"]any',
+                ARRAY_1006: '[\'a\',\'b\',\'c\']',
+                ARRAY_1007: '[a,b,c]',
+                ARRAY_1021: '[undefined]',
+                ARRAY_1022: '[UNDEFINED]',
+                ARRAY_1023: '[True]',
+                ARRAY_1024: '[TRUE]',
+                ARRAY_1025: '[False]',
+                ARRAY_1026: '[FALSE]',
+                ARRAY_1027: '[no]',
+                ARRAY_1028: '[No]',
+                ARRAY_1029: '[No]',
+                ARRAY_1030: '[NaN]',
+                ARRAY_1031: '[Infinity]',
+                ARRAY_1032: '[+Infinity]',
+                ARRAY_1033: '[-Infinity]',
+                ARRAY_2001: 'ARRAY:',
+                ARRAY_2002: 'ARR:',
+                ARRAY_2003: ' ARRAY: ',
+                ARRAY_2004: ' ARR: ',
+                ARRAY_2005: ' array : ',
+                ARRAY_2006: ' arr : ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('method:json', function (done) {
+            // input
+            const input = 'method.json'
+
+            // output
+            const expected = {
+                JSON_1: {'a': null, 'b': true, 'c': false, 'd': 1, 'e': 'x', 'f': [-1, 2.1, 30, 4.5e+123], 'g': {'y': 'z'}},
+                JSON_2: {'a': null, 'b': true, 'c': false, 'd': 1, 'e': 'x', 'f': [-1, 2.1, 30, 4.5e+123], 'g': {'y': 'z'}},
+
+                JSON_21: {'_': ' ', 'a': '\'\'', 'b': '""', 'c': '``', 'd': '\\\\', 'e': '()', 'f': '[]', 'g': '{}'},
+                JSON_22: {'_': ' ', 'a': '\'\'', 'b': '""', 'c': '``', 'd': '\\\\', 'e': '()', 'f': '[]', 'g': '{}'},
+
+                JSON_101: {'a': null, 'b': true, 'c': 4.5e+123, 'd': ' x y '},
+                JSON_102: {'a': null, 'b': true, 'c': 4.5e+123, 'd': ' x y '},
+                JSON_103: {'a': null, 'b': true, 'c': 4.5e+123, 'd': ' x y '},
+
+                JSON_201: {'a': null, 'b': true, 'c': 4.5e+123, 'd': ' x y '},
+                JSON_202: {'a': null, 'b': true, 'c': 4.5e+123, 'd': ' x y '},
+                JSON_203: {'a': null, 'b': true, 'c': 4.5e+123, 'd': ' x y '},
+
+                JSON_301: {},
+                JSON_302: {},
+                JSON_303: {},
+                JSON_304: {},
+
+                // No conversion
+                JSON_1001: '{"a":1,"b":2,"c":3',
+                JSON_1002: '"a":1,"b":2,"c":3}',
+                JSON_1003: '"a":1,"b":2},"c":3',
+                JSON_1004: '{"a":1,"b":2,"c":3,}',
+                JSON_1005: '{"a":1,"b":2,"c":3}any',
+                JSON_1006: '{\'a\':1,\'b\':2,\'c\':3}',
+                JSON_1007: '{a:1,b:2,c:3}',
+                JSON_1008: '{"a":a,"b":b,"c":c}',
+                JSON_1021: '{"a":undefined}',
+                JSON_1022: '{"a":UNDEFINED}',
+                JSON_1023: '{"a":True}',
+                JSON_1024: '{"a":TRUE}',
+                JSON_1025: '{"a":False}',
+                JSON_1026: '{"a":FALSE}',
+                JSON_1027: '{"a":no}',
+                JSON_1028: '{"a":No}',
+                JSON_1029: '{"a":No}',
+                JSON_1030: '{"a":NaN}',
+                JSON_1031: '{"a":Infinity}',
+                JSON_1032: '{"a":+Infinity}',
+                JSON_1033: '{"a":-Infinity}',
+                JSON_2001: 'JSON:',
+                JSON_2002: 'OBJ:',
+                JSON_2003: ' JSON: ',
+                JSON_2004: ' OBJ: ',
+                JSON_2005: ' json : ',
+                JSON_2006: ' obj : ',
+            }
+            const expectedForEnv = {
+                JSON_1: '{"a":null,"b":true,"c":false,"d":1,"e":"x","f":[-1,2.1,30,4.5e+123],"g":{"y":"z"}}',
+                JSON_2: '{"a":null,"b":true,"c":false,"d":1,"e":"x","f":[-1,2.1,30,4.5e+123],"g":{"y":"z"}}',
+
+                JSON_21: '{"_":" ","a":"\'\'","b":"\\"\\"","c":"``","d":"\\\\\\\\","e":"()","f":"[]","g":"{}"}',
+                JSON_22: '{"_":" ","a":"\'\'","b":"\\"\\"","c":"``","d":"\\\\\\\\","e":"()","f":"[]","g":"{}"}',
+
+                JSON_101: '{"a":null,"b":true,"c":4.5e+123,"d":" x y "}',
+                JSON_102: '{"a":null,"b":true,"c":4.5e+123,"d":" x y "}',
+                JSON_103: '{"a":null,"b":true,"c":4.5e+123,"d":" x y "}',
+
+                JSON_201: '{"a":null,"b":true,"c":4.5e+123,"d":" x y "}',
+                JSON_202: '{"a":null,"b":true,"c":4.5e+123,"d":" x y "}',
+                JSON_203: '{"a":null,"b":true,"c":4.5e+123,"d":" x y "}',
+
+                JSON_301: '{}',
+                JSON_302: '{}',
+                JSON_303: '{}',
+                JSON_304: '{}',
+
+                // No conversion
+                JSON_1001: '{"a":1,"b":2,"c":3',
+                JSON_1002: '"a":1,"b":2,"c":3}',
+                JSON_1003: '"a":1,"b":2},"c":3',
+                JSON_1004: '{"a":1,"b":2,"c":3,}',
+                JSON_1005: '{"a":1,"b":2,"c":3}any',
+                JSON_1006: '{\'a\':1,\'b\':2,\'c\':3}',
+                JSON_1007: '{a:1,b:2,c:3}',
+                JSON_1008: '{"a":a,"b":b,"c":c}',
+                JSON_1021: '{"a":undefined}',
+                JSON_1022: '{"a":UNDEFINED}',
+                JSON_1023: '{"a":True}',
+                JSON_1024: '{"a":TRUE}',
+                JSON_1025: '{"a":False}',
+                JSON_1026: '{"a":FALSE}',
+                JSON_1027: '{"a":no}',
+                JSON_1028: '{"a":No}',
+                JSON_1029: '{"a":No}',
+                JSON_1030: '{"a":NaN}',
+                JSON_1031: '{"a":Infinity}',
+                JSON_1032: '{"a":+Infinity}',
+                JSON_1033: '{"a":-Infinity}',
+                JSON_2001: 'JSON:',
+                JSON_2002: 'OBJ:',
+                JSON_2003: ' JSON: ',
+                JSON_2004: ' OBJ: ',
+                JSON_2005: ' json : ',
+                JSON_2006: ' obj : ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
 
         it('method:custom:not-set(default)', function (done) {
             // input

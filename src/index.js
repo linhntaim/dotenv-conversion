@@ -1,8 +1,8 @@
+/* region env-utils */
+
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
  */
-
-/* region env-utils */
 
 const NUMBER_REGEX = /^[+-]?((\d+(\.(\d*)?)?)|(\.\d+))(e[+-]?\d+)?$/i
 const BIGINT_REGEX = /^[+-]?\d+n$/
@@ -16,6 +16,11 @@ const FALSE_VALUES = ['false', 'False', 'FALSE', 'no', 'No', 'NO']
 const NAN_VALUES = ['NaN']
 const INFINITY_VALUES = ['Infinity', '-Infinity', '+Infinity']
 
+/**
+ *
+ * @param {string} value
+ * @returns {string}
+ */
 function unescapeValue(value) {
     return value.replaceAll('\\"', '"').replaceAll('\\\\', '\\')
 }
@@ -69,22 +74,18 @@ function restoreValue(value, fromDotEnv) {
                 default:
                     let v
                     v = `[${trimmed}]`
-                    if (ARRAY_REGEX.test(v)) {
+                    try {
+                        return JSON.parse(v)
+                    }
+                    catch (e) {
+                        v = `{${trimmed}}`
                         try {
                             return JSON.parse(v)
                         }
                         catch (e) {
+                            return value
                         }
                     }
-                    v = `{${trimmed}}`
-                    if (JSON_REGEX.test(v)) {
-                        try {
-                            return JSON.parse(v)
-                        }
-                        catch (e) {
-                        }
-                    }
-                    return value
             }
     }
 }
@@ -121,6 +122,11 @@ function flattenValue(value) {
             return `${value.toString()}n`
 
         default:
+            // `JSON.stringify` can wrap value with double quotes.
+            // E.g. `JSON.stringify(new Date)` will result a string looks like `'"2023-..."'`.
+            // We surely want the string to be without the double quotes. (Don't we?)
+            // But currently, the code won't reach that case.
+            // So we do not need to handle it now.
             return JSON.stringify(value)
     }
 }
