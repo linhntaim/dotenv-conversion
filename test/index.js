@@ -1222,622 +1222,729 @@ describe('dotenv-conversion', function () {
             done()
         })
 
-        // it('method:boolean', function (done) {
-        //     // input
-        //     const input = {
-        //         BOOLEAN_1: 'boolean:',
-        //         BOOLEAN_2: 'boolean: ',
-        //         BOOLEAN_3: 'boolean:false',
-        //         BOOLEAN_4: 'boolean:False',
-        //         BOOLEAN_5: 'boolean:FALSE',
-        //         BOOLEAN_6: 'boolean:no',
-        //         BOOLEAN_7: 'boolean:No',
-        //         BOOLEAN_8: 'boolean:NO',
-        //         BOOLEAN_9: 'boolean:null',
-        //         BOOLEAN_10: 'boolean:Null',
-        //         BOOLEAN_11: 'boolean:NULL',
-        //         BOOLEAN_12: 'boolean:undefined',
-        //         BOOLEAN_13: 'boolean:UNDEFINED',
-        //         BOOLEAN_14: 'boolean:NaN',
-        //         BOOLEAN_15: 'boolean:not',
-        //         BOOLEAN_16: 'boolean:Not',
-        //         BOOLEAN_17: 'boolean:NOT',
-        //         BOOLEAN_18: 'boolean:none',
-        //         BOOLEAN_19: 'boolean:None',
-        //         BOOLEAN_20: 'boolean:NONE',
-        //         BOOLEAN_21: 'boolean: false ',
-        //
-        //         BOOLEAN_101: 'boolean:0',
-        //         BOOLEAN_102: 'boolean:+0',
-        //         BOOLEAN_103: 'boolean:-0',
-        //         BOOLEAN_104: 'boolean:00',
-        //         BOOLEAN_105: 'boolean:+00',
-        //         BOOLEAN_106: 'boolean:-00',
-        //         BOOLEAN_107: 'boolean:.00',
-        //         BOOLEAN_108: 'boolean:+.00',
-        //         BOOLEAN_109: 'boolean:-.00',
-        //         BOOLEAN_110: 'boolean:0.00',
-        //         BOOLEAN_111: 'boolean:+0.00',
-        //         BOOLEAN_112: 'boolean:-0.00',
-        //         BOOLEAN_113: 'boolean: 0.00 ',
-        //         BOOLEAN_114: 'boolean: +0.00 ',
-        //         BOOLEAN_115: 'boolean: -0.00 ',
-        //
-        //         BOOLEAN_201: 'boolean:0n',
-        //         BOOLEAN_202: 'boolean:+0n',
-        //         BOOLEAN_203: 'boolean:-0n',
-        //         BOOLEAN_204: 'boolean:00n',
-        //         BOOLEAN_205: 'boolean:+00n',
-        //         BOOLEAN_206: 'boolean:-00n',
-        //         BOOLEAN_207: 'boolean: 00n ',
-        //         BOOLEAN_208: 'boolean: +00n ',
-        //         BOOLEAN_209: 'boolean: -00n ',
-        //
-        //         BOOLEAN_301: 'boolean:any',
-        //         BOOLEAN_302: 'boolean: any ',
-        //
-        //         BOOLEAN_401: 'bool:false',
-        //         BOOLEAN_402: 'bool:any',
-        //         BOOLEAN_403: 'bool: any ',
-        //
-        //         // No conversion
-        //         BOOLEAN_1001: ' boolean:any ',
-        //         BOOLEAN_1002: ' bool:any ',
-        //     }
-        //
-        //     // output
-        //     const expected = {
-        //         BOOLEAN_1: false,
-        //         BOOLEAN_2: false,
-        //         BOOLEAN_3: false,
-        //         BOOLEAN_4: false,
-        //         BOOLEAN_5: false,
-        //         BOOLEAN_6: false,
-        //         BOOLEAN_7: false,
-        //         BOOLEAN_8: false,
-        //         BOOLEAN_9: false,
-        //         BOOLEAN_10: false,
-        //         BOOLEAN_11: false,
-        //         BOOLEAN_12: false,
-        //         BOOLEAN_13: false,
-        //         BOOLEAN_14: false,
-        //         BOOLEAN_15: false,
-        //         BOOLEAN_16: false,
-        //         BOOLEAN_17: false,
-        //         BOOLEAN_18: false,
-        //         BOOLEAN_19: false,
-        //         BOOLEAN_20: false,
-        //         BOOLEAN_21: false,
-        //
-        //         BOOLEAN_101: false,
-        //         BOOLEAN_102: false,
-        //         BOOLEAN_103: false,
-        //         BOOLEAN_104: false,
-        //         BOOLEAN_105: false,
-        //         BOOLEAN_106: false,
-        //         BOOLEAN_107: false,
-        //         BOOLEAN_108: false,
-        //         BOOLEAN_109: false,
-        //         BOOLEAN_110: false,
-        //         BOOLEAN_111: false,
-        //         BOOLEAN_112: false,
-        //         BOOLEAN_113: false,
-        //         BOOLEAN_114: false,
-        //         BOOLEAN_115: false,
-        //
-        //         BOOLEAN_201: false,
-        //         BOOLEAN_202: false,
-        //         BOOLEAN_203: false,
-        //         BOOLEAN_204: false,
-        //         BOOLEAN_205: false,
-        //         BOOLEAN_206: false,
-        //         BOOLEAN_207: false,
-        //         BOOLEAN_208: false,
-        //         BOOLEAN_209: false,
-        //
-        //         BOOLEAN_301: true,
-        //         BOOLEAN_302: true,
-        //
-        //         BOOLEAN_401: false,
-        //         BOOLEAN_402: true,
-        //         BOOLEAN_403: true,
-        //
-        //         // No conversion
-        //         BOOLEAN_1001: ' boolean:any ',
-        //         BOOLEAN_1002: ' bool:any ',
-        //     }
-        //     const expectedForEnv = {
-        //         BOOLEAN_1: 'false',
-        //         BOOLEAN_2: 'false',
-        //         BOOLEAN_3: 'false',
-        //         BOOLEAN_4: 'false',
-        //         BOOLEAN_5: 'false',
-        //         BOOLEAN_6: 'false',
-        //         BOOLEAN_7: 'false',
-        //         BOOLEAN_8: 'false',
-        //         BOOLEAN_9: 'false',
-        //         BOOLEAN_10: 'false',
-        //         BOOLEAN_11: 'false',
-        //         BOOLEAN_12: 'false',
-        //         BOOLEAN_13: 'false',
-        //         BOOLEAN_14: 'false',
-        //         BOOLEAN_15: 'false',
-        //         BOOLEAN_16: 'false',
-        //         BOOLEAN_17: 'false',
-        //         BOOLEAN_18: 'false',
-        //         BOOLEAN_19: 'false',
-        //         BOOLEAN_20: 'false',
-        //         BOOLEAN_21: 'false',
-        //
-        //         BOOLEAN_101: 'false',
-        //         BOOLEAN_102: 'false',
-        //         BOOLEAN_103: 'false',
-        //         BOOLEAN_104: 'false',
-        //         BOOLEAN_105: 'false',
-        //         BOOLEAN_106: 'false',
-        //         BOOLEAN_107: 'false',
-        //         BOOLEAN_108: 'false',
-        //         BOOLEAN_109: 'false',
-        //         BOOLEAN_110: 'false',
-        //         BOOLEAN_111: 'false',
-        //         BOOLEAN_112: 'false',
-        //         BOOLEAN_113: 'false',
-        //         BOOLEAN_114: 'false',
-        //         BOOLEAN_115: 'false',
-        //
-        //         BOOLEAN_201: 'false',
-        //         BOOLEAN_202: 'false',
-        //         BOOLEAN_203: 'false',
-        //         BOOLEAN_204: 'false',
-        //         BOOLEAN_205: 'false',
-        //         BOOLEAN_206: 'false',
-        //         BOOLEAN_207: 'false',
-        //         BOOLEAN_208: 'false',
-        //         BOOLEAN_209: 'false',
-        //
-        //         BOOLEAN_301: 'true',
-        //         BOOLEAN_302: 'true',
-        //
-        //         BOOLEAN_401: 'false',
-        //         BOOLEAN_402: 'true',
-        //         BOOLEAN_403: 'true',
-        //
-        //         // No conversion
-        //         BOOLEAN_1001: ' boolean:any ',
-        //         BOOLEAN_1002: ' bool:any ',
-        //     }
-        //
-        //     const dotenvConfig = useEnv(input)
-        //     const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
-        //
-        //     dotenvConversionConfig.parsed.should.deep.equal(expected)
-        //     process.env.should.deep.include(expectedForEnv)
+        it('method:boolean', function (done) {
+            // input
+            const input = {
+                BOOLEAN_1: 'boolean:false',
+                BOOLEAN_2: 'boolean:False',
+                BOOLEAN_3: 'boolean:FALSE',
+                BOOLEAN_4: 'boolean:no',
+                BOOLEAN_5: 'boolean:No',
+                BOOLEAN_6: 'boolean:NO',
+                BOOLEAN_7: 'boolean:null',
+                BOOLEAN_8: 'boolean:Null',
+                BOOLEAN_9: 'boolean:NULL',
+                BOOLEAN_10: 'boolean:undefined',
+                BOOLEAN_11: 'boolean:UNDEFINED',
+                BOOLEAN_12: 'boolean:NaN',
+                BOOLEAN_13: 'boolean:not',
+                BOOLEAN_14: 'boolean:Not',
+                BOOLEAN_15: 'boolean:NOT',
+                BOOLEAN_16: 'boolean:none',
+                BOOLEAN_17: 'boolean:None',
+                BOOLEAN_18: 'boolean:NONE',
 
-        //     done()
-        // })
+                BOOLEAN_21: 'boolean:0',
+                BOOLEAN_22: 'boolean:+0',
+                BOOLEAN_23: 'boolean:-0',
+                BOOLEAN_24: 'boolean:.0',
+                BOOLEAN_25: 'boolean:+.0',
+                BOOLEAN_26: 'boolean:-.0',
+                BOOLEAN_27: 'boolean:0.',
+                BOOLEAN_28: 'boolean:+0.',
+                BOOLEAN_29: 'boolean:-0.',
+                BOOLEAN_30: 'boolean:0.0',
+                BOOLEAN_31: 'boolean:+0.0',
+                BOOLEAN_32: 'boolean:-0.0',
+                BOOLEAN_33: 'boolean:0.0e123',
+                BOOLEAN_34: 'boolean:+0.0e+123',
+                BOOLEAN_35: 'boolean:-0.0e-123',
 
-        // it('method:number', function (done) {
-        //     // input
-        //     const input = {
-        //         NUMBER_1: 'number:',
-        //         NUMBER_2: 'number: ',
-        //         NUMBER_3: 'number:true',
-        //         NUMBER_4: 'number:True',
-        //         NUMBER_5: 'number:TRUE',
-        //         NUMBER_6: 'number:yes',
-        //         NUMBER_7: 'number:Yes',
-        //         NUMBER_8: 'number:YES',
-        //         NUMBER_9: 'number:false',
-        //         NUMBER_10: 'number:False',
-        //         NUMBER_11: 'number:FALSE',
-        //         NUMBER_12: 'number:no',
-        //         NUMBER_13: 'number:No',
-        //         NUMBER_14: 'number:NO',
-        //         NUMBER_15: 'number:null',
-        //         NUMBER_16: 'number:Null',
-        //         NUMBER_17: 'number:NULL',
-        //         NUMBER_18: 'number:undefined',
-        //         NUMBER_19: 'number:UNDEFINED',
-        //         NUMBER_20: 'number:not',
-        //         NUMBER_21: 'number:Not',
-        //         NUMBER_22: 'number:NOT',
-        //         NUMBER_23: 'number:none',
-        //         NUMBER_24: 'number:None',
-        //         NUMBER_25: 'number:NONE',
-        //         NUMBER_26: 'number:NaN',
-        //         NUMBER_27: 'number:Infinity',
-        //         NUMBER_28: 'number:+Infinity',
-        //         NUMBER_29: 'number:-Infinity',
-        //
-        //         NUMBER_31: 'number:4.5e1any',
-        //         NUMBER_32: 'number:+4.5e+1any',
-        //         NUMBER_33: 'number:-4.5e-1any',
-        //         NUMBER_34: 'number:4.5e123any',
-        //         NUMBER_35: 'number:+4.5e+123any',
-        //         NUMBER_36: 'number:-4.5e-123any',
-        //
-        //         NUMBER_41: 'number:any',
-        //         NUMBER_42: 'number: any ',
-        //         NUMBER_43: 'number: 4.5e1 ',
-        //         NUMBER_44: 'number: 4.5e1any ',
-        //
-        //         NUMBER_51: 'num:4.5e1',
-        //         NUMBER_52: 'num:4.5e1any',
-        //         NUMBER_53: 'num:any',
-        //         NUMBER_54: 'num: any ',
-        //         NUMBER_55: 'num: 4.5e1 ',
-        //         NUMBER_56: 'num: 4.5e1any ',
-        //
-        //         // No conversion
-        //         NUMBER_1001: ' number:any ',
-        //         NUMBER_1002: ' num:any ',
-        //     }
-        //
-        //     // output
-        //     const expected = {
-        //         NUMBER_1: 0,
-        //         NUMBER_2: 0,
-        //         NUMBER_3: 1,
-        //         NUMBER_4: 1,
-        //         NUMBER_5: 1,
-        //         NUMBER_6: 1,
-        //         NUMBER_7: 1,
-        //         NUMBER_8: 1,
-        //         NUMBER_9: 0,
-        //         NUMBER_10: 0,
-        //         NUMBER_11: 0,
-        //         NUMBER_12: 0,
-        //         NUMBER_13: 0,
-        //         NUMBER_14: 0,
-        //         NUMBER_15: 0,
-        //         NUMBER_16: 0,
-        //         NUMBER_17: 0,
-        //         NUMBER_18: 0,
-        //         NUMBER_19: 0,
-        //         NUMBER_20: 0,
-        //         NUMBER_21: 0,
-        //         NUMBER_22: 0,
-        //         NUMBER_23: 0,
-        //         NUMBER_24: 0,
-        //         NUMBER_25: 0,
-        //         NUMBER_26: 0,
-        //         NUMBER_27: Infinity,
-        //         NUMBER_28: Infinity,
-        //         NUMBER_29: -Infinity,
-        //
-        //         NUMBER_31: 45,
-        //         NUMBER_32: 45,
-        //         NUMBER_33: -0.45,
-        //         NUMBER_34: 4.5e+123,
-        //         NUMBER_35: 4.5e+123,
-        //         NUMBER_36: -4.5e-123,
-        //
-        //         NUMBER_41: 0,
-        //         NUMBER_42: 0,
-        //         NUMBER_43: 45,
-        //         NUMBER_44: 45,
-        //
-        //         NUMBER_51: 45,
-        //         NUMBER_52: 45,
-        //         NUMBER_53: 0,
-        //         NUMBER_54: 0,
-        //         NUMBER_55: 45,
-        //         NUMBER_56: 45,
-        //
-        //         // No conversion
-        //         NUMBER_1001: ' number:any ',
-        //         NUMBER_1002: ' num:any ',
-        //     }
-        //     const expectedForEnv = {
-        //         NUMBER_1: '0',
-        //         NUMBER_2: '0',
-        //         NUMBER_3: '1',
-        //         NUMBER_4: '1',
-        //         NUMBER_5: '1',
-        //         NUMBER_6: '1',
-        //         NUMBER_7: '1',
-        //         NUMBER_8: '1',
-        //         NUMBER_9: '0',
-        //         NUMBER_10: '0',
-        //         NUMBER_11: '0',
-        //         NUMBER_12: '0',
-        //         NUMBER_13: '0',
-        //         NUMBER_14: '0',
-        //         NUMBER_15: '0',
-        //         NUMBER_16: '0',
-        //         NUMBER_17: '0',
-        //         NUMBER_18: '0',
-        //         NUMBER_19: '0',
-        //         NUMBER_20: '0',
-        //         NUMBER_21: '0',
-        //         NUMBER_22: '0',
-        //         NUMBER_23: '0',
-        //         NUMBER_24: '0',
-        //         NUMBER_25: '0',
-        //         NUMBER_26: '0',
-        //         NUMBER_27: 'Infinity',
-        //         NUMBER_28: 'Infinity',
-        //         NUMBER_29: '-Infinity',
-        //
-        //         NUMBER_41: '0',
-        //         NUMBER_42: '0',
-        //         NUMBER_43: '45',
-        //         NUMBER_44: '45',
-        //
-        //         NUMBER_51: '45',
-        //         NUMBER_52: '45',
-        //         NUMBER_53: '0',
-        //         NUMBER_54: '0',
-        //         NUMBER_55: '45',
-        //         NUMBER_56: '45',
-        //
-        //         // No conversion
-        //         NUMBER_1001: ' number:any ',
-        //         NUMBER_1002: ' num:any ',
-        //     }
-        //
-        //     const dotenvConfig = useEnv(input)
-        //     const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
-        //
-        //     dotenvConversionConfig.parsed.should.deep.equal(expected)
-        //     process.env.should.deep.include(expectedForEnv)
+                BOOLEAN_41: 'boolean:0n',
+                BOOLEAN_42: 'boolean:+0n',
+                BOOLEAN_43: 'boolean:-0n',
 
-        //     done()
-        // })
+                BOOLEAN_101: 'boolean:',
+                BOOLEAN_102: ' boolean: ',
+                BOOLEAN_103: ' boolean: false ',
+                BOOLEAN_104: ' boolean: 0.0e+123 ',
+                BOOLEAN_105: ' boolean: 0n ',
 
-        // it('method:bigint', function (done) {
-        //     // input
-        //     const input = {
-        //         BIGINT_1: 'bigint:',
-        //         BIGINT_2: 'bigint: ',
-        //         BIGINT_3: 'bigint:true',
-        //         BIGINT_4: 'bigint:True',
-        //         BIGINT_5: 'bigint:TRUE',
-        //         BIGINT_6: 'bigint:yes',
-        //         BIGINT_7: 'bigint:Yes',
-        //         BIGINT_8: 'bigint:YES',
-        //         BIGINT_9: 'bigint:false',
-        //         BIGINT_10: 'bigint:False',
-        //         BIGINT_11: 'bigint:FALSE',
-        //         BIGINT_12: 'bigint:no',
-        //         BIGINT_13: 'bigint:No',
-        //         BIGINT_14: 'bigint:NO',
-        //         BIGINT_15: 'bigint:null',
-        //         BIGINT_16: 'bigint:Null',
-        //         BIGINT_17: 'bigint:NULL',
-        //         BIGINT_18: 'bigint:undefined',
-        //         BIGINT_19: 'bigint:UNDEFINED',
-        //         BIGINT_20: 'bigint:not',
-        //         BIGINT_21: 'bigint:Not',
-        //         BIGINT_22: 'bigint:NOT',
-        //         BIGINT_23: 'bigint:none',
-        //         BIGINT_24: 'bigint:None',
-        //         BIGINT_25: 'bigint:NONE',
-        //
-        //         BIGINT_31: 'bigint:123',
-        //         BIGINT_32: 'bigint:+123',
-        //         BIGINT_33: 'bigint:-123',
-        //         BIGINT_34: 'bigint:123n',
-        //
-        //         BIGINT_41: 'bigint:123any',
-        //         BIGINT_42: 'bigint:+123any',
-        //         BIGINT_43: 'bigint:-123any',
-        //         BIGINT_44: 'bigint:123.4any',
-        //
-        //         BIGINT_51: 'bigint:any',
-        //         BIGINT_52: 'bigint: any ',
-        //         BIGINT_53: 'bigint: 123.4any ',
-        //
-        //         BIGINT_61: 'big:123',
-        //         BIGINT_62: 'big:123n',
-        //         BIGINT_63: 'big:123.4any',
-        //         BIGINT_64: 'big:any',
-        //         BIGINT_65: 'big: any ',
-        //         BIGINT_66: 'big: 123.4any ',
-        //
-        //         // No conversion
-        //         BIGINT_1001: ' bigint:any ',
-        //         BIGINT_1002: ' big:any ',
-        //     }
-        //
-        //     // output
-        //     const expected = {
-        //         BIGINT_1: 0n,
-        //         BIGINT_2: 0n,
-        //         BIGINT_3: 1n,
-        //         BIGINT_4: 1n,
-        //         BIGINT_5: 1n,
-        //         BIGINT_6: 1n,
-        //         BIGINT_7: 1n,
-        //         BIGINT_8: 1n,
-        //         BIGINT_9: 0n,
-        //         BIGINT_10: 0n,
-        //         BIGINT_11: 0n,
-        //         BIGINT_12: 0n,
-        //         BIGINT_13: 0n,
-        //         BIGINT_14: 0n,
-        //         BIGINT_15: 0n,
-        //         BIGINT_16: 0n,
-        //         BIGINT_17: 0n,
-        //         BIGINT_18: 0n,
-        //         BIGINT_19: 0n,
-        //         BIGINT_20: 0n,
-        //         BIGINT_21: 0n,
-        //         BIGINT_22: 0n,
-        //         BIGINT_23: 0n,
-        //         BIGINT_24: 0n,
-        //         BIGINT_25: 0n,
-        //
-        //         BIGINT_31: 123n,
-        //         BIGINT_32: 123n,
-        //         BIGINT_33: -123n,
-        //         BIGINT_34: 123n,
-        //
-        //         BIGINT_41: 123n,
-        //         BIGINT_42: 123n,
-        //         BIGINT_43: -123n,
-        //         BIGINT_44: 123n,
-        //
-        //         BIGINT_51: 0n,
-        //         BIGINT_52: 0n,
-        //         BIGINT_53: 123n,
-        //
-        //         BIGINT_61: 123n,
-        //         BIGINT_62: 123n,
-        //         BIGINT_63: 123n,
-        //         BIGINT_64: 0n,
-        //         BIGINT_65: 0n,
-        //         BIGINT_66: 123n,
-        //
-        //         // No conversion
-        //         BIGINT_1001: ' bigint:any ',
-        //         BIGINT_1002: ' big:any ',
-        //     }
-        //     const expectedForEnv = {
-        //         BIGINT_1: '0n',
-        //         BIGINT_2: '0n',
-        //         BIGINT_3: '1n',
-        //         BIGINT_4: '1n',
-        //         BIGINT_5: '1n',
-        //         BIGINT_6: '1n',
-        //         BIGINT_7: '1n',
-        //         BIGINT_8: '1n',
-        //         BIGINT_9: '0n',
-        //         BIGINT_10: '0n',
-        //         BIGINT_11: '0n',
-        //         BIGINT_12: '0n',
-        //         BIGINT_13: '0n',
-        //         BIGINT_14: '0n',
-        //         BIGINT_15: '0n',
-        //         BIGINT_16: '0n',
-        //         BIGINT_17: '0n',
-        //         BIGINT_18: '0n',
-        //         BIGINT_19: '0n',
-        //         BIGINT_20: '0n',
-        //         BIGINT_21: '0n',
-        //         BIGINT_22: '0n',
-        //         BIGINT_23: '0n',
-        //         BIGINT_24: '0n',
-        //         BIGINT_25: '0n',
-        //
-        //         BIGINT_31: '123n',
-        //         BIGINT_32: '123n',
-        //         BIGINT_33: '-123n',
-        //         BIGINT_34: '123n',
-        //
-        //         BIGINT_41: '123n',
-        //         BIGINT_42: '123n',
-        //         BIGINT_43: '-123n',
-        //         BIGINT_44: '123n',
-        //
-        //         BIGINT_51: '0n',
-        //         BIGINT_52: '0n',
-        //         BIGINT_53: '123n',
-        //
-        //         BIGINT_61: '123n',
-        //         BIGINT_62: '123n',
-        //         BIGINT_63: '123n',
-        //         BIGINT_64: '0n',
-        //         BIGINT_65: '0n',
-        //         BIGINT_66: '123n',
-        //
-        //         // No conversion
-        //         BIGINT_1001: ' bigint:any ',
-        //         BIGINT_1002: ' big:any ',
-        //     }
-        //
-        //     const dotenvConfig = useEnv(input)
-        //     const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
-        //
-        //     dotenvConversionConfig.parsed.should.deep.equal(expected)
-        //     process.env.should.deep.include(expectedForEnv)
+                BOOLEAN_201: 'boolean:any',
+                BOOLEAN_202: ' boolean: any ',
 
-        //     done()
-        // })
+                BOOLEAN_301: 'bool:false',
+                BOOLEAN_302: ' bool:false ',
+                BOOLEAN_303: 'bool:any',
+                BOOLEAN_304: ' bool: any ',
 
-        // it('method:symbol', function (done) {
-        //     // input
-        //     const input = {
-        //         SYMBOL_1: 'symbol:',
-        //         SYMBOL_2: 'symbol: ',
-        //         SYMBOL_3: 'symbol:any',
-        //         SYMBOL_4: 'symbol:Symbol(any)',
-        //
-        //         SYMBOL_11: 'symbol: any ',
-        //         SYMBOL_12: 'symbol: Symbol(any) ',
-        //
-        //         // No conversion
-        //         SYMBOL_1001: ' symbol:any ',
-        //     }
-        //
-        //     // output
-        //     const expected = {
-        //         SYMBOL_1: Symbol(),
-        //         SYMBOL_2: Symbol(),
-        //         SYMBOL_3: Symbol('any'),
-        //         SYMBOL_4: Symbol('any'),
-        //
-        //         SYMBOL_11: Symbol('any'),
-        //         SYMBOL_12: Symbol('any'),
-        //
-        //         // No conversion
-        //         SYMBOL_1001: ' symbol:any ',
-        //     }
-        //     const expectedForEnv = {
-        //         SYMBOL_1: 'Symbol()',
-        //         SYMBOL_2: 'Symbol()',
-        //         SYMBOL_3: 'Symbol(any)',
-        //         SYMBOL_4: 'Symbol(any)',
-        //
-        //         SYMBOL_11: 'Symbol(any)',
-        //         SYMBOL_12: 'Symbol(any)',
-        //
-        //         // No conversion
-        //         SYMBOL_1001: ' symbol:any ',
-        //     }
-        //
-        //     const dotenvConfig = useEnv(input)
-        //     const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
-        //
-        //     dotenvConversionConfig.parsed.SYMBOL_1.should.be.a('symbol')
-        //     dotenvConversionConfig.parsed.SYMBOL_1.toString().should.equal(expected.SYMBOL_1.toString())
-        //     dotenvConversionConfig.parsed.SYMBOL_2.should.be.a('symbol')
-        //     dotenvConversionConfig.parsed.SYMBOL_2.toString().should.equal(expected.SYMBOL_2.toString())
-        //     dotenvConversionConfig.parsed.SYMBOL_3.should.be.a('symbol')
-        //     dotenvConversionConfig.parsed.SYMBOL_3.toString().should.equal(expected.SYMBOL_3.toString())
-        //     dotenvConversionConfig.parsed.SYMBOL_4.should.be.a('symbol')
-        //     dotenvConversionConfig.parsed.SYMBOL_4.toString().should.equal(expected.SYMBOL_4.toString())
-        //     dotenvConversionConfig.parsed.SYMBOL_11.should.be.a('symbol')
-        //     dotenvConversionConfig.parsed.SYMBOL_11.toString().should.equal(expected.SYMBOL_11.toString())
-        //     dotenvConversionConfig.parsed.SYMBOL_12.should.be.a('symbol')
-        //     dotenvConversionConfig.parsed.SYMBOL_12.toString().should.equal(expected.SYMBOL_12.toString())
-        //     process.env.should.deep.include(expectedForEnv)
+                // No conversion
+                BOOLEAN_1001: 'BOOLEAN:any',
+                BOOLEAN_1002: 'BOOL:any',
+                BOOLEAN_1003: ' BOOLEAN: any ',
+                BOOLEAN_1004: ' BOOL: any ',
+                BOOLEAN_1005: ' boolean : any ',
+                BOOLEAN_1006: ' bool : any ',
+            }
 
-        //     done()
-        // })
+            // output
+            const expected = {
+                BOOLEAN_1: false,
+                BOOLEAN_2: false,
+                BOOLEAN_3: false,
+                BOOLEAN_4: false,
+                BOOLEAN_5: false,
+                BOOLEAN_6: false,
+                BOOLEAN_7: false,
+                BOOLEAN_8: false,
+                BOOLEAN_9: false,
+                BOOLEAN_10: false,
+                BOOLEAN_11: false,
+                BOOLEAN_12: false,
+                BOOLEAN_13: false,
+                BOOLEAN_14: false,
+                BOOLEAN_15: false,
+                BOOLEAN_16: false,
+                BOOLEAN_17: false,
+                BOOLEAN_18: false,
+
+                BOOLEAN_21: false,
+                BOOLEAN_22: false,
+                BOOLEAN_23: false,
+                BOOLEAN_24: false,
+                BOOLEAN_25: false,
+                BOOLEAN_26: false,
+                BOOLEAN_27: false,
+                BOOLEAN_28: false,
+                BOOLEAN_29: false,
+                BOOLEAN_30: false,
+                BOOLEAN_31: false,
+                BOOLEAN_32: false,
+                BOOLEAN_33: false,
+                BOOLEAN_34: false,
+                BOOLEAN_35: false,
+
+                BOOLEAN_41: false,
+                BOOLEAN_42: false,
+                BOOLEAN_43: false,
+
+                BOOLEAN_101: false,
+                BOOLEAN_102: false,
+                BOOLEAN_103: false,
+                BOOLEAN_104: false,
+                BOOLEAN_105: false,
+
+                BOOLEAN_201: true,
+                BOOLEAN_202: true,
+
+                BOOLEAN_301: false,
+                BOOLEAN_302: false,
+                BOOLEAN_303: true,
+                BOOLEAN_304: true,
+
+                // No conversion
+                BOOLEAN_1001: 'BOOLEAN:any',
+                BOOLEAN_1002: 'BOOL:any',
+                BOOLEAN_1003: ' BOOLEAN: any ',
+                BOOLEAN_1004: ' BOOL: any ',
+                BOOLEAN_1005: ' boolean : any ',
+                BOOLEAN_1006: ' bool : any ',
+            }
+            const expectedForEnv = {
+                BOOLEAN_1: 'false',
+                BOOLEAN_2: 'false',
+                BOOLEAN_3: 'false',
+                BOOLEAN_4: 'false',
+                BOOLEAN_5: 'false',
+                BOOLEAN_6: 'false',
+                BOOLEAN_7: 'false',
+                BOOLEAN_8: 'false',
+                BOOLEAN_9: 'false',
+                BOOLEAN_10: 'false',
+                BOOLEAN_11: 'false',
+                BOOLEAN_12: 'false',
+                BOOLEAN_13: 'false',
+                BOOLEAN_14: 'false',
+                BOOLEAN_15: 'false',
+                BOOLEAN_16: 'false',
+                BOOLEAN_17: 'false',
+                BOOLEAN_18: 'false',
+
+                BOOLEAN_21: 'false',
+                BOOLEAN_22: 'false',
+                BOOLEAN_23: 'false',
+                BOOLEAN_24: 'false',
+                BOOLEAN_25: 'false',
+                BOOLEAN_26: 'false',
+                BOOLEAN_27: 'false',
+                BOOLEAN_28: 'false',
+                BOOLEAN_29: 'false',
+                BOOLEAN_30: 'false',
+                BOOLEAN_31: 'false',
+                BOOLEAN_32: 'false',
+                BOOLEAN_33: 'false',
+                BOOLEAN_34: 'false',
+                BOOLEAN_35: 'false',
+
+                BOOLEAN_41: 'false',
+                BOOLEAN_42: 'false',
+                BOOLEAN_43: 'false',
+
+                BOOLEAN_101: 'false',
+                BOOLEAN_102: 'false',
+                BOOLEAN_103: 'false',
+                BOOLEAN_104: 'false',
+                BOOLEAN_105: 'false',
+
+                BOOLEAN_201: 'true',
+                BOOLEAN_202: 'true',
+
+                BOOLEAN_301: 'false',
+                BOOLEAN_302: 'false',
+                BOOLEAN_303: 'true',
+                BOOLEAN_304: 'true',
+
+                // No conversion
+                BOOLEAN_1001: 'BOOLEAN:any',
+                BOOLEAN_1002: 'BOOL:any',
+                BOOLEAN_1003: ' BOOLEAN: any ',
+                BOOLEAN_1004: ' BOOL: any ',
+                BOOLEAN_1005: ' boolean : any ',
+                BOOLEAN_1006: ' bool : any ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('method:number', function (done) {
+            // input
+            const input = {
+                NUMBER_1: 'number:true',
+                NUMBER_2: 'number:True',
+                NUMBER_3: 'number:TRUE',
+                NUMBER_4: 'number:yes',
+                NUMBER_5: 'number:Yes',
+                NUMBER_6: 'number:YES',
+                NUMBER_7: 'number:false',
+                NUMBER_8: 'number:False',
+                NUMBER_9: 'number:FALSE',
+                NUMBER_10: 'number:no',
+                NUMBER_11: 'number:No',
+                NUMBER_12: 'number:NO',
+                NUMBER_13: 'number:null',
+                NUMBER_14: 'number:Null',
+                NUMBER_15: 'number:NULL',
+                NUMBER_16: 'number:undefined',
+                NUMBER_17: 'number:UNDEFINED',
+                NUMBER_18: 'number:not',
+                NUMBER_19: 'number:Not',
+                NUMBER_20: 'number:NOT',
+                NUMBER_21: 'number:none',
+                NUMBER_22: 'number:None',
+                NUMBER_23: 'number:NONE',
+                NUMBER_24: 'number:NaN',
+                NUMBER_25: 'number:Infinity',
+                NUMBER_26: 'number:+Infinity',
+                NUMBER_27: 'number:-Infinity',
+
+                NUMBER_31: 'number:4.5e1',
+                NUMBER_32: 'number:+4.5e+1',
+                NUMBER_33: 'number:-4.5e-1',
+                NUMBER_34: 'number:4.5e123',
+                NUMBER_35: 'number:+4.5e+123',
+                NUMBER_36: 'number:-4.5e-123',
+
+                NUMBER_41: 'number:',
+                NUMBER_42: 'number:4.5e+123any',
+                NUMBER_43: 'number:any',
+                NUMBER_44: ' number: ',
+                NUMBER_45: ' number: true ',
+                NUMBER_46: ' number: false ',
+                NUMBER_47: ' number: 4.5e+123any ',
+                NUMBER_48: ' number: any ',
+
+                NUMBER_51: 'num:',
+                NUMBER_52: 'num:4.5e+123any',
+                NUMBER_53: 'num:any',
+                NUMBER_54: ' num: ',
+                NUMBER_55: ' num: true ',
+                NUMBER_56: ' num: false ',
+                NUMBER_57: ' num: 4.5e+123any ',
+                NUMBER_58: ' num: any ',
+
+                // No conversion
+                NUMBER_1001: 'NUMBER:any',
+                NUMBER_1002: 'NUM:any',
+                NUMBER_1003: ' NUMBER: any ',
+                NUMBER_1004: ' NUM: any ',
+                NUMBER_1005: ' number : any ',
+                NUMBER_1006: ' num : any ',
+            }
+
+            // output
+            const expected = {
+                NUMBER_1: 1,
+                NUMBER_2: 1,
+                NUMBER_3: 1,
+                NUMBER_4: 1,
+                NUMBER_5: 1,
+                NUMBER_6: 1,
+                NUMBER_7: 0,
+                NUMBER_8: 0,
+                NUMBER_9: 0,
+                NUMBER_10: 0,
+                NUMBER_11: 0,
+                NUMBER_12: 0,
+                NUMBER_13: 0,
+                NUMBER_14: 0,
+                NUMBER_15: 0,
+                NUMBER_16: 0,
+                NUMBER_17: 0,
+                NUMBER_18: 0,
+                NUMBER_19: 0,
+                NUMBER_20: 0,
+                NUMBER_21: 0,
+                NUMBER_22: 0,
+                NUMBER_23: 0,
+                NUMBER_24: 0,
+                NUMBER_25: Infinity,
+                NUMBER_26: Infinity,
+                NUMBER_27: -Infinity,
+
+                NUMBER_31: 45,
+                NUMBER_32: 45,
+                NUMBER_33: -0.45,
+                NUMBER_34: 4.5e+123,
+                NUMBER_35: 4.5e+123,
+                NUMBER_36: -4.5e-123,
+
+                NUMBER_41: 0,
+                NUMBER_42: 4.5e+123,
+                NUMBER_43: 0,
+                NUMBER_44: 0,
+                NUMBER_45: 1,
+                NUMBER_46: 0,
+                NUMBER_47: 4.5e+123,
+                NUMBER_48: 0,
+
+                NUMBER_51: 0,
+                NUMBER_52: 4.5e+123,
+                NUMBER_53: 0,
+                NUMBER_54: 0,
+                NUMBER_55: 1,
+                NUMBER_56: 0,
+                NUMBER_57: 4.5e+123,
+                NUMBER_58: 0,
+
+                // No conversion
+                NUMBER_1001: 'NUMBER:any',
+                NUMBER_1002: 'NUM:any',
+                NUMBER_1003: ' NUMBER: any ',
+                NUMBER_1004: ' NUM: any ',
+                NUMBER_1005: ' number : any ',
+                NUMBER_1006: ' num : any ',
+            }
+            const expectedForEnv = {
+                NUMBER_1: '1',
+                NUMBER_2: '1',
+                NUMBER_3: '1',
+                NUMBER_4: '1',
+                NUMBER_5: '1',
+                NUMBER_6: '1',
+                NUMBER_7: '0',
+                NUMBER_8: '0',
+                NUMBER_9: '0',
+                NUMBER_10: '0',
+                NUMBER_11: '0',
+                NUMBER_12: '0',
+                NUMBER_13: '0',
+                NUMBER_14: '0',
+                NUMBER_15: '0',
+                NUMBER_16: '0',
+                NUMBER_17: '0',
+                NUMBER_18: '0',
+                NUMBER_19: '0',
+                NUMBER_20: '0',
+                NUMBER_21: '0',
+                NUMBER_22: '0',
+                NUMBER_23: '0',
+                NUMBER_24: '0',
+                NUMBER_25: 'Infinity',
+                NUMBER_26: 'Infinity',
+                NUMBER_27: '-Infinity',
+
+                NUMBER_31: '45',
+                NUMBER_32: '45',
+                NUMBER_33: '-0.45',
+                NUMBER_34: '4.5e+123',
+                NUMBER_35: '4.5e+123',
+                NUMBER_36: '-4.5e-123',
+
+                NUMBER_41: '0',
+                NUMBER_42: '4.5e+123',
+                NUMBER_43: '0',
+                NUMBER_44: '0',
+                NUMBER_45: '1',
+                NUMBER_46: '0',
+                NUMBER_47: '4.5e+123',
+                NUMBER_48: '0',
+
+                NUMBER_51: '0',
+                NUMBER_52: '4.5e+123',
+                NUMBER_53: '0',
+                NUMBER_54: '0',
+                NUMBER_55: '1',
+                NUMBER_56: '0',
+                NUMBER_57: '4.5e+123',
+                NUMBER_58: '0',
+
+                // No conversion
+                NUMBER_1001: 'NUMBER:any',
+                NUMBER_1002: 'NUM:any',
+                NUMBER_1003: ' NUMBER: any ',
+                NUMBER_1004: ' NUM: any ',
+                NUMBER_1005: ' number : any ',
+                NUMBER_1006: ' num : any ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('method:bigint', function (done) {
+            // input
+            const input = {
+                BIGINT_1: 'bigint:true',
+                BIGINT_2: 'bigint:True',
+                BIGINT_3: 'bigint:TRUE',
+                BIGINT_4: 'bigint:yes',
+                BIGINT_5: 'bigint:Yes',
+                BIGINT_6: 'bigint:YES',
+                BIGINT_7: 'bigint:false',
+                BIGINT_8: 'bigint:False',
+                BIGINT_9: 'bigint:FALSE',
+                BIGINT_10: 'bigint:no',
+                BIGINT_11: 'bigint:No',
+                BIGINT_12: 'bigint:NO',
+                BIGINT_13: 'bigint:null',
+                BIGINT_14: 'bigint:Null',
+                BIGINT_15: 'bigint:NULL',
+                BIGINT_16: 'bigint:undefined',
+                BIGINT_17: 'bigint:UNDEFINED',
+                BIGINT_18: 'bigint:not',
+                BIGINT_19: 'bigint:Not',
+                BIGINT_20: 'bigint:NOT',
+                BIGINT_21: 'bigint:none',
+                BIGINT_22: 'bigint:None',
+                BIGINT_23: 'bigint:NONE',
+
+                BIGINT_31: 'bigint:5',
+                BIGINT_32: 'bigint:+5',
+                BIGINT_33: 'bigint:-5',
+                BIGINT_34: 'bigint:5n',
+                BIGINT_35: 'bigint:+5n',
+                BIGINT_36: 'bigint:-5n',
+
+                BIGINT_41: 'bigint:',
+                BIGINT_42: 'bigint:5any',
+                BIGINT_43: 'bigint:.5any',
+                BIGINT_44: 'bigint:4.5e+10any',
+                BIGINT_45: 'bigint:any',
+                BIGINT_46: ' bigint: ',
+                BIGINT_47: ' bigint: true ',
+                BIGINT_48: ' bigint: false ',
+                BIGINT_49: ' bigint: 5any ',
+                BIGINT_50: ' bigint: .5any ',
+                BIGINT_51: ' bigint: 4.5e+10any ',
+                BIGINT_52: ' bigint: any ',
+
+                BIGINT_61: 'bigint:',
+                BIGINT_62: 'bigint:5any',
+                BIGINT_63: 'bigint:.5any',
+                BIGINT_64: 'bigint:4.5e+10any',
+                BIGINT_65: 'bigint:any',
+                BIGINT_66: ' bigint: ',
+                BIGINT_67: ' bigint: true ',
+                BIGINT_68: ' bigint: false ',
+                BIGINT_69: ' bigint: 5any ',
+                BIGINT_70: ' bigint: .5any ',
+                BIGINT_71: ' bigint: 4.5e+10any ',
+                BIGINT_72: ' bigint: any ',
+
+                // No conversion
+                BIGINT_1001: 'BIGINT:any',
+                BIGINT_1002: 'BIG:any',
+                BIGINT_1003: ' BIGINT: any ',
+                BIGINT_1004: ' BIG: any ',
+                BIGINT_1005: ' bigint : any ',
+                BIGINT_1006: ' big : any ',
+            }
+
+            // output
+            const expected = {
+                BIGINT_1: 1n,
+                BIGINT_2: 1n,
+                BIGINT_3: 1n,
+                BIGINT_4: 1n,
+                BIGINT_5: 1n,
+                BIGINT_6: 1n,
+                BIGINT_7: 0n,
+                BIGINT_8: 0n,
+                BIGINT_9: 0n,
+                BIGINT_10: 0n,
+                BIGINT_11: 0n,
+                BIGINT_12: 0n,
+                BIGINT_13: 0n,
+                BIGINT_14: 0n,
+                BIGINT_15: 0n,
+                BIGINT_16: 0n,
+                BIGINT_17: 0n,
+                BIGINT_18: 0n,
+                BIGINT_19: 0n,
+                BIGINT_20: 0n,
+                BIGINT_21: 0n,
+                BIGINT_22: 0n,
+                BIGINT_23: 0n,
+
+                BIGINT_31: 5n,
+                BIGINT_32: 5n,
+                BIGINT_33: -5n,
+                BIGINT_34: 5n,
+                BIGINT_35: 5n,
+                BIGINT_36: -5n,
+
+                BIGINT_41: 0n,
+                BIGINT_42: 5n,
+                BIGINT_43: 0n,
+                BIGINT_44: 45000000000n,
+                BIGINT_45: 0n,
+                BIGINT_46: 0n,
+                BIGINT_47: 1n,
+                BIGINT_48: 0n,
+                BIGINT_49: 5n,
+                BIGINT_50: 0n,
+                BIGINT_51: 45000000000n,
+                BIGINT_52: 0n,
+
+                BIGINT_61: 0n,
+                BIGINT_62: 5n,
+                BIGINT_63: 0n,
+                BIGINT_64: 45000000000n,
+                BIGINT_65: 0n,
+                BIGINT_66: 0n,
+                BIGINT_67: 1n,
+                BIGINT_68: 0n,
+                BIGINT_69: 5n,
+                BIGINT_70: 0n,
+                BIGINT_71: 45000000000n,
+                BIGINT_72: 0n,
+
+                // No conversion
+                BIGINT_1001: 'BIGINT:any',
+                BIGINT_1002: 'BIG:any',
+                BIGINT_1003: ' BIGINT: any ',
+                BIGINT_1004: ' BIG: any ',
+                BIGINT_1005: ' bigint : any ',
+                BIGINT_1006: ' big : any ',
+            }
+            const expectedForEnv = {
+                BIGINT_1: '1n',
+                BIGINT_2: '1n',
+                BIGINT_3: '1n',
+                BIGINT_4: '1n',
+                BIGINT_5: '1n',
+                BIGINT_6: '1n',
+                BIGINT_7: '0n',
+                BIGINT_8: '0n',
+                BIGINT_9: '0n',
+                BIGINT_10: '0n',
+                BIGINT_11: '0n',
+                BIGINT_12: '0n',
+                BIGINT_13: '0n',
+                BIGINT_14: '0n',
+                BIGINT_15: '0n',
+                BIGINT_16: '0n',
+                BIGINT_17: '0n',
+                BIGINT_18: '0n',
+                BIGINT_19: '0n',
+                BIGINT_20: '0n',
+                BIGINT_21: '0n',
+                BIGINT_22: '0n',
+                BIGINT_23: '0n',
+
+                BIGINT_31: '5n',
+                BIGINT_32: '5n',
+                BIGINT_33: '-5n',
+                BIGINT_34: '5n',
+                BIGINT_35: '5n',
+                BIGINT_36: '-5n',
+
+                BIGINT_41: '0n',
+                BIGINT_42: '5n',
+                BIGINT_43: '0n',
+                BIGINT_44: '45000000000n',
+                BIGINT_45: '0n',
+                BIGINT_46: '0n',
+                BIGINT_47: '1n',
+                BIGINT_48: '0n',
+                BIGINT_49: '5n',
+                BIGINT_50: '0n',
+                BIGINT_51: '45000000000n',
+                BIGINT_52: '0n',
+
+                BIGINT_61: '0n',
+                BIGINT_62: '5n',
+                BIGINT_63: '0n',
+                BIGINT_64: '45000000000n',
+                BIGINT_65: '0n',
+                BIGINT_66: '0n',
+                BIGINT_67: '1n',
+                BIGINT_68: '0n',
+                BIGINT_69: '5n',
+                BIGINT_70: '0n',
+                BIGINT_71: '45000000000n',
+                BIGINT_72: '0n',
+
+                // No conversion
+                BIGINT_1001: 'BIGINT:any',
+                BIGINT_1002: 'BIG:any',
+                BIGINT_1003: ' BIGINT: any ',
+                BIGINT_1004: ' BIG: any ',
+                BIGINT_1005: ' bigint : any ',
+                BIGINT_1006: ' big : any ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('method:symbol', function (done) {
+            // input
+            const input = {
+                SYMBOL_1: 'symbol:',
+                SYMBOL_2: ' symbol: ',
+
+                SYMBOL_11: 'symbol:any',
+                SYMBOL_12: ' symbol: any ',
+
+                SYMBOL_21: 'symbol:Symbol(any)',
+                SYMBOL_22: ' symbol: Symbol(any) ',
+                SYMBOL_23: ' symbol: Symbol( any ) ',
+
+                // No conversion
+                SYMBOL_1001: 'SYMBOL:any',
+                SYMBOL_1002: ' SYMBOL: any ',
+                SYMBOL_1003: ' symbol : any ',
+            }
+
+            // output
+            const expected = {
+                SYMBOL_1: Symbol(),
+                SYMBOL_2: Symbol(' '),
+
+                SYMBOL_11: Symbol('any'),
+                SYMBOL_12: Symbol(' any '),
+
+                SYMBOL_21: Symbol('any'),
+                SYMBOL_22: Symbol('any'),
+                SYMBOL_23: Symbol(' any '),
+
+                // No conversion
+                SYMBOL_1001: 'SYMBOL:any',
+                SYMBOL_1002: ' SYMBOL: any ',
+                SYMBOL_1003: ' symbol : any ',
+            }
+            const expectedForEnv = {
+                SYMBOL_1: 'Symbol()',
+                SYMBOL_2: 'Symbol( )',
+
+                SYMBOL_11: 'Symbol(any)',
+                SYMBOL_12: 'Symbol( any )',
+
+                SYMBOL_21: 'Symbol(any)',
+                SYMBOL_22: 'Symbol(any)',
+                SYMBOL_23: 'Symbol( any )',
+
+                // No conversion
+                SYMBOL_1001: 'SYMBOL:any',
+                SYMBOL_1002: ' SYMBOL: any ',
+                SYMBOL_1003: ' symbol : any ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.SYMBOL_1.should.be.a('symbol')
+            dotenvConversionConfig.parsed.SYMBOL_1.toString().should.equal(expected.SYMBOL_1.toString())
+            dotenvConversionConfig.parsed.SYMBOL_2.should.be.a('symbol')
+            dotenvConversionConfig.parsed.SYMBOL_2.toString().should.equal(expected.SYMBOL_2.toString())
+            dotenvConversionConfig.parsed.SYMBOL_11.should.be.a('symbol')
+            dotenvConversionConfig.parsed.SYMBOL_11.toString().should.equal(expected.SYMBOL_11.toString())
+            dotenvConversionConfig.parsed.SYMBOL_12.should.be.a('symbol')
+            dotenvConversionConfig.parsed.SYMBOL_12.toString().should.equal(expected.SYMBOL_12.toString())
+            dotenvConversionConfig.parsed.SYMBOL_21.should.be.a('symbol')
+            dotenvConversionConfig.parsed.SYMBOL_21.toString().should.equal(expected.SYMBOL_21.toString())
+            dotenvConversionConfig.parsed.SYMBOL_22.should.be.a('symbol')
+            dotenvConversionConfig.parsed.SYMBOL_22.toString().should.equal(expected.SYMBOL_22.toString())
+            dotenvConversionConfig.parsed.SYMBOL_23.should.be.a('symbol')
+            dotenvConversionConfig.parsed.SYMBOL_23.toString().should.equal(expected.SYMBOL_23.toString())
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
 
         // it('method:array', function (done) {
         //     // input
         //     const input = {
-        //         ARRAY_1: 'array:',
-        //         ARRAY_2: 'array: ',
-        //         ARRAY_3: 'array:1,2,3',
-        //         ARRAY_4: 'array:"a","b","c"',
-        //         ARRAY_5: 'array:null,true,false,1,"a"',
+        //         ARRAY_1: 'array:[null,true,false,1,"x",[-1,2.1,3e1,4.5e+123],{"y":"z"}]',
         //
-        //         ARRAY_11: 'array:[]',
-        //         ARRAY_12: 'array:[ ]',
-        //         ARRAY_13: 'array:[1,2,3]',
-        //         ARRAY_14: 'array:["a","b","c"]',
-        //         ARRAY_15: 'array:[null,true,false,1,"a"]',
+        //         ARRAY_21: 'array:[" ","\'\'","\\"\\"","``","\\\\\\\\","()","[]","{}"]',
         //
-        //         ARRAY_21: 'array: 1, 2, 3 ',
-        //         ARRAY_22: 'arr:1,2,3',
-        //         ARRAY_23: 'arr: 1, 2, 3 ',
+        //         ARRAY_102: 'array:null,true,4.5e+123," x y "',
+        //         ARRAY_101: ' array: [null, true, 4.5e+123, " x y "] ',
+        //         ARRAY_103: ' array: null, true, 4.5e+123, " x y " ',
+        //
+        //         ARRAY_202: 'arr:null,true,4.5e+123," x y "',
+        //         ARRAY_201: ' arr: [null, true, 4.5e+123, " x y "] ',
+        //         ARRAY_203: ' arr: null, true, 4.5e+123, " x y " ',
         //
         //         // No conversion
-        //         ARRAY_1001: 'array:a,b,c',
-        //         ARRAY_1002: ' array:any ',
+        //         ARRAY_1001: '["a","b","c"',
+        //         ARRAY_1002: '"a","b","c"]',
+        //         ARRAY_1003: '"a","b"],"c"',
+        //         ARRAY_1004: '["a","b","c",]',
+        //         ARRAY_1005: '["a","b","c"]any',
+        //         ARRAY_1006: '[\'a\',\'b\',\'c\']',
+        //         ARRAY_1007: '[a,b,c]',
+        //         ARRAY_1021: '[undefined]',
+        //         ARRAY_1022: '[UNDEFINED]',
+        //         ARRAY_1023: '[True]',
+        //         ARRAY_1024: '[TRUE]',
+        //         ARRAY_1025: '[False]',
+        //         ARRAY_1026: '[FALSE]',
+        //         ARRAY_1027: '[no]',
+        //         ARRAY_1028: '[No]',
+        //         ARRAY_1029: '[No]',
+        //         ARRAY_1030: '[NaN]',
+        //         ARRAY_1031: '[Infinity]',
+        //         ARRAY_1032: '[+Infinity]',
+        //         ARRAY_1033: '[-Infinity]',
         //     }
         //
         //     // output
@@ -1889,7 +1996,7 @@ describe('dotenv-conversion', function () {
         //
         //     dotenvConversionConfig.parsed.should.deep.equal(expected)
         //     process.env.should.deep.include(expectedForEnv)
-
+        //
         //     done()
         // })
 
@@ -1954,7 +2061,7 @@ describe('dotenv-conversion', function () {
         //
         //     dotenvConversionConfig.parsed.should.deep.equal(expected)
         //     process.env.should.deep.include(expectedForEnv)
-
+        //
         //     done()
         // })
 
@@ -2942,425 +3049,490 @@ describe('dotenv-conversion', function () {
             done()
         })
 
-        // it('method:boolean', function (done) {
-        //     // input
-        //     const input = 'method.boolean'
-        //
-        //     // output
-        //     const expected = {
-        //         BOOLEAN_1: false,
-        //         BOOLEAN_2: false,
-        //         BOOLEAN_3: false,
-        //         BOOLEAN_4: false,
-        //         BOOLEAN_5: false,
-        //         BOOLEAN_6: false,
-        //         BOOLEAN_7: false,
-        //         BOOLEAN_8: false,
-        //         BOOLEAN_9: false,
-        //         BOOLEAN_10: false,
-        //         BOOLEAN_11: false,
-        //         BOOLEAN_12: false,
-        //         BOOLEAN_13: false,
-        //         BOOLEAN_14: false,
-        //         BOOLEAN_15: false,
-        //         BOOLEAN_16: false,
-        //         BOOLEAN_17: false,
-        //         BOOLEAN_18: false,
-        //         BOOLEAN_19: false,
-        //         BOOLEAN_20: false,
-        //         BOOLEAN_21: false,
-        //
-        //         BOOLEAN_101: false,
-        //         BOOLEAN_102: false,
-        //         BOOLEAN_103: false,
-        //         BOOLEAN_104: false,
-        //         BOOLEAN_105: false,
-        //         BOOLEAN_106: false,
-        //         BOOLEAN_107: false,
-        //         BOOLEAN_108: false,
-        //         BOOLEAN_109: false,
-        //         BOOLEAN_110: false,
-        //         BOOLEAN_111: false,
-        //         BOOLEAN_112: false,
-        //         BOOLEAN_113: false,
-        //         BOOLEAN_114: false,
-        //         BOOLEAN_115: false,
-        //
-        //         BOOLEAN_201: false,
-        //         BOOLEAN_202: false,
-        //         BOOLEAN_203: false,
-        //         BOOLEAN_204: false,
-        //         BOOLEAN_205: false,
-        //         BOOLEAN_206: false,
-        //         BOOLEAN_207: false,
-        //         BOOLEAN_208: false,
-        //         BOOLEAN_209: false,
-        //
-        //         BOOLEAN_301: true,
-        //         BOOLEAN_302: true,
-        //
-        //         BOOLEAN_401: false,
-        //         BOOLEAN_402: true,
-        //         BOOLEAN_403: true,
-        //
-        //         // No conversion
-        //         BOOLEAN_1001: ' boolean:any ',
-        //         BOOLEAN_1002: ' bool:any ',
-        //     }
-        //     const expectedForEnv = {
-        //         BOOLEAN_1: 'false',
-        //         BOOLEAN_2: 'false',
-        //         BOOLEAN_3: 'false',
-        //         BOOLEAN_4: 'false',
-        //         BOOLEAN_5: 'false',
-        //         BOOLEAN_6: 'false',
-        //         BOOLEAN_7: 'false',
-        //         BOOLEAN_8: 'false',
-        //         BOOLEAN_9: 'false',
-        //         BOOLEAN_10: 'false',
-        //         BOOLEAN_11: 'false',
-        //         BOOLEAN_12: 'false',
-        //         BOOLEAN_13: 'false',
-        //         BOOLEAN_14: 'false',
-        //         BOOLEAN_15: 'false',
-        //         BOOLEAN_16: 'false',
-        //         BOOLEAN_17: 'false',
-        //         BOOLEAN_18: 'false',
-        //         BOOLEAN_19: 'false',
-        //         BOOLEAN_20: 'false',
-        //         BOOLEAN_21: 'false',
-        //
-        //         BOOLEAN_101: 'false',
-        //         BOOLEAN_102: 'false',
-        //         BOOLEAN_103: 'false',
-        //         BOOLEAN_104: 'false',
-        //         BOOLEAN_105: 'false',
-        //         BOOLEAN_106: 'false',
-        //         BOOLEAN_107: 'false',
-        //         BOOLEAN_108: 'false',
-        //         BOOLEAN_109: 'false',
-        //         BOOLEAN_110: 'false',
-        //         BOOLEAN_111: 'false',
-        //         BOOLEAN_112: 'false',
-        //         BOOLEAN_113: 'false',
-        //         BOOLEAN_114: 'false',
-        //         BOOLEAN_115: 'false',
-        //
-        //         BOOLEAN_201: 'false',
-        //         BOOLEAN_202: 'false',
-        //         BOOLEAN_203: 'false',
-        //         BOOLEAN_204: 'false',
-        //         BOOLEAN_205: 'false',
-        //         BOOLEAN_206: 'false',
-        //         BOOLEAN_207: 'false',
-        //         BOOLEAN_208: 'false',
-        //         BOOLEAN_209: 'false',
-        //
-        //         BOOLEAN_301: 'true',
-        //         BOOLEAN_302: 'true',
-        //
-        //         BOOLEAN_401: 'false',
-        //         BOOLEAN_402: 'true',
-        //         BOOLEAN_403: 'true',
-        //
-        //         // No conversion
-        //         BOOLEAN_1001: ' boolean:any ',
-        //         BOOLEAN_1002: ' bool:any ',
-        //     }
-        //
-        //     const dotenvConfig = useEnv(input)
-        //     const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
-        //
-        //     dotenvConversionConfig.parsed.should.deep.equal(expected)
-        //     process.env.should.deep.include(expectedForEnv)
-        //
-        //     done()
-        // })
+        it('method:boolean', function (done) {
+            // input
+            const input = 'method.boolean'
 
-        // it('method:number', function (done) {
-        //     // input
-        //     const input = 'method.number'
-        //
-        //     // output
-        //     const expected = {
-        //         NUMBER_1: 0,
-        //         NUMBER_2: 0,
-        //         NUMBER_3: 1,
-        //         NUMBER_4: 1,
-        //         NUMBER_5: 1,
-        //         NUMBER_6: 1,
-        //         NUMBER_7: 1,
-        //         NUMBER_8: 1,
-        //         NUMBER_9: 0,
-        //         NUMBER_10: 0,
-        //         NUMBER_11: 0,
-        //         NUMBER_12: 0,
-        //         NUMBER_13: 0,
-        //         NUMBER_14: 0,
-        //         NUMBER_15: 0,
-        //         NUMBER_16: 0,
-        //         NUMBER_17: 0,
-        //         NUMBER_18: 0,
-        //         NUMBER_19: 0,
-        //         NUMBER_20: 0,
-        //         NUMBER_21: 0,
-        //         NUMBER_22: 0,
-        //         NUMBER_23: 0,
-        //         NUMBER_24: 0,
-        //         NUMBER_25: 0,
-        //         NUMBER_26: 0,
-        //         NUMBER_27: Infinity,
-        //         NUMBER_28: Infinity,
-        //         NUMBER_29: -Infinity,
-        //
-        //         NUMBER_31: 45,
-        //         NUMBER_32: 45,
-        //         NUMBER_33: -0.45,
-        //         NUMBER_34: 4.5e+123,
-        //         NUMBER_35: 4.5e+123,
-        //         NUMBER_36: -4.5e-123,
-        //
-        //         NUMBER_41: 0,
-        //         NUMBER_42: 0,
-        //         NUMBER_43: 45,
-        //         NUMBER_44: 45,
-        //
-        //         NUMBER_51: 45,
-        //         NUMBER_52: 45,
-        //         NUMBER_53: 0,
-        //         NUMBER_54: 0,
-        //         NUMBER_55: 45,
-        //         NUMBER_56: 45,
-        //
-        //         // No conversion
-        //         NUMBER_1001: ' number:any ',
-        //         NUMBER_1002: ' num:any ',
-        //     }
-        //     const expectedForEnv = {
-        //         NUMBER_1: '0',
-        //         NUMBER_2: '0',
-        //         NUMBER_3: '1',
-        //         NUMBER_4: '1',
-        //         NUMBER_5: '1',
-        //         NUMBER_6: '1',
-        //         NUMBER_7: '1',
-        //         NUMBER_8: '1',
-        //         NUMBER_9: '0',
-        //         NUMBER_10: '0',
-        //         NUMBER_11: '0',
-        //         NUMBER_12: '0',
-        //         NUMBER_13: '0',
-        //         NUMBER_14: '0',
-        //         NUMBER_15: '0',
-        //         NUMBER_16: '0',
-        //         NUMBER_17: '0',
-        //         NUMBER_18: '0',
-        //         NUMBER_19: '0',
-        //         NUMBER_20: '0',
-        //         NUMBER_21: '0',
-        //         NUMBER_22: '0',
-        //         NUMBER_23: '0',
-        //         NUMBER_24: '0',
-        //         NUMBER_25: '0',
-        //         NUMBER_26: '0',
-        //         NUMBER_27: 'Infinity',
-        //         NUMBER_28: 'Infinity',
-        //         NUMBER_29: '-Infinity',
-        //
-        //         NUMBER_41: '0',
-        //         NUMBER_42: '0',
-        //         NUMBER_43: '45',
-        //         NUMBER_44: '45',
-        //
-        //         NUMBER_51: '45',
-        //         NUMBER_52: '45',
-        //         NUMBER_53: '0',
-        //         NUMBER_54: '0',
-        //         NUMBER_55: '45',
-        //         NUMBER_56: '45',
-        //
-        //         // No conversion
-        //         NUMBER_1001: ' number:any ',
-        //         NUMBER_1002: ' num:any ',
-        //     }
-        //
-        //     const dotenvConfig = useEnv(input)
-        //     const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
-        //
-        //     dotenvConversionConfig.parsed.should.deep.equal(expected)
-        //     process.env.should.deep.include(expectedForEnv)
-        //
-        //     done()
-        // })
+            // output
+            const expected = {
+                BOOLEAN_1: false,
+                BOOLEAN_2: false,
+                BOOLEAN_3: false,
+                BOOLEAN_4: false,
+                BOOLEAN_5: false,
+                BOOLEAN_6: false,
+                BOOLEAN_7: false,
+                BOOLEAN_8: false,
+                BOOLEAN_9: false,
+                BOOLEAN_10: false,
+                BOOLEAN_11: false,
+                BOOLEAN_12: false,
+                BOOLEAN_13: false,
+                BOOLEAN_14: false,
+                BOOLEAN_15: false,
+                BOOLEAN_16: false,
+                BOOLEAN_17: false,
+                BOOLEAN_18: false,
 
-        // it('method:bigint', function (done) {
-        //     // input
-        //     const input = 'method.bigint'
-        //
-        //     // output
-        //     const expected = {
-        //         BIGINT_1: 0n,
-        //         BIGINT_2: 0n,
-        //         BIGINT_3: 1n,
-        //         BIGINT_4: 1n,
-        //         BIGINT_5: 1n,
-        //         BIGINT_6: 1n,
-        //         BIGINT_7: 1n,
-        //         BIGINT_8: 1n,
-        //         BIGINT_9: 0n,
-        //         BIGINT_10: 0n,
-        //         BIGINT_11: 0n,
-        //         BIGINT_12: 0n,
-        //         BIGINT_13: 0n,
-        //         BIGINT_14: 0n,
-        //         BIGINT_15: 0n,
-        //         BIGINT_16: 0n,
-        //         BIGINT_17: 0n,
-        //         BIGINT_18: 0n,
-        //         BIGINT_19: 0n,
-        //         BIGINT_20: 0n,
-        //         BIGINT_21: 0n,
-        //         BIGINT_22: 0n,
-        //         BIGINT_23: 0n,
-        //         BIGINT_24: 0n,
-        //         BIGINT_25: 0n,
-        //
-        //         BIGINT_31: 123n,
-        //         BIGINT_32: 123n,
-        //         BIGINT_33: -123n,
-        //         BIGINT_34: 123n,
-        //
-        //         BIGINT_41: 123n,
-        //         BIGINT_42: 123n,
-        //         BIGINT_43: -123n,
-        //         BIGINT_44: 123n,
-        //
-        //         BIGINT_51: 0n,
-        //         BIGINT_52: 0n,
-        //         BIGINT_53: 123n,
-        //
-        //         BIGINT_61: 123n,
-        //         BIGINT_62: 123n,
-        //         BIGINT_63: 123n,
-        //         BIGINT_64: 0n,
-        //         BIGINT_65: 0n,
-        //         BIGINT_66: 123n,
-        //
-        //         // No conversion
-        //         BIGINT_1001: ' bigint:any ',
-        //         BIGINT_1002: ' big:any ',
-        //     }
-        //     const expectedForEnv = {
-        //         BIGINT_1: '0n',
-        //         BIGINT_2: '0n',
-        //         BIGINT_3: '1n',
-        //         BIGINT_4: '1n',
-        //         BIGINT_5: '1n',
-        //         BIGINT_6: '1n',
-        //         BIGINT_7: '1n',
-        //         BIGINT_8: '1n',
-        //         BIGINT_9: '0n',
-        //         BIGINT_10: '0n',
-        //         BIGINT_11: '0n',
-        //         BIGINT_12: '0n',
-        //         BIGINT_13: '0n',
-        //         BIGINT_14: '0n',
-        //         BIGINT_15: '0n',
-        //         BIGINT_16: '0n',
-        //         BIGINT_17: '0n',
-        //         BIGINT_18: '0n',
-        //         BIGINT_19: '0n',
-        //         BIGINT_20: '0n',
-        //         BIGINT_21: '0n',
-        //         BIGINT_22: '0n',
-        //         BIGINT_23: '0n',
-        //         BIGINT_24: '0n',
-        //         BIGINT_25: '0n',
-        //
-        //         BIGINT_31: '123n',
-        //         BIGINT_32: '123n',
-        //         BIGINT_33: '-123n',
-        //         BIGINT_34: '123n',
-        //
-        //         BIGINT_41: '123n',
-        //         BIGINT_42: '123n',
-        //         BIGINT_43: '-123n',
-        //         BIGINT_44: '123n',
-        //
-        //         BIGINT_51: '0n',
-        //         BIGINT_52: '0n',
-        //         BIGINT_53: '123n',
-        //
-        //         BIGINT_61: '123n',
-        //         BIGINT_62: '123n',
-        //         BIGINT_63: '123n',
-        //         BIGINT_64: '0n',
-        //         BIGINT_65: '0n',
-        //         BIGINT_66: '123n',
-        //
-        //         // No conversion
-        //         BIGINT_1001: ' bigint:any ',
-        //         BIGINT_1002: ' big:any ',
-        //     }
-        //
-        //     const dotenvConfig = useEnv(input)
-        //     const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
-        //
-        //     dotenvConversionConfig.parsed.should.deep.equal(expected)
-        //     process.env.should.deep.include(expectedForEnv)
-        //
-        //     done()
-        // })
+                BOOLEAN_21: false,
+                BOOLEAN_22: false,
+                BOOLEAN_23: false,
+                BOOLEAN_24: false,
+                BOOLEAN_25: false,
+                BOOLEAN_26: false,
+                BOOLEAN_27: false,
+                BOOLEAN_28: false,
+                BOOLEAN_29: false,
+                BOOLEAN_30: false,
+                BOOLEAN_31: false,
+                BOOLEAN_32: false,
+                BOOLEAN_33: false,
+                BOOLEAN_34: false,
+                BOOLEAN_35: false,
 
-        // it('method:symbol', function (done) {
-        //     // input
-        //     const input = 'method.symbol'
-        //
-        //     // output
-        //     const expected = {
-        //         SYMBOL_1: Symbol(),
-        //         SYMBOL_2: Symbol(),
-        //         SYMBOL_3: Symbol('any'),
-        //         SYMBOL_4: Symbol('any'),
-        //
-        //         SYMBOL_11: Symbol('any'),
-        //         SYMBOL_12: Symbol('any'),
-        //
-        //         // No conversion
-        //         SYMBOL_1001: ' symbol:any ',
-        //     }
-        //     const expectedForEnv = {
-        //         SYMBOL_1: 'Symbol()',
-        //         SYMBOL_2: 'Symbol()',
-        //         SYMBOL_3: 'Symbol(any)',
-        //         SYMBOL_4: 'Symbol(any)',
-        //
-        //         SYMBOL_11: 'Symbol(any)',
-        //         SYMBOL_12: 'Symbol(any)',
-        //
-        //         // No conversion
-        //         SYMBOL_1001: ' symbol:any ',
-        //     }
-        //
-        //     const dotenvConfig = useEnv(input)
-        //     const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
-        //
-        //     dotenvConversionConfig.parsed.SYMBOL_1.should.be.a('symbol')
-        //     dotenvConversionConfig.parsed.SYMBOL_1.toString().should.equal(expected.SYMBOL_1.toString())
-        //     dotenvConversionConfig.parsed.SYMBOL_2.should.be.a('symbol')
-        //     dotenvConversionConfig.parsed.SYMBOL_2.toString().should.equal(expected.SYMBOL_2.toString())
-        //     dotenvConversionConfig.parsed.SYMBOL_3.should.be.a('symbol')
-        //     dotenvConversionConfig.parsed.SYMBOL_3.toString().should.equal(expected.SYMBOL_3.toString())
-        //     dotenvConversionConfig.parsed.SYMBOL_4.should.be.a('symbol')
-        //     dotenvConversionConfig.parsed.SYMBOL_4.toString().should.equal(expected.SYMBOL_4.toString())
-        //     dotenvConversionConfig.parsed.SYMBOL_11.should.be.a('symbol')
-        //     dotenvConversionConfig.parsed.SYMBOL_11.toString().should.equal(expected.SYMBOL_11.toString())
-        //     dotenvConversionConfig.parsed.SYMBOL_12.should.be.a('symbol')
-        //     dotenvConversionConfig.parsed.SYMBOL_12.toString().should.equal(expected.SYMBOL_12.toString())
-        //     process.env.should.deep.include(expectedForEnv)
-        //
-        //     done()
-        // })
+                BOOLEAN_41: false,
+                BOOLEAN_42: false,
+                BOOLEAN_43: false,
+
+                BOOLEAN_101: false,
+                BOOLEAN_102: false,
+                BOOLEAN_103: false,
+                BOOLEAN_104: false,
+                BOOLEAN_105: false,
+
+                BOOLEAN_201: true,
+                BOOLEAN_202: true,
+
+                BOOLEAN_301: false,
+                BOOLEAN_302: false,
+                BOOLEAN_303: true,
+                BOOLEAN_304: true,
+
+                // No conversion
+                BOOLEAN_1001: 'BOOLEAN:any',
+                BOOLEAN_1002: 'BOOL:any',
+                BOOLEAN_1003: ' BOOLEAN: any ',
+                BOOLEAN_1004: ' BOOL: any ',
+                BOOLEAN_1005: ' boolean : any ',
+                BOOLEAN_1006: ' bool : any ',
+            }
+            const expectedForEnv = {
+                BOOLEAN_1: 'false',
+                BOOLEAN_2: 'false',
+                BOOLEAN_3: 'false',
+                BOOLEAN_4: 'false',
+                BOOLEAN_5: 'false',
+                BOOLEAN_6: 'false',
+                BOOLEAN_7: 'false',
+                BOOLEAN_8: 'false',
+                BOOLEAN_9: 'false',
+                BOOLEAN_10: 'false',
+                BOOLEAN_11: 'false',
+                BOOLEAN_12: 'false',
+                BOOLEAN_13: 'false',
+                BOOLEAN_14: 'false',
+                BOOLEAN_15: 'false',
+                BOOLEAN_16: 'false',
+                BOOLEAN_17: 'false',
+                BOOLEAN_18: 'false',
+
+                BOOLEAN_21: 'false',
+                BOOLEAN_22: 'false',
+                BOOLEAN_23: 'false',
+                BOOLEAN_24: 'false',
+                BOOLEAN_25: 'false',
+                BOOLEAN_26: 'false',
+                BOOLEAN_27: 'false',
+                BOOLEAN_28: 'false',
+                BOOLEAN_29: 'false',
+                BOOLEAN_30: 'false',
+                BOOLEAN_31: 'false',
+                BOOLEAN_32: 'false',
+                BOOLEAN_33: 'false',
+                BOOLEAN_34: 'false',
+                BOOLEAN_35: 'false',
+
+                BOOLEAN_41: 'false',
+                BOOLEAN_42: 'false',
+                BOOLEAN_43: 'false',
+
+                BOOLEAN_101: 'false',
+                BOOLEAN_102: 'false',
+                BOOLEAN_103: 'false',
+                BOOLEAN_104: 'false',
+                BOOLEAN_105: 'false',
+
+                BOOLEAN_201: 'true',
+                BOOLEAN_202: 'true',
+
+                BOOLEAN_301: 'false',
+                BOOLEAN_302: 'false',
+                BOOLEAN_303: 'true',
+                BOOLEAN_304: 'true',
+
+                // No conversion
+                BOOLEAN_1001: 'BOOLEAN:any',
+                BOOLEAN_1002: 'BOOL:any',
+                BOOLEAN_1003: ' BOOLEAN: any ',
+                BOOLEAN_1004: ' BOOL: any ',
+                BOOLEAN_1005: ' boolean : any ',
+                BOOLEAN_1006: ' bool : any ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('method:number', function (done) {
+            // input
+            const input = 'method.number'
+
+            // output
+            const expected = {
+                NUMBER_1: 1,
+                NUMBER_2: 1,
+                NUMBER_3: 1,
+                NUMBER_4: 1,
+                NUMBER_5: 1,
+                NUMBER_6: 1,
+                NUMBER_7: 0,
+                NUMBER_8: 0,
+                NUMBER_9: 0,
+                NUMBER_10: 0,
+                NUMBER_11: 0,
+                NUMBER_12: 0,
+                NUMBER_13: 0,
+                NUMBER_14: 0,
+                NUMBER_15: 0,
+                NUMBER_16: 0,
+                NUMBER_17: 0,
+                NUMBER_18: 0,
+                NUMBER_19: 0,
+                NUMBER_20: 0,
+                NUMBER_21: 0,
+                NUMBER_22: 0,
+                NUMBER_23: 0,
+                NUMBER_24: 0,
+                NUMBER_25: Infinity,
+                NUMBER_26: Infinity,
+                NUMBER_27: -Infinity,
+
+                NUMBER_31: 45,
+                NUMBER_32: 45,
+                NUMBER_33: -0.45,
+                NUMBER_34: 4.5e+123,
+                NUMBER_35: 4.5e+123,
+                NUMBER_36: -4.5e-123,
+
+                NUMBER_41: 0,
+                NUMBER_42: 4.5e+123,
+                NUMBER_43: 0,
+                NUMBER_44: 0,
+                NUMBER_45: 1,
+                NUMBER_46: 0,
+                NUMBER_47: 4.5e+123,
+                NUMBER_48: 0,
+
+                NUMBER_51: 0,
+                NUMBER_52: 4.5e+123,
+                NUMBER_53: 0,
+                NUMBER_54: 0,
+                NUMBER_55: 1,
+                NUMBER_56: 0,
+                NUMBER_57: 4.5e+123,
+                NUMBER_58: 0,
+
+                // No conversion
+                NUMBER_1001: 'NUMBER:any',
+                NUMBER_1002: 'NUM:any',
+                NUMBER_1003: ' NUMBER: any ',
+                NUMBER_1004: ' NUM: any ',
+                NUMBER_1005: ' number : any ',
+                NUMBER_1006: ' num : any ',
+            }
+            const expectedForEnv = {
+                NUMBER_1: '1',
+                NUMBER_2: '1',
+                NUMBER_3: '1',
+                NUMBER_4: '1',
+                NUMBER_5: '1',
+                NUMBER_6: '1',
+                NUMBER_7: '0',
+                NUMBER_8: '0',
+                NUMBER_9: '0',
+                NUMBER_10: '0',
+                NUMBER_11: '0',
+                NUMBER_12: '0',
+                NUMBER_13: '0',
+                NUMBER_14: '0',
+                NUMBER_15: '0',
+                NUMBER_16: '0',
+                NUMBER_17: '0',
+                NUMBER_18: '0',
+                NUMBER_19: '0',
+                NUMBER_20: '0',
+                NUMBER_21: '0',
+                NUMBER_22: '0',
+                NUMBER_23: '0',
+                NUMBER_24: '0',
+                NUMBER_25: 'Infinity',
+                NUMBER_26: 'Infinity',
+                NUMBER_27: '-Infinity',
+
+                NUMBER_31: '45',
+                NUMBER_32: '45',
+                NUMBER_33: '-0.45',
+                NUMBER_34: '4.5e+123',
+                NUMBER_35: '4.5e+123',
+                NUMBER_36: '-4.5e-123',
+
+                NUMBER_41: '0',
+                NUMBER_42: '4.5e+123',
+                NUMBER_43: '0',
+                NUMBER_44: '0',
+                NUMBER_45: '1',
+                NUMBER_46: '0',
+                NUMBER_47: '4.5e+123',
+                NUMBER_48: '0',
+
+                NUMBER_51: '0',
+                NUMBER_52: '4.5e+123',
+                NUMBER_53: '0',
+                NUMBER_54: '0',
+                NUMBER_55: '1',
+                NUMBER_56: '0',
+                NUMBER_57: '4.5e+123',
+                NUMBER_58: '0',
+
+                // No conversion
+                NUMBER_1001: 'NUMBER:any',
+                NUMBER_1002: 'NUM:any',
+                NUMBER_1003: ' NUMBER: any ',
+                NUMBER_1004: ' NUM: any ',
+                NUMBER_1005: ' number : any ',
+                NUMBER_1006: ' num : any ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('method:bigint', function (done) {
+            // input
+            const input = 'method.bigint'
+
+            // output
+            const expected = {
+                BIGINT_1: 1n,
+                BIGINT_2: 1n,
+                BIGINT_3: 1n,
+                BIGINT_4: 1n,
+                BIGINT_5: 1n,
+                BIGINT_6: 1n,
+                BIGINT_7: 0n,
+                BIGINT_8: 0n,
+                BIGINT_9: 0n,
+                BIGINT_10: 0n,
+                BIGINT_11: 0n,
+                BIGINT_12: 0n,
+                BIGINT_13: 0n,
+                BIGINT_14: 0n,
+                BIGINT_15: 0n,
+                BIGINT_16: 0n,
+                BIGINT_17: 0n,
+                BIGINT_18: 0n,
+                BIGINT_19: 0n,
+                BIGINT_20: 0n,
+                BIGINT_21: 0n,
+                BIGINT_22: 0n,
+                BIGINT_23: 0n,
+
+                BIGINT_31: 5n,
+                BIGINT_32: 5n,
+                BIGINT_33: -5n,
+                BIGINT_34: 5n,
+                BIGINT_35: 5n,
+                BIGINT_36: -5n,
+
+                BIGINT_41: 0n,
+                BIGINT_42: 5n,
+                BIGINT_43: 0n,
+                BIGINT_44: 45000000000n,
+                BIGINT_45: 0n,
+                BIGINT_46: 0n,
+                BIGINT_47: 1n,
+                BIGINT_48: 0n,
+                BIGINT_49: 5n,
+                BIGINT_50: 0n,
+                BIGINT_51: 45000000000n,
+                BIGINT_52: 0n,
+
+                BIGINT_61: 0n,
+                BIGINT_62: 5n,
+                BIGINT_63: 0n,
+                BIGINT_64: 45000000000n,
+                BIGINT_65: 0n,
+                BIGINT_66: 0n,
+                BIGINT_67: 1n,
+                BIGINT_68: 0n,
+                BIGINT_69: 5n,
+                BIGINT_70: 0n,
+                BIGINT_71: 45000000000n,
+                BIGINT_72: 0n,
+
+                // No conversion
+                BIGINT_1001: 'BIGINT:any',
+                BIGINT_1002: 'BIG:any',
+                BIGINT_1003: ' BIGINT: any ',
+                BIGINT_1004: ' BIG: any ',
+                BIGINT_1005: ' bigint : any ',
+                BIGINT_1006: ' big : any ',
+            }
+            const expectedForEnv = {
+                BIGINT_1: '1n',
+                BIGINT_2: '1n',
+                BIGINT_3: '1n',
+                BIGINT_4: '1n',
+                BIGINT_5: '1n',
+                BIGINT_6: '1n',
+                BIGINT_7: '0n',
+                BIGINT_8: '0n',
+                BIGINT_9: '0n',
+                BIGINT_10: '0n',
+                BIGINT_11: '0n',
+                BIGINT_12: '0n',
+                BIGINT_13: '0n',
+                BIGINT_14: '0n',
+                BIGINT_15: '0n',
+                BIGINT_16: '0n',
+                BIGINT_17: '0n',
+                BIGINT_18: '0n',
+                BIGINT_19: '0n',
+                BIGINT_20: '0n',
+                BIGINT_21: '0n',
+                BIGINT_22: '0n',
+                BIGINT_23: '0n',
+
+                BIGINT_31: '5n',
+                BIGINT_32: '5n',
+                BIGINT_33: '-5n',
+                BIGINT_34: '5n',
+                BIGINT_35: '5n',
+                BIGINT_36: '-5n',
+
+                BIGINT_41: '0n',
+                BIGINT_42: '5n',
+                BIGINT_43: '0n',
+                BIGINT_44: '45000000000n',
+                BIGINT_45: '0n',
+                BIGINT_46: '0n',
+                BIGINT_47: '1n',
+                BIGINT_48: '0n',
+                BIGINT_49: '5n',
+                BIGINT_50: '0n',
+                BIGINT_51: '45000000000n',
+                BIGINT_52: '0n',
+
+                BIGINT_61: '0n',
+                BIGINT_62: '5n',
+                BIGINT_63: '0n',
+                BIGINT_64: '45000000000n',
+                BIGINT_65: '0n',
+                BIGINT_66: '0n',
+                BIGINT_67: '1n',
+                BIGINT_68: '0n',
+                BIGINT_69: '5n',
+                BIGINT_70: '0n',
+                BIGINT_71: '45000000000n',
+                BIGINT_72: '0n',
+
+                // No conversion
+                BIGINT_1001: 'BIGINT:any',
+                BIGINT_1002: 'BIG:any',
+                BIGINT_1003: ' BIGINT: any ',
+                BIGINT_1004: ' BIG: any ',
+                BIGINT_1005: ' bigint : any ',
+                BIGINT_1006: ' big : any ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.should.deep.equal(expected)
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('method:symbol', function (done) {
+            // input
+            const input = 'method.symbol'
+
+            // output
+            const expected = {
+                SYMBOL_1: Symbol(),
+                SYMBOL_2: Symbol(' '),
+
+                SYMBOL_11: Symbol('any'),
+                SYMBOL_12: Symbol(' any '),
+
+                SYMBOL_21: Symbol('any'),
+                SYMBOL_22: Symbol('any'),
+                SYMBOL_23: Symbol(' any '),
+
+                // No conversion
+                SYMBOL_1001: 'SYMBOL:any',
+                SYMBOL_1002: ' SYMBOL: any ',
+                SYMBOL_1003: ' symbol : any ',
+            }
+            const expectedForEnv = {
+                SYMBOL_1: 'Symbol()',
+                SYMBOL_2: 'Symbol( )',
+
+                SYMBOL_11: 'Symbol(any)',
+                SYMBOL_12: 'Symbol( any )',
+
+                SYMBOL_21: 'Symbol(any)',
+                SYMBOL_22: 'Symbol(any)',
+                SYMBOL_23: 'Symbol( any )',
+
+                // No conversion
+                SYMBOL_1001: 'SYMBOL:any',
+                SYMBOL_1002: ' SYMBOL: any ',
+                SYMBOL_1003: ' symbol : any ',
+            }
+
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            dotenvConversionConfig.parsed.SYMBOL_1.should.be.a('symbol')
+            dotenvConversionConfig.parsed.SYMBOL_1.toString().should.equal(expected.SYMBOL_1.toString())
+            dotenvConversionConfig.parsed.SYMBOL_2.should.be.a('symbol')
+            dotenvConversionConfig.parsed.SYMBOL_2.toString().should.equal(expected.SYMBOL_2.toString())
+            dotenvConversionConfig.parsed.SYMBOL_11.should.be.a('symbol')
+            dotenvConversionConfig.parsed.SYMBOL_11.toString().should.equal(expected.SYMBOL_11.toString())
+            dotenvConversionConfig.parsed.SYMBOL_12.should.be.a('symbol')
+            dotenvConversionConfig.parsed.SYMBOL_12.toString().should.equal(expected.SYMBOL_12.toString())
+            dotenvConversionConfig.parsed.SYMBOL_21.should.be.a('symbol')
+            dotenvConversionConfig.parsed.SYMBOL_21.toString().should.equal(expected.SYMBOL_21.toString())
+            dotenvConversionConfig.parsed.SYMBOL_22.should.be.a('symbol')
+            dotenvConversionConfig.parsed.SYMBOL_22.toString().should.equal(expected.SYMBOL_22.toString())
+            dotenvConversionConfig.parsed.SYMBOL_23.should.be.a('symbol')
+            dotenvConversionConfig.parsed.SYMBOL_23.toString().should.equal(expected.SYMBOL_23.toString())
+            process.env.should.deep.include(expectedForEnv)
+
+            done()
+        })
 
         // it('method:array', function (done) {
         //     // input

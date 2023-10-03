@@ -148,13 +148,14 @@ function defaultConfig() {
             auto(value, name, config) {
                 value = restoreValue(value, config.fromDotEnv)
                 if (typeof value === 'string') {
-                    const findPossibleMethod = methods => methods.find(method => value.startsWith(`${method}:`))
+                    const lTrimmed = value.replace(/^\s+/, '')
+                    const findPossibleMethod = methods => methods.find(method => lTrimmed.startsWith(`${method}:`))
                     let possibleMethod
                     // find in methods
                     possibleMethod = findPossibleMethod(Object.keys(this))
                     if (possibleMethod) {
                         return this[possibleMethod](
-                            value.substring(possibleMethod.length + 1),
+                            lTrimmed.substring(possibleMethod.length + 1),
                             name,
                             config,
                         )
@@ -163,7 +164,7 @@ function defaultConfig() {
                     possibleMethod = findPossibleMethod(Object.keys(config.methodAliases))
                     if (possibleMethod) {
                         return this[config.methodAliases[possibleMethod]](
-                            value.substring(possibleMethod.length + 1),
+                            lTrimmed.substring(possibleMethod.length + 1),
                             name,
                             config,
                         )
@@ -230,14 +231,10 @@ function defaultConfig() {
             },
             symbol(value) {
                 const trimmed = value.trim()
-                if (!trimmed) {
-                    return Symbol()
+                if (SYMBOL_REGEX.test(trimmed)) {
+                    return Symbol(trimmed.slice(7, -1))
                 }
-                return Symbol(
-                    SYMBOL_REGEX.test(trimmed)
-                        ? trimmed.slice(7, -1)
-                        : trimmed,
-                )
+                return Symbol(value)
             },
             array(value) {
                 const trimmed = value.trim()
