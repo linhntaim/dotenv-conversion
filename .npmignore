@@ -25,6 +25,7 @@ test
 # Common
 node_modules
 .DS_Store
+src
 *.local
 *.local.*
 .env
