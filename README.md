@@ -19,6 +19,7 @@ then dotenv-conversion is your tool.
     - [Method Aliases](#method-aliases)
   - [Custom Conversion on a Specific Variable](#custom-conversion-on-a-specific-variable)
   - [Prevent Variables from Conversion](#prevent-variables-from-conversion)
+  - [Ignore `process.env`](#ignore-processenv)
 
 
 ## Installation
@@ -139,7 +140,8 @@ console.log(process.env.NUMBER)         // (string) '100'
 
 By default, environment variables will be converted automatically based on its string value.
 
-Currently, auto-conversion supports:
+Currently, auto-conversion supports 
+`null`, `undefined`, `boolean`, `number`, `bigint`, `symbol`, `array`, `object` as follows:
 
 - **null**
 
@@ -494,7 +496,8 @@ NOT_NUMBER=" number : true "
 
 #### Built-in Methods
 
-Here are built-in conversion methods that can be used now: 
+Here are built-in conversion methods (`boolean`, `number`, `bigint`, `string`, `symbol`, `array`, `object`)
+that can be used now: 
 
 - **boolean**
 
@@ -1193,7 +1196,7 @@ const dotenvConversion = require('dotenv-conversion')
 
 const config = dotenv.config()
 
-// Define variables that should be excluded in any conversion
+// Declare variables that should be excluded in any conversion
 config.prevents = ['VARIABLE_3', 'VARIABLE_4']
 
 const {parsed} = dotenvConversion.convert(config)
@@ -1205,4 +1208,55 @@ console.log(process.env.VARIABLE_1)     // (string) 'true'
 console.log(process.env.VARIABLE_2)     // (string) '{"foo":"bar"}'
 console.log(process.env.VARIABLE_3)     // (string) 'bool:true'
 console.log(process.env.VARIABLE_4)     // (string) 'object:{"foo":"bar"}'
+```
+
+### Ignore `process.env`
+
+By default, after conversion, the variables will also be saved into `process.env` with their values kept in string format.
+If you want to ignore this execution, please do as follows:
+
+- Standalone:
+
+```javascript
+const dotenvConversion = require('dotenv-conversion')
+/* or ES6 */
+// import dotenv from 'dotenv'
+// import dotenvConversion from 'dotenv-conversion'
+
+const config = {
+    parsed: {
+        VARIABLE: 'yes'
+    }
+}
+
+// Ignore process.env
+config.ignoreProcessEnv = true
+
+const {parsed} = dotenvConversion.convert(config)
+console.log(parsed.VARIABLE)        // (boolean) true
+console.log(process.env.VARIABLE)   // (undefined) undefined // if not ignore, value will be 'true'
+```
+
+- With `dotenv`:
+
+```dotenv
+# .env file
+VARIABLE=yes
+```
+
+```javascript
+const dotenv = require('dotenv')
+const dotenvConversion = require('dotenv-conversion')
+/* or ES6 */
+// import dotenv from 'dotenv'
+// import dotenvConversion from 'dotenv-conversion'
+
+const config = dotenv.config()
+
+// Ignore process.env
+config.ignoreProcessEnv = true
+
+const {parsed} = dotenvConversion.convert(config)
+console.log(parsed.VARIABLE)        // (boolean) true
+console.log(process.env.VARIABLE)   // (string) 'yes' // if not ignore, value will be 'true'
 ```
