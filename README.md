@@ -9,6 +9,8 @@ Dotenv-conversion adds variable conversion on top of dotenv. If you find yoursel
 needing to convert/transform environment variables to anything more useful than strings,
 then dotenv-conversion is your tool.
 
+---
+
 - [Installation](#installation)
 - [Usage](#usage)
 - [Features](#features)
@@ -17,10 +19,12 @@ then dotenv-conversion is your tool.
     - [Built-in Methods](#built-in-methods)
     - [Custom Methods](#custom-methods)
     - [Method Aliases](#method-aliases)
-  - [Custom Conversion on a Specific Variable](#custom-conversion-on-a-specific-variable)
+    - [The special built-in method `auto`](#the-special-built-in-method-auto)
+  - [Custom Conversion for a Specific Variable](#custom-conversion-for-a-specific-variable)
   - [Prevent Variables from Conversion](#prevent-variables-from-conversion)
   - [Ignore `process.env`](#ignore-processenv)
 
+---
 
 ## Installation
 
@@ -344,7 +348,7 @@ console.log(process.env.VARIABLE_3)     // (string) '5n'
 
 - **symbol**
 
-Values to be a symbol must match the format: `Symbol(${string})`.
+Values to be converted to symbol must match the format: `Symbol(${string})`.
 
 *Spaces will be trimmed.*
 
@@ -373,7 +377,8 @@ console.log(process.env.VARIABLE_2)     // (string) 'Symbol(a)'
 
 - **array**
 
-Values to be an array must match the format: a string contains `${value}` separated by `,`;
+Values to be converted to array must match the format: 
+a string contains `${value}` separated by commas;
 the `value` could be `null`,`boolean`, `number`, `"string"`, `[..array..]` or `{..object..}`;
 and all could be wrapped or not wrapped by `[` and `]` (*must*, when the string is empty).
 
@@ -411,9 +416,10 @@ console.log(process.env.VARIABLE_5)     // (string) '[]'
 
 - **object**
 
-Values to be a json must match the format:
-a string contains pairs of `${key}:${value}` separated by `,`; the `key` must be `"string"`
-and the `value` could be `null`,`boolean`, `number`, `"string"`, `[..array..]` or `{..object..}`;
+Values to be converted to object must match the format:
+a string contains `${key}:${value}` separated by commas; 
+the `key` must be `"string"` and 
+the `value` could be `null`,`boolean`, `number`, `"string"`, `[..array..]` or `{..object..}`;
 and all could be wrapped or not wrapped by `{` and `}` (*must*, when the string is empty).
 
 *Spaces will be trimmed.*
@@ -450,7 +456,7 @@ console.log(process.env.VARIABLE_5)     // (string) '{}'
 
 ### Conversion Methods
 
-Auto-conversion also looks for the conversion method indicated by a variable
+[Auto-Conversion](#auto-conversion) also looks for the conversion method indicated by a variable
 when it cannot convert that variable to anything but a string,
 and uses the method to make the conversion.
 
@@ -492,7 +498,7 @@ NOT_BOOLEAN="boolean :1"
 NOT_NUMBER=" number : true "
 ```
 
-**Notes: `method` is case-sensitive.
+***Notes*: `method` is case-sensitive.
 
 #### Built-in Methods
 
@@ -725,7 +731,7 @@ console.log(process.env.VARIABLE_2)     // (string) '4.5e1'
 console.log(process.env.VARIABLE_3)     // (string) ' anything '
 ```
 
-**Note: Auto-conversion will use the conversion method `string` for all variables 
+***Note:* [Auto-Conversion](#auto-conversion) will use the conversion method `string` for all variables 
 that it cannot convert to anything but a string. 
 So, `VARIABLE=text` is also the same as `VARIABLE=string:text`.
 
@@ -956,6 +962,45 @@ console.log(process.env.VARIABLE_3)     // (string) 'true'
 console.log(process.env.VARIABLE_4)     // (string) 'false'
 ```
 
+***Note:* A conversion method always has 3 params in order: `value`, `name` and `config`.
+
+```dotenv
+# .env file
+VARIABLE=text
+```
+
+```javascript
+const dotenv = require('dotenv')
+const dotenvConversion = require('dotenv-conversion')
+/* or ES6 */
+// import dotenv from 'dotenv'
+// import dotenvConversion from 'dotenv-conversion'
+
+const dotenvConfig = dotenv.config()
+
+// Override built-int methods `string`
+config.methods = {
+    string(value, name, config) {
+        console.log('value:', value)
+        console.log('name:', name)
+        console.log('config:', config)
+        return value
+    },
+}
+
+const {parsed} = dotenvConversion.convert(dotenvConfig)
+
+/* CONSOLE OUTPUT:
+value: text
+name: VARIABLE
+config: {
+    parsed: { ... },
+    methods: { ... },
+    ...
+}
+*/
+```
+
 #### Method Aliases
 
 When you don't like the (long) method name, but you don't want to change it directly 
@@ -1032,7 +1077,7 @@ console.log(process.env.VARIABLE_1)     // (string) 'true'
 console.log(process.env.VARIABLE_2)     // (string) '4.5e+123'
 ```
 
-**Note:
+***Note:*
 
 - You cannot override existing aliases.
 - Alias named by existing methods is not allowed
@@ -1106,7 +1151,104 @@ console.log(process.env.VARIABLE_7)     // (string) 'CUSTOM_STRING:text'
 console.log(process.env.VARIABLE_8)     // (string) 'true'
 ```
 
-### Custom Conversion on a Specific Variable
+#### The special built-in method `auto`
+
+The [Auto-Conversion](#auto-conversion) use the built-in conversion method `auto` 
+for its automated execution.
+
+Logically, you can override it. But certainly, it is **HIGHLY NOT RECOMMENDED**, 
+unless you want to change the whole auto-conversion process.
+
+```dotenv
+# .env file
+VARIABLE_1=text
+VARIABLE_2=true
+VARIABLE_3=123.5
+VARIABLE_4=boolean:yes
+```
+
+```javascript
+const dotenv = require('dotenv')
+const dotenvConversion = require('dotenv-conversion')
+/* or ES6 */
+// import dotenv from 'dotenv'
+// import dotenvConversion from 'dotenv-conversion'
+
+const config = dotenv.config()
+
+// Override the conversion method `auto`
+config.methods = {
+    auto(value) {
+        return 'overridden'
+    },
+}
+
+const {parsed} = dotenvConversion.convert(config)
+console.log(parsed.VARIABLE_1)          // (string) 'overridden'
+console.log(parsed.VARIABLE_2)          // (string) 'overridden'
+console.log(parsed.VARIABLE_3)          // (string) 'overridden'
+console.log(parsed.VARIABLE_4)          // (string) 'overridden'
+console.log(process.env.VARIABLE_1)     // (string) 'overridden'
+console.log(process.env.VARIABLE_2)     // (string) 'overridden'
+console.log(process.env.VARIABLE_3)     // (string) 'overridden'
+console.log(process.env.VARIABLE_4)     // (string) 'overridden'
+```
+
+***Note:* The override will affect only the [Auto-Conversion](#auto-conversion) feature.
+
+Besides, you need to avoid those worthless actions:
+- Defining [aliases](#method-aliases) to the `auto`.
+- Defining [custom conversions](#custom-conversion-for-a-specific-variable) that point to `auto`.
+
+The reuse of `auto` could be an option if you know what to do:
+
+```dotenv
+# .env file
+STATE=state:stop
+
+RUNNING_VALUE=true
+STOPPED_VALUE_1={"reason":"reason1"}
+STOPPED_VALUE_2={"reason":"reason2","code":123}
+```
+
+```javascript
+const dotenv = require('dotenv')
+const dotenvConversion = require('dotenv-conversion')
+/* or ES6 */
+// import dotenv from 'dotenv'
+// import dotenvConversion from 'dotenv-conversion'
+
+const config = dotenv.config()
+
+const originEnv = {...config.parsed}
+config.methods = {
+    state(value, ...params) {
+        switch (value) {
+            case 'running':
+                value = originEnv.RUNNING_VALUE
+                break
+            case 'stop2':
+                value = originEnv.STOPPED_VALUE_2
+                break
+            case 'stop1':
+            default:
+                value = originEnv.STOPPED_VALUE_1
+                break
+        }
+        // When reusing `auto`, make sure you pass all available params of the method to it
+        return this.auto(value, ...params)
+    },
+}
+
+const {parsed} = dotenvConversion.convert(config)
+console.log(parsed.STATE)          // (object) {"reason": "reason1"}
+console.log(process.env.STATE)     // (string) '{"reason":"reason1"}'
+```
+
+### Custom Conversion for a Specific Variable
+
+Custom conversion for a specific variable could be a function or 
+a string refers to a conversion method or alias as follows:
 
 ```dotenv
 # .env file
@@ -1143,7 +1285,7 @@ config.specs = {
     },
   
     // Custom conversion for `VARIABLE_5
-    VARIABLE_5(value, name, config_) {
+    VARIABLE_5(value) {
         // reuse conversion method
         return config_.methods.boolean(value)
     },
@@ -1176,6 +1318,10 @@ console.log(process.env.VARIABLE_6)     // (string) 'false'
 console.log(process.env.VARIABLE_7)     // (string) 'false'
 console.log(process.env.VARIABLE_8)     // (string) 'boolean:true'
 ```
+
+***Note:* The function used in custom conversion also has 3 params in order 
+like the conversion methods: `value`, `name` and `config`. 
+See the note at the end of [Custom Methods](#custom-methods).
 
 ### Prevent Variables from Conversion
 
