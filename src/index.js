@@ -202,7 +202,7 @@ function defaultConfig() {
                 if (FORCING_FALSE_VALUES.includes(value)) {
                     return 0
                 }
-                value = parseFloat(value)
+                value = Number.parseFloat(value)
                 return Number.isNaN(value) ? 0 : value
             },
             bigint(value) {
@@ -216,20 +216,23 @@ function defaultConfig() {
                 if (FORCING_FALSE_VALUES.includes(value)) {
                     return 0n
                 }
+                if (INFINITY_VALUES.includes(value)) {
+                    return 0n
+                }
                 if (INTEGER_REGEX.test(value)) {
                     return BigInt(value)
                 }
                 if (BIGINT_REGEX.test(value)) {
                     return BigInt(value.slice(0, -1))
                 }
-                value = parseFloat(value)
+                value = Number.parseFloat(value)
                 switch (true) {
                     case Number.isNaN(value):
                         return 0n
                     case Number.isInteger(value):
                         return BigInt(value)
                     default:
-                        return BigInt(parseInt(value))
+                        return BigInt(Number.parseInt(value))
                 }
             },
             string(value) {
@@ -258,7 +261,7 @@ function defaultConfig() {
                     return this.string(value)
                 }
             },
-            json(value) {
+            object(value) {
                 const trimmed = value.trim()
                 if (!trimmed) {
                     return {}
@@ -281,7 +284,7 @@ function defaultConfig() {
             big: 'bigint',
             str: 'string',
             arr: 'array',
-            obj: 'json',
+            obj: 'object',
         },
     }
 }
