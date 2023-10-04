@@ -1,2 +1,33 @@
-tests/
-.travis.yml
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Test results
+.nyc_output
+coverage
+test
+
+# Common
+node_modules
+.DS_Store
+*.local
+*.local.*
+.env
+
+# Others
+.env.*
