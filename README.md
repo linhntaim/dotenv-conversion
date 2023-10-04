@@ -1153,7 +1153,7 @@ console.log(process.env.VARIABLE_8)     // (string) 'true'
 
 #### The special built-in method `auto`
 
-The [Auto-Conversion](#auto-conversion) use the built-in conversion method `auto` 
+The [Auto-Conversion](#auto-conversion) uses the built-in conversion method `auto` 
 for its automated execution.
 
 Logically, you can override it. But certainly, it is **HIGHLY NOT RECOMMENDED**, 
@@ -1196,11 +1196,11 @@ console.log(process.env.VARIABLE_4)     // (string) 'overridden'
 
 ***Note:* The override will affect only the [Auto-Conversion](#auto-conversion) feature.
 
-Besides, you need to avoid those worthless actions:
+Besides, you need to avoid these worthless actions:
 - Defining [aliases](#method-aliases) to the `auto`.
-- Defining [custom conversions](#custom-conversion-for-a-specific-variable) that point to `auto`.
+- Defining [custom conversions](#custom-conversion-for-a-specific-variable) that point to the `auto`.
 
-The reuse of `auto` could be an option if you know what to do:
+The reuse of the method `auto` could be an option if you know what to do:
 
 ```dotenv
 # .env file
