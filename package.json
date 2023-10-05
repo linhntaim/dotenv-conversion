@@ -8,6 +8,10 @@
             "require": "./dist/index.js",
             "default": "./dist/index.js"
         },
+        "./config": "./config.js",
+        "./config.js": "./config.js",
+        "./config-expand": "./config-expand.js",
+        "./config-expand.js": "./config-expand.js",
         "./package.json": "./package.json"
     },
     "scripts": {

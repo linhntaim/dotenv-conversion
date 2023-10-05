@@ -36,6 +36,9 @@ node_modules
 .babelrc
 .babelrc.*
 babel.config.*
+.nycrc
+.nycrc.*
+nyc.config.js
 .travis.yml
 /test
 /src
