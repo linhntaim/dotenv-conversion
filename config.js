@@ -9,5 +9,5 @@
         ),
     )
 
-    return dotenvConversion(env)
+    return global.dotenvConversion = dotenvConversion(env)
 })()

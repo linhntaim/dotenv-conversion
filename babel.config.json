@@ -4,8 +4,5 @@
     ],
     "plugins": [
         "add-module-exports"
-    ],
-    "comments": false,
-    "sourceMaps": true,
-    "minified": true
+    ]
 }

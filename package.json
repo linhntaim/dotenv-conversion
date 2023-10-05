@@ -1,6 +1,6 @@
 {
     "name": "dotenv-conversion",
-    "version": "2.0.3",
+    "version": "2.1.0",
     "description": "An extension for dotenv is to help converting environment variables to anything more useful than strings.",
     "main": "dist/index.js",
     "exports": {
@@ -16,7 +16,7 @@
     },
     "scripts": {
         "build": "babel ./src -d ./dist -D --delete-dir-on-start",
-        "test": "nyc mocha --require @babel/register",
+        "test": "nyc mocha ./tests --require @babel/register",
         "coverage": "nyc report --reporter=text-lcov | coveralls"
     },
     "repository": {

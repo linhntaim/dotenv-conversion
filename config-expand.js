@@ -10,5 +10,5 @@
         ),
     )
 
-    return dotenvConversion(dotenvExpand(env))
+    return global.dotenvConversion = dotenvConversion(dotenvExpand(env))
 })()

@@ -2513,7 +2513,7 @@ describe('dotenv-conversion', function () {
         })
 
         function useEnv(envBasename) {
-            fs.copyFileSync(`./test/inputs/${envBasename}.env`, dotEnvPath)
+            fs.copyFileSync(`./tests/inputs/${envBasename}.env`, dotEnvPath)
             return dotenv.config()
         }
 
@@ -4322,7 +4322,7 @@ describe('dotenv-conversion', function () {
         })
 
         function useEnv(envBasename) {
-            fs.copyFileSync(`./test/inputs/${envBasename}.env`, dotEnvPath)
+            fs.copyFileSync(`./tests/inputs/${envBasename}.env`, dotEnvPath)
             return dotenvExpand.expand(dotenv.config())
         }
 
@@ -4366,10 +4366,10 @@ describe('dotenv-conversion', function () {
         })
 
         function useEnv(level = 1) {
-            fs.copyFileSync(`./test/inputs/flow.env`, dotEnvPath)
-            level > 1 && fs.copyFileSync(`./test/inputs/flow.env.local`, `${dotEnvPath}.local`)
-            level > 2 && fs.copyFileSync(`./test/inputs/flow.env.test`, `${dotEnvPath}.test`)
-            level > 3 && fs.copyFileSync(`./test/inputs/flow.env.test.local`, `${dotEnvPath}.test.local`)
+            fs.copyFileSync(`./tests/inputs/flow.env`, dotEnvPath)
+            level > 1 && fs.copyFileSync(`./tests/inputs/flow.env.local`, `${dotEnvPath}.local`)
+            level > 2 && fs.copyFileSync(`./tests/inputs/flow.env.test`, `${dotEnvPath}.test`)
+            level > 3 && fs.copyFileSync(`./tests/inputs/flow.env.test.local`, `${dotEnvPath}.test.local`)
             return dotenvExpand.expand(dotenvFlow.config())
         }
 
