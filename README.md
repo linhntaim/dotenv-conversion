@@ -37,7 +37,7 @@ npm install dotenv-conversion --save
 - Standalone:
 
 ```javascript
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenvConversion from 'dotenv-conversion'
 
@@ -60,7 +60,7 @@ DEBUG=false
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -85,7 +85,7 @@ NUMBER=1e$EXPONENTIAL
 ```javascript
 const dotenv = require('dotenv')
 const dotenvExpand = require('dotenv-expand')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvExpand from 'dotenv-expand'
@@ -117,7 +117,7 @@ NUMBER=1e$EXPONENTIAL
 ```javascript
 const dotenvFlow = require('dotenv-flow')
 const dotenvExpand = require('dotenv-expand')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenvFlow from 'dotenv-flow'
 // import dotenvExpand from 'dotenv-expand'
@@ -161,7 +161,7 @@ VARIABLE_2=" null "
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -188,7 +188,7 @@ VARIABLE_2=" undefined "
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -219,7 +219,7 @@ VARIABLE_4=" no "
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -268,7 +268,7 @@ VARIABLE_19=" 4.5e+123 "
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -331,7 +331,7 @@ VARIABLE_3=" 5n "
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -361,7 +361,7 @@ VARIABLE_3=" Symbol(a) "
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -395,7 +395,7 @@ VARIABLE_5=" [ ] "
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -435,7 +435,7 @@ VARIABLE_5=" { } "
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -527,7 +527,7 @@ VARIABLE_12="boolean:anything else"
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -587,7 +587,7 @@ VARIABLE_17=number:string
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -658,7 +658,7 @@ VARIABLE_18=bigint:string
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -716,7 +716,7 @@ VARIABLE_3=" string: anything "
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -753,7 +753,7 @@ VARIABLE_8="bigint:Symbol( a )"
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -797,7 +797,7 @@ VARIABLE_7="array: a, b, c"
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -840,7 +840,7 @@ VARIABLE_8="object: \"a\": x, \"b\": y, \"c\": z"
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -883,7 +883,7 @@ VARIABLE_6=no_custom:yes
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -934,7 +934,7 @@ VARIABLE_4=boolean:true
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -971,7 +971,7 @@ VARIABLE=text
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -1016,7 +1016,7 @@ VARIABLE_3=U:text
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -1064,7 +1064,7 @@ VARIABLE_2=num:4.5e123
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -1097,7 +1097,7 @@ VARIABLE_8=b:yes
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -1169,7 +1169,7 @@ VARIABLE_4=boolean:yes
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -1213,7 +1213,7 @@ STOPPED_VALUE_2={"reason":"reason2","code":123}
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -1264,7 +1264,7 @@ VARIABLE_8=boolean:true
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -1335,7 +1335,7 @@ VARIABLE_4=object:{"foo":"bar"}
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -1364,7 +1364,7 @@ If you want to ignore this execution, please do as follows:
 - Standalone:
 
 ```javascript
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
@@ -1392,7 +1392,7 @@ VARIABLE=yes
 
 ```javascript
 const dotenv = require('dotenv')
-const dotenvConversion = require('dotenv-conversion').default
+const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'

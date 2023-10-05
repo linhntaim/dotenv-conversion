@@ -11,7 +11,7 @@
         "./package.json": "./package.json"
     },
     "scripts": {
-        "build": "babel src --out-dir ./dist --delete-dir-on-start --minified --source-maps",
+        "build": "babel ./src -d ./dist -D --delete-dir-on-start",
         "test": "nyc mocha --require @babel/register",
         "coverage": "nyc report --reporter=text-lcov | coveralls"
     },
@@ -37,6 +37,7 @@
         "@babel/core": "^7.23.0",
         "@babel/preset-env": "^7.22.20",
         "@babel/register": "^7.22.15",
+        "babel-plugin-add-module-exports": "^1.0.4",
         "chai": "^4.3.10",
         "coveralls": "^3.1.1",
         "dotenv": "^16.3.1",
