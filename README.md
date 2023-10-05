@@ -67,7 +67,7 @@ const dotenvConversion = require('dotenv-conversion')
 // import dotenvConversion from 'dotenv-conversion'
 
 const config = dotenv.config()
-const {parsed} = dotenvConversion.convert(dotenvConfig)
+const {parsed} = dotenvConversion.convert(config)
 console.log(parsed.DEBUG)       // (boolean) false
 console.log(process.env.DEBUG)  // (string) 'false'
 ```
