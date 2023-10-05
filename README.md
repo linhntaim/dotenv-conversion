@@ -13,6 +13,7 @@ then dotenv-conversion is your tool.
 
 - [Installation](#installation)
 - [Usage](#usage)
+- [Preload](#preload)
 - [Features](#features)
   - [Auto-Conversion](#auto-conversion)
   - [Conversion Methods](#conversion-methods)
