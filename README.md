@@ -163,7 +163,7 @@ in the format `dotenv_config_<option>=value`.
 $ node -r dotenv-conversion/config your_script.js dotenv_config_path=/custom/path/to/your/env/vars
 
 # dotenv + dotenv-expand + dotenv-conversion
-$ node -r dotenv-conversion/config your_script.js dotenv_config_path=/custom/path/to/your/env/vars
+$ node -r dotenv-conversion/config-expand your_script.js dotenv_config_path=/custom/path/to/your/env/vars
 ```
 
 Additionally, you can use environment variables to set configuration options. 
@@ -174,7 +174,7 @@ Command line arguments will precede these.
 $ DOTENV_CONFIG_<OPTION>=value node -r dotenv-conversion/config your_script.js
 
 # dotenv + dotenv-expand + dotenv-conversion
-$ DOTENV_CONFIG_<OPTION>=value node -r dotenv-conversion/config your_script.js
+$ DOTENV_CONFIG_<OPTION>=value node -r dotenv-conversion/config-expand your_script.js
 ```
 
 ```bash
@@ -182,7 +182,7 @@ $ DOTENV_CONFIG_<OPTION>=value node -r dotenv-conversion/config your_script.js
 $ DOTENV_CONFIG_ENCODING=latin1 node -r dotenv-conversion/config your_script.js dotenv_config_path=/custom/path/to/.env
 
 # dotenv + dotenv-expand + dotenv-conversion
-$ DOTENV_CONFIG_ENCODING=latin1 node -r dotenv-conversion/config your_script.js dotenv_config_path=/custom/path/to/.env
+$ DOTENV_CONFIG_ENCODING=latin1 node -r dotenv-conversion/config-expand your_script.js dotenv_config_path=/custom/path/to/.env
 ```
 
 After preload, you can retrieve converted variables via `global.dotenvConversion.parsed`:
