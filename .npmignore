@@ -40,5 +40,5 @@ babel.config.*
 .nycrc.*
 nyc.config.js
 .travis.yml
-/test
+/tests
 /src
