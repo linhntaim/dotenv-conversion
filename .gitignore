@@ -30,4 +30,4 @@ node_modules
 
 # Others
 .env.*
-!/test/inputs/*.local
+!/tests/inputs/*.local
