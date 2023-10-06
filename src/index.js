@@ -8,11 +8,24 @@ const NUMBER_REGEX = /^[+-]?((\d+(\.(\d*)?)?)|(\.\d+))(e[+-]?\d+)?$/i
 const BIGINT_REGEX = /^[+-]?\d+n$/
 const SYMBOL_REGEX = /^Symbol\(.*\)$/
 const ARRAY_REGEX = /^\[.*\]$/
-const JSON_REGEX = /^\{.*\}$/
-const NULL_VALUES = ['null', 'Null', 'NULL']
-const UNDEFINED_VALUES = ['undefined', 'UNDEFINED']
-const TRUE_VALUES = ['true', 'True', 'TRUE', 'yes', 'Yes', 'YES']
-const FALSE_VALUES = ['false', 'False', 'FALSE', 'no', 'No', 'NO']
+const OBJECT_REGEX = /^\{.*\}$/
+const NULL_VALUES = [
+    'null', 'Null', 'NULL',
+]
+const UNDEFINED_VALUES = [
+    'undefined', 'UNDEFINED',
+]
+const TRUE_VALUES = [
+    'true', 'True', 'TRUE',
+    'yes', 'Yes', 'YES',
+    'ok', 'Ok', 'OK',
+]
+const FALSE_VALUES = [
+    'false', 'False', 'FALSE',
+    'no', 'No', 'NO',
+    'not', 'Not', 'NOT',
+    'none', 'None', 'NONE',
+]
 const NAN_VALUES = ['NaN']
 const INFINITY_VALUES = ['Infinity', '-Infinity', '+Infinity']
 
@@ -27,12 +40,120 @@ function unescapeValue(value) {
 
 /**
  *
+ * @param {string} value String with `[` and `]`
+ * @returns {array}
+ */
+function parseArray(value) {
+    try {
+        return JSON.parse(value)
+    }
+    catch (e) {
+        value = value.slice(1, -1) // remove [ and ]
+
+        const items = []
+        if (value.trim()) {
+            const groupStarts = ['"', '\'', '`', 'Symbol(', '[', '{']
+            const groupEnds = ['"', '\'', '`', ')', ']', '}']
+            let groupIndex = -1
+            let groupStack = []
+            value.split(',').forEach(item => {
+                const lTrimmed = item.replace(/^\s+/, '')
+                const startIndex = groupStarts.findIndex(s => {
+                    return lTrimmed.substring(0, s.length) === s
+                })
+                if (startIndex !== -1) { // group start found
+                    if (groupIndex !== -1) { // group start already found before
+                        throw 'Invalid array format'
+                    }
+                    groupIndex = startIndex
+                    groupStack.push(lTrimmed.substring(groupStarts[groupIndex].length))
+                }
+
+                const rTrimmed = item.replace(/\s+$/, '')
+                const endIndex = groupEnds.findIndex(s => {
+                    return rTrimmed.slice(-s.length) === s
+                })
+                if (endIndex !== -1) { // group end found
+                    if (endIndex !== groupIndex) { // not match current group
+                        throw 'Invalid array format'
+                    }
+                    // let's end
+                    if (startIndex === -1) {
+                        groupStack.push(rTrimmed.slice(0, -groupEnds[groupIndex].length))
+                    }
+                    else { // end immediately
+                        groupStack[0] = groupStack[0].replace(/\s+$/, '').slice(0, -groupEnds[groupIndex].length)
+                    }
+                    switch (groupIndex) {
+                        case 3: // symbol
+                            items.push(Symbol(groupStack.join(',')))
+                            break
+                        case 4: // array group
+                            items.push(parseArray(`[${groupStack.join(',')}]`))
+                            break
+                        case 5: // object group
+                            items.push(parseObject(`{${groupStack.join(',')}`))
+                            break
+                        default:
+                            items.push(groupStack.join(','))
+                            break
+                    }
+                    // then reset stack
+                    groupIndex = -1
+                    groupStack = []
+                    return
+                }
+
+                if (startIndex !== -1) {
+                    return
+                }
+
+                if (groupIndex !== -1) {
+                    groupStack.push(item)
+                    return
+                }
+
+                const v = restoreValue(item.trim(), false)
+                if (typeof v === 'string') {
+                    if (ARRAY_REGEX.test(v)) {
+                        items.push(parseArray(v.slice(1, -1)))
+                        return
+                    }
+                    if (OBJECT_REGEX.test(v)) {
+                        items.push(parseObject(v.slice(1, -1)))
+                        return
+                    }
+                }
+                items.push(v)
+            })
+            if (groupIndex !== -1) { // group not completely parsed
+                throw 'Invalid array format'
+            }
+        }
+        return items
+    }
+}
+
+/**
+ *
+ * @param {string} value String with `{` and `}`
+ * @returns {object}
+ */
+function parseObject(value) {
+    return JSON.parse(value)
+}
+
+/**
+ *
  * @param {string} value
  * @param {boolean} fromDotEnv
  * @returns {null|undefined|boolean|number|bigint|string|symbol|array|object}
  */
 function restoreValue(value, fromDotEnv) {
-    let trimmed = value.trim()
+    if (fromDotEnv) {
+        value = unescapeValue(value)
+    }
+    const trimmed = value.trim()
     switch (true) {
         case NULL_VALUES.includes(trimmed):
             return null
@@ -52,42 +173,94 @@ function restoreValue(value, fromDotEnv) {
         case BIGINT_REGEX.test(trimmed):
             return BigInt(trimmed.slice(0, -1))
 
-        default:
-            if (fromDotEnv) {
-                value = unescapeValue(value)
-                trimmed = value.trim()
+        case SYMBOL_REGEX.test(trimmed):
+            return Symbol(trimmed.slice(7, -1))
+
+        case ARRAY_REGEX.test(trimmed):
+            try {
+                return parseArray(trimmed)
+            }
+            catch (e) {
+                return value
             }
 
-            switch (true) {
-                case SYMBOL_REGEX.test(trimmed):
-                    return Symbol(trimmed.slice(7, -1))
+        case OBJECT_REGEX.test(trimmed):
+            try {
+                return parseObject(trimmed)
+            }
+            catch (e) {
+                return value
+            }
 
-                case ARRAY_REGEX.test(trimmed):
-                case JSON_REGEX.test(trimmed):
-                    try {
-                        return JSON.parse(trimmed)
-                    }
-                    catch (e) {
-                        return value
-                    }
-
-                default:
-                    let v
-                    v = `[${trimmed}]`
-                    try {
-                        return JSON.parse(v)
-                    }
-                    catch (e) {
-                        v = `{${trimmed}}`
-                        try {
-                            return JSON.parse(v)
-                        }
-                        catch (e) {
-                            return value
-                        }
-                    }
+        default:
+            if (!trimmed) {
+                return value
+            }
+            try {
+                return parseArray(`[${trimmed}]`)
+            }
+            catch (e) {
+                try {
+                    return parseObject(`{${trimmed}}`)
+                }
+                catch (e) {
+                    return value
+                }
             }
     }
+}
+
+/**
+ * Handle values which are not friendly with `JSON.stringify`
+ *
+ * @param {null|undefined|boolean|number|bigint|string|symbol|array|object} value
+ * @returns {null|boolean|number|string|array|object}
+ */
+function beforeJsonStringify(value) {
+    switch (true) {
+        case typeof value === 'undefined':
+            return 'undefined'
+
+        case Number.isNaN(value):
+        case value === Infinity:
+        case value === -Infinity:
+            return value.toString()
+
+        case typeof value === 'bigint':
+        case value instanceof BigInt:
+            return `${value.toString()}n`
+
+        case typeof value === 'symbol':
+            return value.toString()
+
+        case value instanceof Array:
+            return value.map(i => beforeJsonStringify(i))
+
+        case value instanceof Object:
+            Object.keys(value).forEach(k => value[k] = beforeJsonStringify(value[k]))
+            return value
+
+        default:
+            return value
+    }
+}
+
+/**
+ * Remove double quotes wrapping for values which are not friendly with `JSON.stringify` in the json string result
+ *
+ * @param {string} json
+ * @returns {string}
+ */
+function afterJsonStringify(json) {
+    return json
+        .replaceAll('"undefined"', 'undefined')
+        .replaceAll('"NaN"', 'NaN')
+        .replaceAll('"Infinity"', 'Infinity')
+        .replaceAll('"-Infinity"', '-Infinity')
+        .replaceAll(/"([+-]?\d+n)"/g, '$1')
+        .replaceAll(/"Symbol\(((?!\)").)*\)"/g, matched => {
+            return `Symbol(${matched.slice(8, -2).replaceAll('\\"', '"')})`
+        })
 }
 
 /**
@@ -127,7 +300,7 @@ function flattenValue(value) {
             // We surely want the string to be without the double quotes. (Don't we?)
             // But currently, the code won't reach that case.
             // So we do not need to handle it now.
-            return JSON.stringify(value)
+            return afterJsonStringify(JSON.stringify(beforeJsonStringify(value)))
     }
 }
 
@@ -139,8 +312,6 @@ const FORCING_FALSE_VALUES = [
     ...NULL_VALUES,
     ...UNDEFINED_VALUES,
     ...NAN_VALUES,
-    'not', 'Not', 'NOT',
-    'none', 'None', 'NONE',
 ]
 
 function defaultConfig() {
@@ -246,19 +417,23 @@ function defaultConfig() {
                 return Symbol(value)
             },
             array(value) {
-                const trimmed = value.trim()
+                let trimmed = value.trim()
                 if (!trimmed) {
                     return []
                 }
+                if (!ARRAY_REGEX.test(trimmed)) {
+                    trimmed = `[${trimmed}]`
+                }
                 try {
-                    return JSON.parse(
-                        ARRAY_REGEX.test(trimmed)
-                            ? trimmed
-                            : `[${trimmed}]`,
-                    )
+                    return JSON.parse(trimmed)
                 }
                 catch (e) {
-                    return this.string(value)
+                    try {
+                        return parseArray(trimmed.slice(1, -1))
+                    }
+                    catch (e) {
+                        return this.string(value)
+                    }
                 }
             },
             object(value) {
@@ -268,7 +443,7 @@ function defaultConfig() {
                 }
                 try {
                     return JSON.parse(
-                        JSON_REGEX.test(trimmed)
+                        OBJECT_REGEX.test(trimmed)
                             ? trimmed
                             : `{${trimmed}}`,
                     )
