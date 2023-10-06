@@ -482,6 +482,11 @@ function mergeConfig(config) {
         mergingConfig.specs = config.specs
     }
     if ('methods' in config) {
+        Object.keys(config.methods).forEach(method => {
+            if (!/^[\w.]+$/.test(method)) {
+                throw 'Method: Invalid format'
+            }
+        })
         Object.assign(mergingConfig.methods, config.methods)
     }
     if ('methodAliases' in config) {
@@ -497,6 +502,9 @@ function mergeConfig(config) {
             // only add alias to existing methods
             const method = config.methodAliases[alias]
             if (method in mergingConfig.methods) {
+                if (!/^[\w.]+$/.test(alias)) {
+                    throw 'Alias: Invalid format'
+                }
                 mergingConfig.methodAliases[alias] = method
             }
         }

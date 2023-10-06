@@ -1,6 +1,6 @@
 {
     "name": "dotenv-conversion",
-    "version": "2.1.0",
+    "version": "2.2.0",
     "description": "An extension for dotenv is to help converting environment variables to anything more useful than strings.",
     "main": "dist/index.js",
     "exports": {
@@ -12,6 +12,10 @@
         "./config.js": "./config.js",
         "./config-expand": "./config-expand.js",
         "./config-expand.js": "./config-expand.js",
+        "./config-flow": "./config-flow.js",
+        "./config-flow.js": "./config-flow.js",
+        "./config-flow-expand": "./config-flow-expand.js",
+        "./config-flow-expand.js": "./config-flow-expand.js",
         "./package.json": "./package.json"
     },
     "scripts": {
