@@ -32,7 +32,10 @@ function unescapeValue(value) {
  * @returns {null|undefined|boolean|number|bigint|string|symbol|array|object}
  */
 function restoreValue(value, fromDotEnv) {
-    let trimmed = value.trim()
+    if (fromDotEnv) {
+        value = unescapeValue(value)
+    }
+    const trimmed = value.trim()
     switch (true) {
         case NULL_VALUES.includes(trimmed):
             return null
@@ -52,40 +55,29 @@ function restoreValue(value, fromDotEnv) {
         case BIGINT_REGEX.test(trimmed):
             return BigInt(trimmed.slice(0, -1))
 
-        default:
-            if (fromDotEnv) {
-                value = unescapeValue(value)
-                trimmed = value.trim()
+        case SYMBOL_REGEX.test(trimmed):
+            return Symbol(trimmed.slice(7, -1))
+
+        case ARRAY_REGEX.test(trimmed):
+        case JSON_REGEX.test(trimmed):
+            try {
+                return JSON.parse(trimmed)
+            }
+            catch (e) {
+                return value
             }
 
-            switch (true) {
-                case SYMBOL_REGEX.test(trimmed):
-                    return Symbol(trimmed.slice(7, -1))
-
-                case ARRAY_REGEX.test(trimmed):
-                case JSON_REGEX.test(trimmed):
-                    try {
-                        return JSON.parse(trimmed)
-                    }
-                    catch (e) {
-                        return value
-                    }
-
-                default:
-                    let v
-                    v = `[${trimmed}]`
-                    try {
-                        return JSON.parse(v)
-                    }
-                    catch (e) {
-                        v = `{${trimmed}}`
-                        try {
-                            return JSON.parse(v)
-                        }
-                        catch (e) {
-                            return value
-                        }
-                    }
+        default:
+            try {
+                return JSON.parse(`[${trimmed}]`)
+            }
+            catch (e) {
+                try {
+                    return JSON.parse(`{${trimmed}}`)
+                }
+                catch (e) {
+                    return value
+                }
             }
     }
 }

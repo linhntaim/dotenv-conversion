@@ -14,6 +14,8 @@ then dotenv-conversion is your tool.
 - [Installation](#installation)
 - [Usage](#usage)
 - [Preload](#preload)
+  - [With `dotenv`](#with-dotenv)
+  - [With `dotenv-flow`](#with-dotenv-flow)
 - [Features](#features)
   - [Auto-Conversion](#auto-conversion)
   - [Conversion Methods](#conversion-methods)
@@ -141,9 +143,11 @@ console.log(process.env.NUMBER)         // (string) '100'
 
 ## Preload
 
+### With `dotenv`
+
 You can use the `--require` (`-r`) [command line option](https://nodejs.org/api/cli.html#cli_r_require_module) 
-to preload dotenv & dotenv-conversion (and even dotenv-expand). 
-By doing this, you do not need to require and load dotenv or dotenv-conversion (or dotenv-expand)
+to preload `dotenv` and `dotenv-conversion` (and even `dotenv-expand`). 
+By doing this, you do not need to require and load `dotenv` or `dotenv-conversion` (or `dotenv-expand`)
 in your application code. 
 This is the preferred approach when using `import` instead of `require`.
 
@@ -171,10 +175,10 @@ Command line arguments will precede these.
 
 ```bash
 # dotenv + dotenv-conversion
-$ DOTENV_CONFIG_<OPTION>=value node -r dotenv-conversion/config your_script.js
+$ DOTENV_CONFIG_<OPTION>=<value> node -r dotenv-conversion/config your_script.js
 
 # dotenv + dotenv-expand + dotenv-conversion
-$ DOTENV_CONFIG_<OPTION>=value node -r dotenv-conversion/config-expand your_script.js
+$ DOTENV_CONFIG_<OPTION>=<value> node -r dotenv-conversion/config-expand your_script.js
 ```
 
 ```bash
@@ -198,11 +202,11 @@ NUMBER=1e$EXPONENTIAL
 
 ```javascript
 // index.js file
-const parsedEnv = global.dotenvConversion.parsed
-console.log(parsedEnv.DEBUG_LEVEL)      // (number) 0 
-console.log(parsedEnv.DEBUG)            // (boolean) false
-console.log(parsedEnv.EXPONENTIAL)      // (boolean) 2
-console.log(parsedEnv.NUMBER)           // (boolean) 100
+const {parsed} = global.dotenvConversion
+console.log(parsed.DEBUG_LEVEL)         // (number) 0 
+console.log(parsed.DEBUG)               // (boolean) false
+console.log(parsed.EXPONENTIAL)         // (boolean) 2
+console.log(parsed.NUMBER)              // (boolean) 100
 console.log(process.env.DEBUG_LEVEL)    // (string) '0'
 console.log(process.env.DEBUG)          // (string) 'false'
 console.log(process.env.EXPONENTIAL)    // (string) 'false'
@@ -227,6 +231,38 @@ false
 100
 ```
 
+### With `dotenv-flow`
+
+Alternatively, you can preload `dotenv-flow` and `dotenv-conversion` (and `dotenv-expand`).
+
+```bash
+# dotenv-flow + dotenv-conversion
+$ node -r dotenv-conversion/config-flow your_script.js
+
+# dotenv-flow + dotenv-expand + dotenv-conversion
+$ node -r dotenv-conversion/config-flow-expand your_script.js
+```
+
+Remember to set `NODE_ENV` before preloading when you need to 
+load `NODE_ENV`-specific `.env` file.
+
+```bash
+# dotenv-flow + dotenv-conversion
+$ NODE_ENV=<value> node -r dotenv-conversion/config-flow your_script.js
+
+# dotenv-flow + dotenv-expand + dotenv-conversion
+$ NODE_ENV=<value> node -r dotenv-conversion/config-flow-expand your_script.js
+```
+
+```bash
+# dotenv-flow + dotenv-conversion
+$ NODE_ENV=production node -r dotenv-conversion/config-flow your_script.js
+
+# dotenv-flow + dotenv-expand + dotenv-conversion
+$ NODE_ENV=production node -r dotenv-conversion/config-flow-expand your_script.js
+```
+
+After preload, you can also retrieve converted variables via `global.dotenvConversion.parsed`:
 
 ## Features
 
@@ -573,7 +609,7 @@ const env = {
 }
 ```
 
-- In .env file:
+- In `.env` file:
 
 ```dotenv
 ${VARIABLE_1}=${method}:${value}
@@ -1359,7 +1395,7 @@ const dotenvConversion = require('dotenv-conversion')
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
 
-const config = dotenv.config()
+const dotenvConfig = dotenv.config()
 
 // Define custom conversion for specific variables
 config.specs = {
@@ -1375,9 +1411,9 @@ config.specs = {
     },
   
     // Custom conversion for `VARIABLE_5
-    VARIABLE_5(value) {
+    VARIABLE_5(value, name, config) {
         // reuse conversion method
-        return config_.methods.boolean(value)
+        return config.methods.boolean(value)
     },
   
     // Custom conversion for `VARIABLE_6`
@@ -1390,7 +1426,7 @@ config.specs = {
     VARIABLE_8: 'anything-else', // the conversion method `string` will be used by default
 }
 
-const {parsed} = dotenvConversion.convert(config)
+const {parsed} = dotenvConversion.convert(dotenvConfig)
 console.log(parsed.VARIABLE_1)          // (string) 'ok'
 console.log(parsed.VARIABLE_2)          // (boolean) true
 console.log(parsed.VARIABLE_3)          // (boolean) true
