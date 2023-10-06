@@ -39,6 +39,9 @@ function unescapeValue(value) {
  * @returns {null|undefined|boolean|number|bigint|string|symbol|array|object}
  */
 function restoreValue(value, fromDotEnv) {
+  if (fromDotEnv) {
+    value = unescapeValue(value);
+  }
   var trimmed = value.trim();
   switch (true) {
     case NULL_VALUES.includes(trimmed):
@@ -54,34 +57,24 @@ function restoreValue(value, fromDotEnv) {
       return Number(trimmed);
     case BIGINT_REGEX.test(trimmed):
       return BigInt(trimmed.slice(0, -1));
-    default:
-      if (fromDotEnv) {
-        value = unescapeValue(value);
-        trimmed = value.trim();
+    case SYMBOL_REGEX.test(trimmed):
+      return Symbol(trimmed.slice(7, -1));
+    case ARRAY_REGEX.test(trimmed):
+    case JSON_REGEX.test(trimmed):
+      try {
+        return JSON.parse(trimmed);
+      } catch (e) {
+        return value;
       }
-      switch (true) {
-        case SYMBOL_REGEX.test(trimmed):
-          return Symbol(trimmed.slice(7, -1));
-        case ARRAY_REGEX.test(trimmed):
-        case JSON_REGEX.test(trimmed):
-          try {
-            return JSON.parse(trimmed);
-          } catch (e) {
-            return value;
-          }
-        default:
-          var v;
-          v = "[".concat(trimmed, "]");
-          try {
-            return JSON.parse(v);
-          } catch (e) {
-            v = "{".concat(trimmed, "}");
-            try {
-              return JSON.parse(v);
-            } catch (e) {
-              return value;
-            }
-          }
+    default:
+      try {
+        return JSON.parse("[".concat(trimmed, "]"));
+      } catch (e) {
+        try {
+          return JSON.parse("{".concat(trimmed, "}"));
+        } catch (e) {
+          return value;
+        }
       }
   }
 }
@@ -271,6 +264,11 @@ function mergeConfig(config) {
     mergingConfig.specs = config.specs;
   }
   if ('methods' in config) {
+    Object.keys(config.methods).forEach(function (method) {
+      if (!/^[\w.]+$/.test(method)) {
+        throw 'Method: Invalid format';
+      }
+    });
     Object.assign(mergingConfig.methods, config.methods);
   }
   if ('methodAliases' in config) {
@@ -286,6 +284,9 @@ function mergeConfig(config) {
       // only add alias to existing methods
       var method = config.methodAliases[alias];
       if (method in mergingConfig.methods) {
+        if (!/^[\w.]+$/.test(alias)) {
+          throw 'Alias: Invalid format';
+        }
         mergingConfig.methodAliases[alias] = method;
       }
     }

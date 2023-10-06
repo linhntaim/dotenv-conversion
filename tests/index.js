@@ -154,6 +154,50 @@ describe('dotenv-conversion', function () {
 
             done()
         })
+
+        it('set:invalid-method', function (done) {
+            // input
+            const inputConfig = {
+                methods: {
+                    'test:array'(value) {
+                        return value
+                    },
+                },
+            }
+
+            // output
+            const expectedError = 'Method: Invalid format'
+
+            try {
+                dotenvConversion.convert(inputConfig)
+            }
+            catch (e) {
+                e.should.equal(expectedError)
+            }
+
+            done()
+        })
+
+        it('set:invalid-alias', function (done) {
+            // input
+            const inputConfig = {
+                methodAliases: {
+                    'test:array': 'array',
+                },
+            }
+
+            // output
+            const expectedError = 'Alias: Invalid format'
+
+            try {
+                dotenvConversion.convert(inputConfig)
+            }
+            catch (e) {
+                e.should.equal(expectedError)
+            }
+
+            done()
+        })
     })
 
     describe('convert:standalone', function () {
