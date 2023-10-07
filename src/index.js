@@ -68,6 +68,9 @@ function restoreValue(value, fromDotEnv) {
             }
 
         default:
+            if (!trimmed) {
+                return value
+            }
             try {
                 return JSON.parse(`[${trimmed}]`)
             }

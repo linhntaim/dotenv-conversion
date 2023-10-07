@@ -588,28 +588,34 @@ and uses the method to make the conversion.
 
 How a variable indicates its conversion method:
 
-- In an object:
+- Standalone:
 
 ```javascript
-const env = {
-    "${VARIABLE_1}": "${method}:${value}",
-    "${VARIABLE_2}": " ${method}: ${value} ",
+const config = {
+    parsed: {
+        "${VARIABLE_1}": "${method}:${value}",
+        "${VARIABLE_2}": " ${method}: ${value} ",
+    },
 }
 
 // Example:
-const env = {
-    "BOOLEAN": "boolean:1",
-    "NUMBER": " number: true ",
+const config = {
+    parsed: {
+        BOOLEAN: "boolean:1",
+        NUMBER: " number: true ",
+    },
 }
 
 // Unaccepted (no conversion):
-const env = {
-    "NOT_BOOLEAN": "boolean :1",
-    "NOT_NUMBER": " number : true ",
+const config = {
+    parsed: {
+        NOT_BOOLEAN: "boolean :1",
+        NOT_NUMBER: " number : true ",
+    },
 }
 ```
 
-- In `.env` file:
+- Within `.env` files:
 
 ```dotenv
 ${VARIABLE_1}=${method}:${value}
@@ -873,8 +879,8 @@ VARIABLE_3="symbol:a"
 VARIABLE_4="symbol: a "
 VARIABLE_5="symbol:Symbol()"
 VARIABLE_6="symbol:Symbol( )"
-VARIABLE_7="bigint:Symbol(a)"
-VARIABLE_8="bigint:Symbol( a )"
+VARIABLE_7="symbol:Symbol(a)"
+VARIABLE_8="symbol:Symbol( a )"
 ```
 
 ```javascript
@@ -1328,6 +1334,9 @@ Besides, you need to avoid these worthless actions:
 
 - Defining [aliases](#method-aliases) to the `auto`.
 - Defining [custom conversions](#custom-conversion-for-a-specific-variable) that point to the `auto`.
+- Using `auto` like other methods to indicate conversion:
+  - Standalone: `{AUTO_BOOLEAN: "auto:true"}`, or 
+  - Within `.env` files: `AUTO_BOOLEAN=auto:true`.
 
 The reuse of the method `auto` could be an option if you know what to do:
 
