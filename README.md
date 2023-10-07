@@ -141,10 +141,10 @@ console.log(process.env.NUMBER)         // (string) '100'
 
 ## Preload
 
-You can use the `--require` (`-r`) [command line option](https://nodejs.org/api/cli.html#cli_r_require_module) 
-to preload dotenv & dotenv-conversion (and even dotenv-expand). 
-By doing this, you do not need to require and load dotenv or dotenv-conversion (or dotenv-expand)
-in your application code. 
+You can use the `--require` (`-r`) [command line option](https://nodejs.org/api/cli.html#cli_r_require_module)
+to preload `dotenv` and `dotenv-conversion` (and even `dotenv-expand`).
+By doing this, you do not need to require and load `dotenv` or `dotenv-conversion`
+(or `dotenv-expand`) in your application code.
 This is the preferred approach when using `import` instead of `require`.
 
 ```bash
@@ -155,8 +155,8 @@ $ node -r dotenv-conversion/config your_script.js
 $ node -r dotenv-conversion/config-expand your_script.js
 ```
 
-The configuration options below are supported as command line arguments 
-in the format `dotenv_config_<option>=value`.
+The configuration options below are supported as command line arguments
+in the format `dotenv_config_<option>=<value>`.
 
 ```bash
 # dotenv + dotenv-conversion
@@ -166,15 +166,15 @@ $ node -r dotenv-conversion/config your_script.js dotenv_config_path=/custom/pat
 $ node -r dotenv-conversion/config-expand your_script.js dotenv_config_path=/custom/path/to/your/env/vars
 ```
 
-Additionally, you can use environment variables to set configuration options. 
+Additionally, you can use environment variables to set configuration options.
 Command line arguments will precede these.
 
 ```bash
 # dotenv + dotenv-conversion
-$ DOTENV_CONFIG_<OPTION>=value node -r dotenv-conversion/config your_script.js
+$ DOTENV_CONFIG_<OPTION>=<value> node -r dotenv-conversion/config your_script.js
 
 # dotenv + dotenv-expand + dotenv-conversion
-$ DOTENV_CONFIG_<OPTION>=value node -r dotenv-conversion/config-expand your_script.js
+$ DOTENV_CONFIG_<OPTION>=<value> node -r dotenv-conversion/config-expand your_script.js
 ```
 
 ```bash
@@ -198,14 +198,14 @@ NUMBER=1e$EXPONENTIAL
 
 ```javascript
 // index.js file
-const parsedEnv = global.dotenvConversion.parsed
-console.log(parsedEnv.DEBUG_LEVEL)      // (number) 0 
-console.log(parsedEnv.DEBUG)            // (boolean) false
-console.log(parsedEnv.EXPONENTIAL)      // (boolean) 2
-console.log(parsedEnv.NUMBER)           // (boolean) 100
+const {parsed} = global.dotenvConversion
+console.log(parsed.DEBUG_LEVEL)         // (number) 0 
+console.log(parsed.DEBUG)               // (boolean) false
+console.log(parsed.EXPONENTIAL)         // (number) 2
+console.log(parsed.NUMBER)              // (number) 100
 console.log(process.env.DEBUG_LEVEL)    // (string) '0'
 console.log(process.env.DEBUG)          // (string) 'false'
-console.log(process.env.EXPONENTIAL)    // (string) 'false'
+console.log(process.env.EXPONENTIAL)    // (string) '2'
 console.log(process.env.NUMBER)         // (string) '100'
 ```
 
@@ -226,7 +226,6 @@ false
 2
 100
 ```
-
 
 ## Features
 
