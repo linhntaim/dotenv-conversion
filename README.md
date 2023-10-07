@@ -7,6 +7,14 @@
 
 Description.
 
+---
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+
+---
+
 ## Installation
 
 ```bash

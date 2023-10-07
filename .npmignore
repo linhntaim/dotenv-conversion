@@ -30,3 +30,14 @@ node_modules
 .env.*
 
 # Others
+
+# NPM
+.babelrc
+.babelrc.*
+babel.config.*
+.nycrc
+.nycrc.*
+nyc.config.js
+.travis.yml
+/tests
+/src
