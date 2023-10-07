@@ -72,6 +72,10 @@ function restoreValue(value, fromDotEnv) {
                     }
 
                 default:
+                    if (!trimmed) {
+                        return value
+                    }
+
                     let v
                     v = `[${trimmed}]`
                     try {

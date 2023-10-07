@@ -20,15 +20,25 @@ lerna-debug.log*
 # Test results
 .nyc_output
 coverage
-test
 
 # Common
 node_modules
 .DS_Store
-src
 *.local
 *.local.*
 .env
 
 # Others
 .env.*
+#!/test/inputs/*.local
+
+# NPM
+.babelrc
+.babelrc.*
+babel.config.*
+.nycrc
+.nycrc.*
+nyc.config.js
+.travis.yml
+/test
+/src

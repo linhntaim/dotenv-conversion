@@ -5,9 +5,9 @@
 [![Coveralls github](https://img.shields.io/coveralls/github/linhntaim/dotenv-conversion?style=flat-square)](https://coveralls.io/github/linhntaim/dotenv-conversion)
 [![NPM](https://img.shields.io/npm/l/dotenv-conversion?style=flat-square)](https://github.com/linhntaim/dotenv-conversion/blob/master/LICENSE)
 
-Dotenv-conversion adds variable conversion on top of dotenv. If you find yourself
+`dotenv-conversion` adds variable conversion on top of `dotenv`. If you find yourself
 needing to convert/transform environment variables to anything more useful than strings,
-then dotenv-conversion is your tool.
+then `dotenv-conversion` is your tool.
 
 ---
 
@@ -66,7 +66,7 @@ const dotenvConversion = require('dotenv-conversion').default
 // import dotenvConversion from 'dotenv-conversion'
 
 const config = dotenv.config()
-const {parsed} = dotenvConversion.convert(dotenvConfig)
+const {parsed} = dotenvConversion.convert(config)
 console.log(parsed.DEBUG)       // (boolean) false
 console.log(process.env.DEBUG)  // (string) 'false'
 ```
@@ -95,11 +95,11 @@ const config = dotenv.config()
 const {parsed} = dotenvConversion.convert(dotenvExpand.expand(config))
 console.log(parsed.DEBUG_LEVEL)         // (number) 0 
 console.log(parsed.DEBUG)               // (boolean) false
-console.log(parsed.EXPONENTIAL)         // (boolean) 2
-console.log(parsed.NUMBER)              // (boolean) 100
+console.log(parsed.EXPONENTIAL)         // (number) 2
+console.log(parsed.NUMBER)              // (number) 100
 console.log(process.env.DEBUG_LEVEL)    // (string) '0'
 console.log(process.env.DEBUG)          // (string) 'false'
-console.log(process.env.EXPONENTIAL)    // (string) 'false'
+console.log(process.env.EXPONENTIAL)    // (string) '2'
 console.log(process.env.NUMBER)         // (string) '100'
 ```
 
@@ -130,11 +130,11 @@ const config = dotenvFlow.config()
 const {parsed} = dotenvConversion.convert(dotenvExpand.expand(config))
 console.log(parsed.DEBUG_LEVEL)         // (number) 0 
 console.log(parsed.DEBUG)               // (boolean) false
-console.log(parsed.EXPONENTIAL)         // (boolean) 2
-console.log(parsed.NUMBER)              // (boolean) 100
+console.log(parsed.EXPONENTIAL)         // (number) 2
+console.log(parsed.NUMBER)              // (number) 100
 console.log(process.env.DEBUG_LEVEL)    // (string) '0'
 console.log(process.env.DEBUG)          // (string) 'false'
-console.log(process.env.EXPONENTIAL)    // (string) 'false'
+console.log(process.env.EXPONENTIAL)    // (string) '2'
 console.log(process.env.NUMBER)         // (string) '100'
 ```
 
@@ -462,28 +462,34 @@ and uses the method to make the conversion.
 
 How a variable indicates its conversion method:
 
-- In an object:
+- Standalone:
 
 ```javascript
-const env = {
-    "${VARIABLE_1}": "${method}:${value}",
-    "${VARIABLE_2}": " ${method}: ${value} ",
+const config = {
+    parsed: {
+        "${VARIABLE_1}": "${method}:${value}",
+        "${VARIABLE_2}": " ${method}: ${value} ",
+    },
 }
 
 // Example:
-const env = {
-    "BOOLEAN": "boolean:1",
-    "NUMBER": " number: true ",
+const config = {
+    parsed: {
+        BOOLEAN: "boolean:1",
+        NUMBER: " number: true ",
+    },
 }
 
 // Unaccepted (no conversion):
-const env = {
-    "NOT_BOOLEAN": "boolean :1",
-    "NOT_NUMBER": " number : true ",
+const config = {
+    parsed: {
+        NOT_BOOLEAN: "boolean :1",
+        NOT_NUMBER: " number : true ",
+    },
 }
 ```
 
-- In .env file:
+- Within `.env` files:
 
 ```dotenv
 ${VARIABLE_1}=${method}:${value}
@@ -498,12 +504,12 @@ NOT_BOOLEAN="boolean :1"
 NOT_NUMBER=" number : true "
 ```
 
-***Notes*: `method` is case-sensitive.
+***Note:* `method` is case-sensitive.
 
 #### Built-in Methods
 
 Here are built-in conversion methods (`boolean`, `number`, `bigint`, `string`, `symbol`, `array`, `object`)
-that can be used now: 
+that can be used now:
 
 - **boolean**
 
@@ -747,8 +753,8 @@ VARIABLE_3="symbol:a"
 VARIABLE_4="symbol: a "
 VARIABLE_5="symbol:Symbol()"
 VARIABLE_6="symbol:Symbol( )"
-VARIABLE_7="bigint:Symbol(a)"
-VARIABLE_8="bigint:Symbol( a )"
+VARIABLE_7="symbol:Symbol(a)"
+VARIABLE_8="symbol:Symbol( a )"
 ```
 
 ```javascript
@@ -1072,7 +1078,7 @@ const dotenvConversion = require('dotenv-conversion').default
 const config = dotenv.config()
 const {parsed} = dotenvConversion.convert(config)
 console.log(parsed.VARIABLE_1)          // (boolean) true
-console.log(parsed.VARIABLE_2)          // (string) 4.5e+123
+console.log(parsed.VARIABLE_2)          // (number) 4.5e+123
 console.log(process.env.VARIABLE_1)     // (string) 'true'
 console.log(process.env.VARIABLE_2)     // (string) '4.5e+123'
 ```
@@ -1092,7 +1098,7 @@ VARIABLE_4=string:text
 VARIABLE_5=b:yes
 VARIABLE_6=cb:yes
 VARIABLE_7=cs:text
-VARIABLE_8=b:yes
+VARIABLE_8=bl:yes
 ```
 
 ```javascript
@@ -1199,6 +1205,9 @@ console.log(process.env.VARIABLE_4)     // (string) 'overridden'
 Besides, you need to avoid these worthless actions:
 - Defining [aliases](#method-aliases) to the `auto`.
 - Defining [custom conversions](#custom-conversion-for-a-specific-variable) that point to the `auto`.
+- Using `auto` like other methods to indicate conversion:
+  - Standalone: `{AUTO_BOOLEAN: "auto:true"}`, or
+  - Within `.env` files: `AUTO_BOOLEAN=auto:true`.
 
 The reuse of the method `auto` could be an option if you know what to do:
 
@@ -1221,6 +1230,8 @@ const dotenvConversion = require('dotenv-conversion').default
 const config = dotenv.config()
 
 const originEnv = {...config.parsed}
+// Define custom method `state` to replace current value with the value coming from 
+// other environment variables which need to convert automatically.
 config.methods = {
     state(value, ...params) {
         switch (value) {
@@ -1269,7 +1280,7 @@ const dotenvConversion = require('dotenv-conversion').default
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
 
-const config = dotenv.config()
+const dotenvConfig = dotenv.config()
 
 // Define custom conversion for specific variables
 config.specs = {
@@ -1277,22 +1288,22 @@ config.specs = {
     VARIABLE_2(value) {
         return value === 'ok' ? true : false
     },
-  
+
     // Custom conversion for `VARIABLE_3`
     VARIABLE_3(value) {
         // reuse custom conversion
         return this.VARIABLE_2(value)
     },
-  
+
     // Custom conversion for `VARIABLE_5
-    VARIABLE_5(value) {
+    VARIABLE_5(value, name, config) {
         // reuse conversion method
-        return config_.methods.boolean(value)
+        return config.methods.boolean(value)
     },
-  
+
     // Custom conversion for `VARIABLE_6`
     VARIABLE_6: 'boolean', // use the conversion method `boolean`
-  
+
     // Custom conversion for `VARIABLE_7`
     VARIABLE_7: 'bool', // use the conversion method alias `bool` -> `boolean`
 
@@ -1300,7 +1311,7 @@ config.specs = {
     VARIABLE_8: 'anything-else', // the conversion method `string` will be used by default
 }
 
-const {parsed} = dotenvConversion.convert(config)
+const {parsed} = dotenvConversion.convert(dotenvConfig)
 console.log(parsed.VARIABLE_1)          // (string) 'ok'
 console.log(parsed.VARIABLE_2)          // (boolean) true
 console.log(parsed.VARIABLE_3)          // (boolean) true
