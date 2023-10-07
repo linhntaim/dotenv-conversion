@@ -1359,6 +1359,8 @@ const dotenvConversion = require('dotenv-conversion')
 const config = dotenv.config()
 
 const originEnv = {...config.parsed}
+// Define custom method `state` to replace current value with the value coming from 
+// other environment variables which need to convert automatically.
 config.methods = {
     state(value, ...params) {
         switch (value) {
