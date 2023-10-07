@@ -593,24 +593,24 @@ How a variable indicates its conversion method:
 ```javascript
 const config = {
     parsed: {
-        "${VARIABLE_1}": "${method}:${value}",
-        "${VARIABLE_2}": " ${method}: ${value} ",
+        '${VARIABLE_1}': '${method}:${value}',
+        '${VARIABLE_2}': ' ${method}: ${value} ',
     },
 }
 
 // Example:
 const config = {
     parsed: {
-        BOOLEAN: "boolean:1",
-        NUMBER: " number: true ",
+        BOOLEAN: 'boolean:1',
+        NUMBER: ' number: true ',
     },
 }
 
 // Unaccepted (no conversion):
 const config = {
     parsed: {
-        NOT_BOOLEAN: "boolean :1",
-        NOT_NUMBER: " number : true ",
+        NOT_BOOLEAN: 'boolean :1',
+        NOT_NUMBER: ' number : true ',
     },
 }
 ```
@@ -1283,7 +1283,8 @@ console.log(process.env.VARIABLE_7)     // (string) 'CUSTOM_STRING:text'
 console.log(process.env.VARIABLE_8)     // (string) 'true'
 ```
 
-*** *Only alphanumeric (a-z, A-Z, 0-9), underscore (_) and dot (.) characters are allowed in naming the conversion methods and aliases.*
+*** *Only alphanumeric (a-z, A-Z, 0-9), underscore (_) and dot (.) characters are allowed in naming the conversion
+methods and aliases.*
 
 #### The special built-in method `auto`
 
@@ -1335,8 +1336,8 @@ Besides, you need to avoid these worthless actions:
 - Defining [aliases](#method-aliases) to the `auto`.
 - Defining [custom conversions](#custom-conversion-for-a-specific-variable) that point to the `auto`.
 - Using `auto` like other methods to indicate conversion:
-  - Standalone: `{AUTO_BOOLEAN: "auto:true"}`, or 
-  - Within `.env` files: `AUTO_BOOLEAN=auto:true`.
+    - Standalone: `{AUTO_BOOLEAN: "auto:true"}`, or
+    - Within `.env` files: `AUTO_BOOLEAN=auto:true`.
 
 The reuse of the method `auto` could be an option if you know what to do:
 
@@ -1512,8 +1513,8 @@ const dotenvConversion = require('dotenv-conversion')
 
 const config = {
     parsed: {
-        VARIABLE: 'yes'
-    }
+        VARIABLE: 'yes',
+    },
 }
 
 // Ignore process.env
