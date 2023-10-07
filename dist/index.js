@@ -70,6 +70,9 @@ function restoreValue(value, fromDotEnv) {
             return value;
           }
         default:
+          if (!trimmed) {
+            return value;
+          }
           var v;
           v = "[".concat(trimmed, "]");
           try {

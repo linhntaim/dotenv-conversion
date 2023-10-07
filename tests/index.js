@@ -1874,6 +1874,11 @@ describe('dotenv-conversion', function () {
                 STRING_33: ' str: ',
                 STRING_34: ' str: any ',
 
+                STRING_101: '',
+                STRING_102: 'text',
+                STRING_103: ' ',
+                STRING_104: ' text ',
+
                 // No conversion
                 STRING_1001: 'STRING:any',
                 STRING_1002: 'STR:any',
@@ -1907,6 +1912,11 @@ describe('dotenv-conversion', function () {
                 STRING_33: ' ',
                 STRING_34: ' any ',
 
+                STRING_101: '',
+                STRING_102: 'text',
+                STRING_103: ' ',
+                STRING_104: ' text ',
+
                 // No conversion
                 STRING_1001: 'STRING:any',
                 STRING_1002: 'STR:any',
@@ -1937,6 +1947,11 @@ describe('dotenv-conversion', function () {
                 STRING_32: 'any',
                 STRING_33: ' ',
                 STRING_34: ' any ',
+
+                STRING_101: '',
+                STRING_102: 'text',
+                STRING_103: ' ',
+                STRING_104: ' text ',
 
                 // No conversion
                 STRING_1001: 'STRING:any',
@@ -3800,6 +3815,11 @@ describe('dotenv-conversion', function () {
                 STRING_33: ' ',
                 STRING_34: ' any ',
 
+                STRING_101: '',
+                STRING_102: 'text',
+                STRING_103: ' ',
+                STRING_104: ' text ',
+
                 // No conversion
                 STRING_1001: 'STRING:any',
                 STRING_1002: 'STR:any',
@@ -3830,6 +3850,11 @@ describe('dotenv-conversion', function () {
                 STRING_32: 'any',
                 STRING_33: ' ',
                 STRING_34: ' any ',
+
+                STRING_101: '',
+                STRING_102: 'text',
+                STRING_103: ' ',
+                STRING_104: ' text ',
 
                 // No conversion
                 STRING_1001: 'STRING:any',
