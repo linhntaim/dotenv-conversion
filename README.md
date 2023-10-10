@@ -12,6 +12,7 @@ Description.
 - [Installation](#installation)
 - [Usage](#usage)
 - [Features](#features)
+- [Documentation](#documentation)
 
 ---
 
@@ -24,3 +25,5 @@ npm install node-js-package-starter
 ## Usage
 
 ## Features
+
+## Documentation
