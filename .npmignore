@@ -28,6 +28,8 @@ node_modules
 *.local.*
 .env
 .env.*
+#!*.example
+#!*.example.*
 
 # Others
 
