@@ -27,7 +27,9 @@ node_modules
 *.local
 *.local.*
 .env
+.env.*
+!*.example
+!*.example.*
 
 # Others
-.env.*
 !/tests/inputs/*.local
