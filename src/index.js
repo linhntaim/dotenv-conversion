@@ -1,20 +1,39 @@
-/* region env-utils */
-
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
  */
 
-const NUMBER_REGEX = /^[+-]?((\d+(\.(\d*)?)?)|(\.\d+))(e[+-]?\d+)?$/i
-const BIGINT_REGEX = /^[+-]?\d+n$/
+const NUMBER_REGEX = /^[+-]?((\d+(\.(\d*)?)?)|(\.\d+))([eE][+-]?\d+)?$/
+// const NUM_INT_REGEX = /^[+-]?\d+$/
+const NUM_BIN_REGEX = /^[+-]?0[bB][01]+$/
+const NUM_OCT_REGEX = /^[+-]?0[oO][0-8]+$/
+const NUM_HEX_REGEX = /^[+-]?0[xX][0-9a-fA-F]+$/
+const BIG_INT_REGEX = /^[+-]?\d+n$/
+const BIG_BIN_REGEX = /^[+-]?0[bB][01]+n$/
+const BIG_OCT_REGEX = /^[+-]?0[oO][0-8]+n$/
+const BIG_HEX_REGEX = /^[+-]?0[xX][0-9a-fA-F]+n$/
 const SYMBOL_REGEX = /^Symbol\(.*\)$/
-const ARRAY_REGEX = /^\[.*\]$/
-const JSON_REGEX = /^\{.*\}$/
+const SYMBOL_EMPTY_REGEX = /^Symbol\(\)$/
+const ARRAY_REGEX = /^\[.*]$/
+const ARRAY_EMPTY_REGEX = /^\[\s*]$/
+const OBJECT_REGEX = /^\{.*}$/
+const OBJECT_EMPTY_REGEX = /^\{\s*}$/
+
 const NULL_VALUES = ['null', 'Null', 'NULL']
 const UNDEFINED_VALUES = ['undefined', 'UNDEFINED']
-const TRUE_VALUES = ['true', 'True', 'TRUE', 'yes', 'Yes', 'YES']
-const FALSE_VALUES = ['false', 'False', 'FALSE', 'no', 'No', 'NO']
+const TRUE_VALUES = [
+    'true', 'True', 'TRUE',
+    'yes', 'Yes', 'YES',
+    'ok', 'Ok', 'OK',
+]
+const FALSE_VALUES = [
+    'false', 'False', 'FALSE',
+    'no', 'No', 'NO',
+    'not', 'Not', 'NOT',
+    'none', 'None', 'NONE',
+]
 const NAN_VALUES = ['NaN']
-const INFINITY_VALUES = ['Infinity', '-Infinity', '+Infinity']
+const INFINITY_POSITIVE_VALUES = ['Infinity', '+Infinity']
+const INFINITY_NEGATIVE_VALUES = ['-Infinity']
 
 /**
  *
@@ -48,18 +67,29 @@ function restoreValue(value, fromDotEnv) {
         case FALSE_VALUES.includes(trimmed):
             return false
 
-        case [...NAN_VALUES, ...INFINITY_VALUES].includes(trimmed):
+        case NAN_VALUES.includes(trimmed):
+            return Number.NaN
+        case INFINITY_POSITIVE_VALUES.includes(trimmed):
+            return Number.POSITIVE_INFINITY
+        case INFINITY_NEGATIVE_VALUES.includes(trimmed):
+            return Number.NEGATIVE_INFINITY
         case NUMBER_REGEX.test(trimmed):
+        case NUM_BIN_REGEX.test(trimmed):
+        case NUM_OCT_REGEX.test(trimmed):
+        case NUM_HEX_REGEX.test(trimmed):
             return Number(trimmed)
 
-        case BIGINT_REGEX.test(trimmed):
+        case BIG_INT_REGEX.test(trimmed):
+        case BIG_BIN_REGEX.test(trimmed):
+        case BIG_OCT_REGEX.test(trimmed):
+        case BIG_HEX_REGEX.test(trimmed):
             return BigInt(trimmed.slice(0, -1))
 
         case SYMBOL_REGEX.test(trimmed):
             return Symbol(trimmed.slice(7, -1))
 
         case ARRAY_REGEX.test(trimmed):
-        case JSON_REGEX.test(trimmed):
+        case OBJECT_REGEX.test(trimmed):
             try {
                 return JSON.parse(trimmed)
             }
@@ -68,7 +98,7 @@ function restoreValue(value, fromDotEnv) {
             }
 
         default:
-            if (!trimmed) {
+            if (trimmed === '') {
                 return value
             }
             try {
@@ -87,7 +117,7 @@ function restoreValue(value, fromDotEnv) {
 
 /**
  *
- * @param {null|undefined|boolean|number|bigint|string|symbol|array|object} value
+ * @param {null|undefined|boolean|number|bigint|string|symbol|array|object|function} value
  * @returns {string}
  */
 function flattenValue(value) {
@@ -95,48 +125,43 @@ function flattenValue(value) {
 
     switch (true) {
         case value === null:
-        case typeOf === 'function':
             return 'null'
 
         case typeOf === 'undefined':
+        case typeOf === 'function':
+        case value instanceof Function:
             return 'undefined'
-
-        case typeOf === 'string':
-            return value
 
         case typeOf === 'number':
         case value instanceof Number:
         case typeOf === 'boolean':
         case value instanceof Boolean:
-        case typeOf === 'symbol':
         case value instanceof String:
+        case typeOf === 'symbol':
+        case value instanceof Symbol:
             return value.toString()
 
         case typeOf === 'bigint':
         case value instanceof BigInt:
             return `${value.toString()}n`
 
+        case typeOf === 'string':
+            return value
+
         default:
-            // `JSON.stringify` can wrap value with double quotes.
-            // E.g. `JSON.stringify(new Date)` will result a string looks like `'"2023-..."'`.
-            // We surely want the string to be without the double quotes. (Don't we?)
-            // But currently, the code won't reach that case.
-            // So we do not need to handle it now.
-            return JSON.stringify(value)
+            try {
+                return (str => {
+                    if (str === undefined) {
+                        return 'undefined'
+                    }
+                    return /^".*"$/.test(str) ? str.slice(1, -1) : str
+                })(JSON.stringify(value))
+            }
+            catch (e) {
+                return 'undefined'
+            }
     }
 }
-
-/* endregion */
-
-const INTEGER_REGEX = /^[+-]?\d+$/
-const FORCING_FALSE_VALUES = [
-    ...FALSE_VALUES,
-    ...NULL_VALUES,
-    ...UNDEFINED_VALUES,
-    ...NAN_VALUES,
-    'not', 'Not', 'NOT',
-    'none', 'None', 'NONE',
-]
 
 function defaultConfig() {
     return {
@@ -176,59 +201,113 @@ function defaultConfig() {
             },
             boolean(value) {
                 value = value.trim()
-                if (!value) {
+                if ([
+                        '',
+                        ...NULL_VALUES,
+                        ...UNDEFINED_VALUES,
+                        ...FALSE_VALUES,
+                        ...NAN_VALUES,
+                    ].includes(value)
+                    || SYMBOL_EMPTY_REGEX.test(value)
+                    || ARRAY_EMPTY_REGEX.test(value)
+                    || OBJECT_EMPTY_REGEX.test(value)) {
                     return false
                 }
-                return !FORCING_FALSE_VALUES.includes(value)
-                    && ((isNumber, isBigInt) => {
-                        return (!isNumber && !isBigInt)
-                            || (isNumber && Number(value) !== 0)
-                            || (isBigInt && BigInt(value.slice(0, -1)) !== 0n)
-                    })(NUMBER_REGEX.test(value), BIGINT_REGEX.test(value))
+                if ([
+                        ...TRUE_VALUES,
+                        ...INFINITY_POSITIVE_VALUES,
+                        ...INFINITY_NEGATIVE_VALUES,
+                    ].includes(value)
+                    || SYMBOL_REGEX.test(value)) {
+                    return true
+                }
+                if (NUMBER_REGEX.test(value)
+                    || NUM_BIN_REGEX.test(value)
+                    || NUM_OCT_REGEX.test(value)
+                    || NUM_HEX_REGEX.test(value)) {
+                    return Number(value) !== 0
+                }
+                if (BIG_INT_REGEX.test(value)
+                    || BIG_BIN_REGEX.test(value)
+                    || BIG_OCT_REGEX.test(value)
+                    || BIG_HEX_REGEX.test(value)) {
+                    return BigInt(value.slice(0, -1)) !== 0n
+                }
+                return true
             },
             number(value) {
                 value = value.trim()
-                if (!value) {
+                if ([
+                        '',
+                        ...NULL_VALUES,
+                        ...FALSE_VALUES,
+                    ].includes(value)
+                    || SYMBOL_EMPTY_REGEX.test(value)
+                    || ARRAY_EMPTY_REGEX.test(value)
+                    || OBJECT_EMPTY_REGEX.test(value)) {
                     return 0
                 }
-                if (TRUE_VALUES.includes(value)) {
+                if ([...UNDEFINED_VALUES, ...NAN_VALUES].includes(value)) {
+                    return Number.NaN
+                }
+                if (TRUE_VALUES.includes(value)
+                    || SYMBOL_REGEX.test(value)) {
                     return 1
                 }
-                if (FORCING_FALSE_VALUES.includes(value)) {
-                    return 0
+                if (INFINITY_POSITIVE_VALUES.includes(value)) {
+                    return Number.POSITIVE_INFINITY
                 }
-                value = Number.parseFloat(value)
-                return Number.isNaN(value) ? 0 : value
+                if (INFINITY_NEGATIVE_VALUES.includes(value)) {
+                    return Number.NEGATIVE_INFINITY
+                }
+                if (NUMBER_REGEX.test(value)
+                    || NUM_BIN_REGEX.test(value)
+                    || NUM_OCT_REGEX.test(value)
+                    || NUM_HEX_REGEX.test(value)) {
+                    return Number(value)
+                }
+                if (BIG_INT_REGEX.test(value)
+                    || BIG_BIN_REGEX.test(value)
+                    || BIG_OCT_REGEX.test(value)
+                    || BIG_HEX_REGEX.test(value)) {
+                    return Number(value.slice(0, -1))
+                }
+                return (number => Number.isNaN(number) ? 0 : number)(Number.parseFloat(value))
             },
             bigint(value) {
                 value = value.trim()
-                if (!value) {
+                if ([
+                        '',
+                        ...NULL_VALUES,
+                        ...UNDEFINED_VALUES,
+                        ...FALSE_VALUES,
+                        ...NAN_VALUES,
+                    ].includes(value)
+                    || SYMBOL_EMPTY_REGEX.test(value)
+                    || ARRAY_EMPTY_REGEX.test(value)
+                    || OBJECT_EMPTY_REGEX.test(value)) {
                     return 0n
                 }
-                if (TRUE_VALUES.includes(value)) {
+                if ([...TRUE_VALUES, ...INFINITY_POSITIVE_VALUES].includes(value)
+                    || SYMBOL_REGEX.test(value)) {
                     return 1n
                 }
-                if (FORCING_FALSE_VALUES.includes(value)) {
-                    return 0n
+                if (INFINITY_NEGATIVE_VALUES.includes(value)) {
+                    return -1n
                 }
-                if (INFINITY_VALUES.includes(value)) {
-                    return 0n
+                if (NUMBER_REGEX.test(value)
+                    || NUM_BIN_REGEX.test(value)
+                    || NUM_OCT_REGEX.test(value)
+                    || NUM_HEX_REGEX.test(value)) {
+                    return BigInt(Math.trunc(Number(value)))
                 }
-                if (INTEGER_REGEX.test(value)) {
-                    return BigInt(value)
-                }
-                if (BIGINT_REGEX.test(value)) {
+                if (BIG_INT_REGEX.test(value)
+                    || BIG_BIN_REGEX.test(value)
+                    || BIG_OCT_REGEX.test(value)
+                    || BIG_HEX_REGEX.test(value)) {
                     return BigInt(value.slice(0, -1))
                 }
-                value = Number.parseFloat(value)
-                switch (true) {
-                    case Number.isNaN(value):
-                        return 0n
-                    case Number.isInteger(value):
-                        return BigInt(value)
-                    default:
-                        return BigInt(Number.parseInt(value))
-                }
+                return (number => Number.isNaN(number) ? 0n : BigInt(Math.trunc(number)))(Number.parseFloat(value))
             },
             string(value) {
                 return value
@@ -242,7 +321,7 @@ function defaultConfig() {
             },
             array(value) {
                 const trimmed = value.trim()
-                if (!trimmed) {
+                if (trimmed === '') {
                     return []
                 }
                 try {
@@ -258,12 +337,12 @@ function defaultConfig() {
             },
             object(value) {
                 const trimmed = value.trim()
-                if (!trimmed) {
+                if (trimmed === '') {
                     return {}
                 }
                 try {
                     return JSON.parse(
-                        JSON_REGEX.test(trimmed)
+                        OBJECT_REGEX.test(trimmed)
                             ? trimmed
                             : `{${trimmed}}`,
                     )
