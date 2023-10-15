@@ -1732,7 +1732,7 @@ that has not been resolved yet. When it is `true`, `dotenv-conversion` will appl
 
 ##### `ignoreProcessEnv`
 
-Type: `boolean`. *Default:* `false`.
+*Type:* `boolean`. *Default:* `false`.
 
 If this option is set to `false`, the environment variables' values
 after converting will be written back to `process.env`.
@@ -1742,7 +1742,7 @@ See [this feature](#ignore-processenv).
 
 ##### `prevents`
 
-Type: `array`. *Default:* `[]`.
+*Type:* `array`. *Default:* `[]`.
 
 List of environment variables which won't be converted.
 
@@ -1750,7 +1750,7 @@ See [this feature](#prevent-variables-from-conversion).
 
 ##### `specs`
 
-Type: `object`. *Default:* `{}`.
+*Type:* `object`. *Default:* `{}`.
 
 Contains custom conversions for specific environment variables.
 
@@ -1758,7 +1758,7 @@ See [this feature](#custom-conversion-for-a-specific-variable).
 
 ##### `methods`
 
-Type: `object`. *Default:* `{}`.
+*Type:* `object`. *Default:* `{}`.
 
 Contains custom conversion methods.
 
@@ -1766,7 +1766,7 @@ See [this feature](#custom-methods).
 
 ##### `methodAliases`
 
-Type: `object`. *Default:* `{}`.
+*Type:* `object`. *Default:* `{}`.
 
 Contains conversion method aliases.
 
