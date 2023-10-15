@@ -129,12 +129,15 @@ function parseSymbol(str) {
 
 /**
  *
- * @param {string} value
+ * @param {string|*} value
  * @param {object} valueTable
  * @param {boolean} fromDotEnv
  * @returns {null|undefined|boolean|number|bigint|string|symbol|array|object}
  */
 function restoreValue(value, valueTable, fromDotEnv) {
+    if (!(typeof value == 'string' || value instanceof String)) {
+        return value
+    }
     if (fromDotEnv) {
         value = unescapeValue(value)
     }

@@ -74,7 +74,11 @@ describe('dotenv-conversion', function () {
         it('set', function (done) {
             // input
             const inputConfig = {
-                parsed: {},
+                parsed: {
+                    TRUE: true,
+                    FALSE: 'false',
+                    NUMBER: new String('4.5e10'),
+                },
                 fromDotEnv: false,
                 ignoreProcessEnv: true,
                 prevents: ['BASIC'],
@@ -85,8 +89,8 @@ describe('dotenv-conversion', function () {
                 },
                 methods: {
                     // override existing built-in conversion method
-                    auto(value) {
-                        return 'auto'
+                    number(value) {
+                        return 'number'
                     },
                     // add new conversion method
                     basic(value) {
@@ -102,7 +106,11 @@ describe('dotenv-conversion', function () {
             }
 
             // output
-            const expectedParsed = inputConfig.parsed
+            const expectedParsed = {
+                TRUE: true,
+                FALSE: false,
+                NUMBER: 45000000000,
+            }
             const expectedFromDotEnv = inputConfig.fromDotEnv
             const expectedIgnoreProcessEnv = inputConfig.ignoreProcessEnv
             const expectedPrevents = inputConfig.prevents
@@ -119,7 +127,7 @@ describe('dotenv-conversion', function () {
 
                 'basic',
             ]
-            const expectedMethodAutoReturn = 'auto'
+            const expectedMethodNumberReturn = 'number'
             const expectedMethodBasicReturn = 'basic'
             const expectedMethodAliases = {
                 bool: 'boolean',
@@ -150,7 +158,7 @@ describe('dotenv-conversion', function () {
             dotenvConversionConfig.specs.should.deep.equal(expectedSpecs)
             Object.keys(dotenvConversionConfig.methods).should.deep.equal(expectedMethods)
             dotenvConversionConfig.methodAliases.should.deep.equal(expectedMethodAliases)
-            dotenvConversionConfig.methods.auto('value').should.equal(expectedMethodAutoReturn)
+            dotenvConversionConfig.methods.number('value').should.equal(expectedMethodNumberReturn)
             dotenvConversionConfig.methods.basic('value').should.equal(expectedMethodBasicReturn)
 
             done()

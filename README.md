@@ -554,7 +554,7 @@ a string contains `${value}` separated by commas;
 the `value` could be `null`,`boolean`, `number`, `"string"`, `[..array..]` or `{..object..}`;
 and all could be wrapped or not wrapped by `[` and `]` (*must*, when the string is empty).
 
-*Special case:* Values that have only a string enclosed by double quotes 
+*Special case:* Values that have only a string enclosed by double quotes
 also match the above format.
 
 *Spaces will be trimmed.*
@@ -1752,7 +1752,7 @@ See [this feature](#prevent-variables-from-conversion).
 
 Type: `object`. *Default:* `{}`.
 
-List of custom conversions for specific environment variables.
+Contains custom conversions for specific environment variables.
 
 See [this feature](#custom-conversion-for-a-specific-variable).
 
@@ -1760,7 +1760,7 @@ See [this feature](#custom-conversion-for-a-specific-variable).
 
 Type: `object`. *Default:* `{}`.
 
-List of custom conversion methods.
+Contains custom conversion methods.
 
 See [this feature](#custom-methods).
 
@@ -1768,6 +1768,6 @@ See [this feature](#custom-methods).
 
 Type: `object`. *Default:* `{}`.
 
-List of conversion method aliases.
+Contains conversion method aliases.
 
 See [this feature](#method-aliases).
