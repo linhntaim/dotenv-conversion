@@ -2,17 +2,11 @@
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
  */
 
-const NUMBER_REGEX = /^[+-]?((\d+(\.(\d*)?)?)|(\.\d+))([eE][+-]?\d+)?$/
-// const NUM_INT_REGEX = /^[+-]?\d+$/
-const NUM_BIN_REGEX = /^[+-]?0[bB][01]+$/
-const NUM_OCT_REGEX = /^[+-]?0[oO][0-8]+$/
-const NUM_HEX_REGEX = /^[+-]?0[xX][0-9a-fA-F]+$/
-const BIG_INT_REGEX = /^[+-]?\d+n$/
-const BIG_BIN_REGEX = /^[+-]?0[bB][01]+n$/
-const BIG_OCT_REGEX = /^[+-]?0[oO][0-8]+n$/
-const BIG_HEX_REGEX = /^[+-]?0[xX][0-9a-fA-F]+n$/
+const NUMBER_REGEX = /^[+-]?(\d+(\.(\d*)?)?|\.\d+)([eE][+-]?\d+)?$/
+const NUM_BOH_REGEX = /^[+-]?0([bB][01]+|[oO][0-8]+|[xX][0-9a-fA-F]+)$/
+const BIGINT_REGEX = /^[+-]?\d+n$/
+const BIG_BOH_REGEX = /^[+-]?0([bB][01]+|[oO][0-8]+|[xX][0-9a-fA-F]+)n$/
 const SYMBOL_REGEX = /^Symbol\(.*\)$/
-const SYMBOL_EMPTY_REGEX = /^Symbol\(\)$/
 const ARRAY_REGEX = /^\[.*]$/
 const ARRAY_EMPTY_REGEX = /^\[\s*]$/
 const OBJECT_REGEX = /^\{.*}$/
@@ -37,6 +31,18 @@ const INFINITY_NEGATIVE_VALUES = ['-Infinity']
 
 /**
  *
+ * @param {array} stringValues
+ * @param {*} value
+ * @param {object} valueTable
+ * @returns {object}
+ */
+function makeValueTable(stringValues, value, valueTable = {}) {
+    stringValues.forEach(stringValue => valueTable[stringValue] = value)
+    return valueTable
+}
+
+/**
+ *
  * @param {string} value
  * @returns {string}
  */
@@ -46,72 +52,138 @@ function unescapeValue(value) {
 
 /**
  *
+ * @param {number} number
+ * @returns {number}
+ */
+function safeZero(number) {
+    return 0 === number ? 0 : number
+}
+
+/**
+ *
+ * @param {string} str
+ * @returns {number}
+ */
+function parseNumber(str) {
+    return safeZero(Number(str))
+}
+
+/**
+ *
+ * @param {string} str
+ * @returns {number}
+ */
+function parseBohNumber(str) {
+    switch (str[0]) {
+        case '+':
+            return Number(str.substring(1))
+        case '-':
+            return safeZero(-Number(str.substring(1)))
+        default:
+            return Number(str)
+    }
+}
+
+/**
+ *
+ * @param {string} str
+ * @returns {bigint}
+ */
+function parseBigInt(str) {
+    return BigInt(str.slice(0, -1))
+}
+
+/**
+ *
+ * @param {string} str
+ * @returns {bigint}
+ */
+function parseBohBigInt(str) {
+    switch (str[0]) {
+        case '+':
+            return BigInt(str.slice(1, -1))
+        case '-':
+            return -BigInt(str.slice(1, -1))
+        default:
+            return BigInt(str.slice(0, -1))
+    }
+}
+
+/**
+ *
+ * @param {number} number
+ * @returns {bigint}
+ */
+function numberAsBigInt(number) {
+    return BigInt(Math.trunc(number))
+}
+
+/**
+ *
+ * @param {string} str
+ * @returns {symbol}
+ */
+function parseSymbol(str) {
+    return Symbol(str.slice(7, -1))
+}
+
+/**
+ *
  * @param {string} value
+ * @param {object} valueTable
  * @param {boolean} fromDotEnv
  * @returns {null|undefined|boolean|number|bigint|string|symbol|array|object}
  */
-function restoreValue(value, fromDotEnv) {
+function restoreValue(value, valueTable, fromDotEnv) {
     if (fromDotEnv) {
         value = unescapeValue(value)
     }
     const trimmed = value.trim()
-    switch (true) {
-        case NULL_VALUES.includes(trimmed):
-            return null
-
-        case UNDEFINED_VALUES.includes(trimmed):
-            return undefined
-
-        case TRUE_VALUES.includes(trimmed):
-            return true
-        case FALSE_VALUES.includes(trimmed):
-            return false
-
-        case NAN_VALUES.includes(trimmed):
-            return Number.NaN
-        case INFINITY_POSITIVE_VALUES.includes(trimmed):
-            return Number.POSITIVE_INFINITY
-        case INFINITY_NEGATIVE_VALUES.includes(trimmed):
-            return Number.NEGATIVE_INFINITY
-        case NUMBER_REGEX.test(trimmed):
-        case NUM_BIN_REGEX.test(trimmed):
-        case NUM_OCT_REGEX.test(trimmed):
-        case NUM_HEX_REGEX.test(trimmed):
-            return Number(trimmed)
-
-        case BIG_INT_REGEX.test(trimmed):
-        case BIG_BIN_REGEX.test(trimmed):
-        case BIG_OCT_REGEX.test(trimmed):
-        case BIG_HEX_REGEX.test(trimmed):
-            return BigInt(trimmed.slice(0, -1))
-
-        case SYMBOL_REGEX.test(trimmed):
-            return Symbol(trimmed.slice(7, -1))
-
-        case ARRAY_REGEX.test(trimmed):
-        case OBJECT_REGEX.test(trimmed):
-            try {
-                return JSON.parse(trimmed)
-            }
-            catch (e) {
-                return value
-            }
-
-        default:
-            if (trimmed === '') {
-                return value
-            }
-            try {
-                return JSON.parse(`[${trimmed}]`)
-            }
-            catch (e) {
-                try {
-                    return JSON.parse(`{${trimmed}}`)
-                }
-                catch (e) {
-                    return value
-                }
-            }
+    if (trimmed in valueTable) {
+        return valueTable[trimmed]
+    }
+    // Number
+    if (NUMBER_REGEX.test(trimmed)) {
+        return parseNumber(trimmed)
+    }
+    if (NUM_BOH_REGEX.test(trimmed)) {
+        return parseBohNumber(trimmed)
+    }
+    // BigInt
+    if (BIGINT_REGEX.test(trimmed)) {
+        return parseBigInt(trimmed)
+    }
+    if (BIG_BOH_REGEX.test(trimmed)) {
+        return parseBohBigInt(trimmed)
+    }
+    // Symbol
+    if (SYMBOL_REGEX.test(trimmed)) {
+        return parseSymbol(trimmed)
+    }
+    // Object
+    if (ARRAY_REGEX.test(trimmed) || OBJECT_REGEX.test(trimmed)) {
+        try {
+            return JSON.parse(trimmed)
+        }
+        catch (e) {
+            return value
+        }
+    }
+    // Empty
+    if (trimmed === '') {
+        return value
+    }
+    // Unwrapped Object or String
+    try {
+        return JSON.parse(`[${trimmed}]`)
+    }
+    catch (e) {
+        try {
+            return JSON.parse(`{${trimmed}}`)
+        }
+        catch (e) {
+            return value
+        }
     }
 }
 
@@ -123,43 +195,42 @@ function restoreValue(value, fromDotEnv) {
 function flattenValue(value) {
     const typeOf = typeof value
 
-    switch (true) {
-        case value === null:
-            return 'null'
+    if (value === null) {
+        return 'null'
+    }
 
-        case typeOf === 'undefined':
-        case typeOf === 'function':
-        case value instanceof Function:
-            return 'undefined'
+    if (typeOf === 'string') {
+        return value
+    }
 
-        case typeOf === 'number':
-        case value instanceof Number:
-        case typeOf === 'boolean':
-        case value instanceof Boolean:
-        case value instanceof String:
-        case typeOf === 'symbol':
-        case value instanceof Symbol:
-            return value.toString()
+    if (typeOf === 'number'
+        || typeOf === 'boolean'
+        || typeOf === 'symbol'
+        || value instanceof Number
+        || value instanceof Boolean
+        || value instanceof String
+        || value instanceof Symbol) {
+        return value.toString()
+    }
 
-        case typeOf === 'bigint':
-        case value instanceof BigInt:
-            return `${value.toString()}n`
+    if (typeOf === 'bigint' || value instanceof BigInt) {
+        return `${value.toString()}n`
+    }
 
-        case typeOf === 'string':
-            return value
+    if (typeOf === 'undefined'
+        || typeOf === 'function' || value instanceof Function) {
+        return 'undefined'
+    }
 
-        default:
-            try {
-                return (str => {
-                    if (str === undefined) {
-                        return 'undefined'
-                    }
-                    return /^".*"$/.test(str) ? str.slice(1, -1) : str
-                })(JSON.stringify(value))
-            }
-            catch (e) {
-                return 'undefined'
-            }
+    try {
+        return (str => {
+            return str === undefined
+                ? 'undefined'
+                : (/^".*"$/.test(str) ? str.slice(1, -1) : str)
+        })(JSON.stringify(value))
+    }
+    catch (e) {
+        return 'undefined'
     }
 }
 
@@ -172,7 +243,7 @@ function defaultConfig() {
         specs: {},
         methods: {
             auto(value, name, config) {
-                value = restoreValue(value, config.fromDotEnv)
+                value = restoreValue(value, config._cache.valueTables.forAutoForced, config.fromDotEnv)
                 if (typeof value === 'string') {
                     const lTrimmed = value.replace(/^\s+/, '')
                     const findPossibleMethod = methods => methods.find(method => lTrimmed.startsWith(`${method}:`))
@@ -199,115 +270,74 @@ function defaultConfig() {
                 }
                 return value
             },
-            boolean(value) {
+            boolean(value, name, config) {
                 value = value.trim()
-                if ([
-                        '',
-                        ...NULL_VALUES,
-                        ...UNDEFINED_VALUES,
-                        ...FALSE_VALUES,
-                        ...NAN_VALUES,
-                    ].includes(value)
-                    || SYMBOL_EMPTY_REGEX.test(value)
-                    || ARRAY_EMPTY_REGEX.test(value)
-                    || OBJECT_EMPTY_REGEX.test(value)) {
+                const valueTable = config._cache.valueTables.forBooleanForced
+                if (value in valueTable) {
+                    return valueTable[value]
+                }
+                if (ARRAY_EMPTY_REGEX.test(value) || OBJECT_EMPTY_REGEX.test(value)) {
                     return false
                 }
-                if ([
-                        ...TRUE_VALUES,
-                        ...INFINITY_POSITIVE_VALUES,
-                        ...INFINITY_NEGATIVE_VALUES,
-                    ].includes(value)
-                    || SYMBOL_REGEX.test(value)) {
-                    return true
+                if (NUMBER_REGEX.test(value)) {
+                    return parseNumber(value) !== 0
                 }
-                if (NUMBER_REGEX.test(value)
-                    || NUM_BIN_REGEX.test(value)
-                    || NUM_OCT_REGEX.test(value)
-                    || NUM_HEX_REGEX.test(value)) {
-                    return Number(value) !== 0
+                if (NUM_BOH_REGEX.test(value)) {
+                    return parseBohNumber(value) !== 0
                 }
-                if (BIG_INT_REGEX.test(value)
-                    || BIG_BIN_REGEX.test(value)
-                    || BIG_OCT_REGEX.test(value)
-                    || BIG_HEX_REGEX.test(value)) {
-                    return BigInt(value.slice(0, -1)) !== 0n
+                if (BIGINT_REGEX.test(value)) {
+                    return parseBigInt(value) !== 0n
+                }
+                if (BIG_BOH_REGEX.test(value)) {
+                    return parseBohBigInt(value) !== 0n
                 }
                 return true
             },
-            number(value) {
+            number(value, name, config) {
                 value = value.trim()
-                if ([
-                        '',
-                        ...NULL_VALUES,
-                        ...FALSE_VALUES,
-                    ].includes(value)
-                    || SYMBOL_EMPTY_REGEX.test(value)
-                    || ARRAY_EMPTY_REGEX.test(value)
-                    || OBJECT_EMPTY_REGEX.test(value)) {
+                const valueTable = config._cache.valueTables.forNumberForced
+                if (value in valueTable) {
+                    return valueTable[value]
+                }
+                if (ARRAY_EMPTY_REGEX.test(value) || OBJECT_EMPTY_REGEX.test(value)) {
                     return 0
                 }
-                if ([...UNDEFINED_VALUES, ...NAN_VALUES].includes(value)) {
-                    return Number.NaN
+                if (NUMBER_REGEX.test(value)) {
+                    return parseNumber(value)
                 }
-                if (TRUE_VALUES.includes(value)
-                    || SYMBOL_REGEX.test(value)) {
-                    return 1
+                if (NUM_BOH_REGEX.test(value)) {
+                    return parseBohNumber(value)
                 }
-                if (INFINITY_POSITIVE_VALUES.includes(value)) {
-                    return Number.POSITIVE_INFINITY
+                if (BIGINT_REGEX.test(value)) {
+                    return parseNumber(value.slice(0, -1))
                 }
-                if (INFINITY_NEGATIVE_VALUES.includes(value)) {
-                    return Number.NEGATIVE_INFINITY
+                if (BIG_BOH_REGEX.test(value)) {
+                    return parseBohNumber(value.slice(0, -1))
                 }
-                if (NUMBER_REGEX.test(value)
-                    || NUM_BIN_REGEX.test(value)
-                    || NUM_OCT_REGEX.test(value)
-                    || NUM_HEX_REGEX.test(value)) {
-                    return Number(value)
-                }
-                if (BIG_INT_REGEX.test(value)
-                    || BIG_BIN_REGEX.test(value)
-                    || BIG_OCT_REGEX.test(value)
-                    || BIG_HEX_REGEX.test(value)) {
-                    return Number(value.slice(0, -1))
-                }
-                return (number => Number.isNaN(number) ? 0 : number)(Number.parseFloat(value))
+                return (number => Number.isNaN(number) ? 0 : safeZero(number))(Number.parseFloat(value))
             },
-            bigint(value) {
+            bigint(value, name, config) {
                 value = value.trim()
-                if ([
-                        '',
-                        ...NULL_VALUES,
-                        ...UNDEFINED_VALUES,
-                        ...FALSE_VALUES,
-                        ...NAN_VALUES,
-                    ].includes(value)
-                    || SYMBOL_EMPTY_REGEX.test(value)
-                    || ARRAY_EMPTY_REGEX.test(value)
-                    || OBJECT_EMPTY_REGEX.test(value)) {
+                const valueTable = config._cache.valueTables.forBigIntForced
+                if (value in valueTable) {
+                    return valueTable[value]
+                }
+                if (ARRAY_EMPTY_REGEX.test(value) || OBJECT_EMPTY_REGEX.test(value)) {
                     return 0n
                 }
-                if ([...TRUE_VALUES, ...INFINITY_POSITIVE_VALUES].includes(value)
-                    || SYMBOL_REGEX.test(value)) {
-                    return 1n
+                if (NUMBER_REGEX.test(value)) {
+                    return numberAsBigInt(parseNumber(value))
                 }
-                if (INFINITY_NEGATIVE_VALUES.includes(value)) {
-                    return -1n
+                if (NUM_BOH_REGEX.test(value)) {
+                    return numberAsBigInt(parseBohNumber(value))
                 }
-                if (NUMBER_REGEX.test(value)
-                    || NUM_BIN_REGEX.test(value)
-                    || NUM_OCT_REGEX.test(value)
-                    || NUM_HEX_REGEX.test(value)) {
-                    return BigInt(Math.trunc(Number(value)))
+                if (BIGINT_REGEX.test(value)) {
+                    return parseBigInt(value)
                 }
-                if (BIG_INT_REGEX.test(value)
-                    || BIG_BIN_REGEX.test(value)
-                    || BIG_OCT_REGEX.test(value)
-                    || BIG_HEX_REGEX.test(value)) {
-                    return BigInt(value.slice(0, -1))
+                if (BIG_BOH_REGEX.test(value)) {
+                    return parseBohBigInt(value)
                 }
-                return (number => Number.isNaN(number) ? 0n : BigInt(Math.trunc(number)))(Number.parseFloat(value))
+                return (number => Number.isNaN(number) ? 0n : numberAsBigInt(safeZero(number)))(Number.parseFloat(value))
             },
             string(value) {
                 return value
@@ -315,7 +345,7 @@ function defaultConfig() {
             symbol(value) {
                 const trimmed = value.trim()
                 if (SYMBOL_REGEX.test(trimmed)) {
-                    return Symbol(trimmed.slice(7, -1))
+                    return parseSymbol(trimmed)
                 }
                 return Symbol(value)
             },
@@ -394,7 +424,7 @@ function mergeConfig(config) {
             if (alias in mergingConfig.methodAliases) {
                 continue
             }
-            // not use name of existing methods or aliases
+            // not use name of existing methods
             if (alias in mergingConfig.methods) {
                 continue
             }
@@ -409,6 +439,47 @@ function mergeConfig(config) {
         }
     }
     return mergingConfig
+}
+
+function beforeConfig(config) {
+    config._cache = {
+        valueTables: {
+            forAutoForced: makeValueTable(INFINITY_NEGATIVE_VALUES, Number.NEGATIVE_INFINITY,
+                makeValueTable(INFINITY_POSITIVE_VALUES, Number.POSITIVE_INFINITY,
+                    makeValueTable(NAN_VALUES, Number.NaN,
+                        makeValueTable(FALSE_VALUES, false,
+                            makeValueTable(TRUE_VALUES, true,
+                                makeValueTable(UNDEFINED_VALUES, undefined,
+                                    makeValueTable(NULL_VALUES, null))))))),
+            forBooleanForced: makeValueTable(INFINITY_NEGATIVE_VALUES, true,
+                makeValueTable(INFINITY_POSITIVE_VALUES, true,
+                    makeValueTable(NAN_VALUES, false,
+                        makeValueTable(FALSE_VALUES, false,
+                            makeValueTable(TRUE_VALUES, true,
+                                makeValueTable(UNDEFINED_VALUES, false,
+                                    makeValueTable(['', ...NULL_VALUES], false))))))),
+            forNumberForced: makeValueTable(INFINITY_NEGATIVE_VALUES, Number.NEGATIVE_INFINITY,
+                makeValueTable(INFINITY_POSITIVE_VALUES, Number.POSITIVE_INFINITY,
+                    makeValueTable(NAN_VALUES, Number.NaN,
+                        makeValueTable(FALSE_VALUES, 0,
+                            makeValueTable(TRUE_VALUES, 1,
+                                makeValueTable(UNDEFINED_VALUES, Number.NaN,
+                                    makeValueTable(['', ...NULL_VALUES], 0))))))),
+            forBigIntForced: makeValueTable(INFINITY_NEGATIVE_VALUES, -1n,
+                makeValueTable(INFINITY_POSITIVE_VALUES, 1n,
+                    makeValueTable(NAN_VALUES, 0n,
+                        makeValueTable(FALSE_VALUES, 0n,
+                            makeValueTable(TRUE_VALUES, 1n,
+                                makeValueTable(UNDEFINED_VALUES, 0n,
+                                    makeValueTable(['', ...NULL_VALUES], 0n))))))),
+        },
+    }
+    return config
+}
+
+function afterConfig(config) {
+    delete config._cache
+    return config
 }
 
 function convertValue(value, name, config) {
@@ -438,7 +509,7 @@ function convertValue(value, name, config) {
 }
 
 function convert(config = {}) {
-    config = mergeConfig(config)
+    config = beforeConfig(mergeConfig(config))
 
     const environment = config.ignoreProcessEnv ? {} : process.env
 
@@ -454,7 +525,7 @@ function convert(config = {}) {
         environment[processKey] = flattenValue(config.parsed[processKey])
     }
 
-    return config
+    return afterConfig(config)
 }
 
 export default {convert}

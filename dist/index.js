@@ -5,23 +5,41 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-/* region env-utils */
-
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
  */
 
-var NUMBER_REGEX = /^[+-]?((\d+(\.(\d*)?)?)|(\.\d+))(e[+-]?\d+)?$/i;
+var NUMBER_REGEX = /^[+-]?(\d+(\.(\d*)?)?|\.\d+)([eE][+-]?\d+)?$/;
+var NUM_BOH_REGEX = /^[+-]?0([bB][01]+|[oO][0-8]+|[xX][0-9a-fA-F]+)$/;
 var BIGINT_REGEX = /^[+-]?\d+n$/;
+var BIG_BOH_REGEX = /^[+-]?0([bB][01]+|[oO][0-8]+|[xX][0-9a-fA-F]+)n$/;
 var SYMBOL_REGEX = /^Symbol\(.*\)$/;
-var ARRAY_REGEX = /^\[.*\]$/;
-var JSON_REGEX = /^\{.*\}$/;
+var ARRAY_REGEX = /^\[.*]$/;
+var ARRAY_EMPTY_REGEX = /^\[\s*]$/;
+var OBJECT_REGEX = /^\{.*}$/;
+var OBJECT_EMPTY_REGEX = /^\{\s*}$/;
 var NULL_VALUES = ['null', 'Null', 'NULL'];
 var UNDEFINED_VALUES = ['undefined', 'UNDEFINED'];
-var TRUE_VALUES = ['true', 'True', 'TRUE', 'yes', 'Yes', 'YES'];
-var FALSE_VALUES = ['false', 'False', 'FALSE', 'no', 'No', 'NO'];
+var TRUE_VALUES = ['true', 'True', 'TRUE', 'yes', 'Yes', 'YES', 'ok', 'Ok', 'OK'];
+var FALSE_VALUES = ['false', 'False', 'FALSE', 'no', 'No', 'NO', 'not', 'Not', 'NOT', 'none', 'None', 'NONE'];
 var NAN_VALUES = ['NaN'];
-var INFINITY_VALUES = ['Infinity', '-Infinity', '+Infinity'];
+var INFINITY_POSITIVE_VALUES = ['Infinity', '+Infinity'];
+var INFINITY_NEGATIVE_VALUES = ['-Infinity'];
+
+/**
+ *
+ * @param {array} stringValues
+ * @param {*} value
+ * @param {object} valueTable
+ * @returns {object}
+ */
+function makeValueTable(stringValues, value) {
+  var valueTable = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  stringValues.forEach(function (stringValue) {
+    return valueTable[stringValue] = value;
+  });
+  return valueTable;
+}
 
 /**
  *
@@ -34,93 +52,168 @@ function unescapeValue(value) {
 
 /**
  *
- * @param {string} value
- * @param {boolean} fromDotEnv
- * @returns {null|undefined|boolean|number|bigint|string|symbol|array|object}
+ * @param {number} number
+ * @returns {number}
  */
-function restoreValue(value, fromDotEnv) {
-  if (fromDotEnv) {
-    value = unescapeValue(value);
-  }
-  var trimmed = value.trim();
-  switch (true) {
-    case NULL_VALUES.includes(trimmed):
-      return null;
-    case UNDEFINED_VALUES.includes(trimmed):
-      return undefined;
-    case TRUE_VALUES.includes(trimmed):
-      return true;
-    case FALSE_VALUES.includes(trimmed):
-      return false;
-    case [].concat(NAN_VALUES, INFINITY_VALUES).includes(trimmed):
-    case NUMBER_REGEX.test(trimmed):
-      return Number(trimmed);
-    case BIGINT_REGEX.test(trimmed):
-      return BigInt(trimmed.slice(0, -1));
-    case SYMBOL_REGEX.test(trimmed):
-      return Symbol(trimmed.slice(7, -1));
-    case ARRAY_REGEX.test(trimmed):
-    case JSON_REGEX.test(trimmed):
-      try {
-        return JSON.parse(trimmed);
-      } catch (e) {
-        return value;
-      }
+function safeZero(number) {
+  return 0 === number ? 0 : number;
+}
+
+/**
+ *
+ * @param {string} str
+ * @returns {number}
+ */
+function parseNumber(str) {
+  return safeZero(Number(str));
+}
+
+/**
+ *
+ * @param {string} str
+ * @returns {number}
+ */
+function parseBohNumber(str) {
+  switch (str[0]) {
+    case '+':
+      return Number(str.substring(1));
+    case '-':
+      return safeZero(-Number(str.substring(1)));
     default:
-      if (!trimmed) {
-        return value;
-      }
-      try {
-        return JSON.parse("[".concat(trimmed, "]"));
-      } catch (e) {
-        try {
-          return JSON.parse("{".concat(trimmed, "}"));
-        } catch (e) {
-          return value;
-        }
-      }
+      return Number(str);
   }
 }
 
 /**
  *
- * @param {null|undefined|boolean|number|bigint|string|symbol|array|object} value
+ * @param {string} str
+ * @returns {bigint}
+ */
+function parseBigInt(str) {
+  return BigInt(str.slice(0, -1));
+}
+
+/**
+ *
+ * @param {string} str
+ * @returns {bigint}
+ */
+function parseBohBigInt(str) {
+  switch (str[0]) {
+    case '+':
+      return BigInt(str.slice(1, -1));
+    case '-':
+      return -BigInt(str.slice(1, -1));
+    default:
+      return BigInt(str.slice(0, -1));
+  }
+}
+
+/**
+ *
+ * @param {number} number
+ * @returns {bigint}
+ */
+function numberAsBigInt(number) {
+  return BigInt(Math.trunc(number));
+}
+
+/**
+ *
+ * @param {string} str
+ * @returns {symbol}
+ */
+function parseSymbol(str) {
+  return Symbol(str.slice(7, -1));
+}
+
+/**
+ *
+ * @param {string} value
+ * @param {object} valueTable
+ * @param {boolean} fromDotEnv
+ * @returns {null|undefined|boolean|number|bigint|string|symbol|array|object}
+ */
+function restoreValue(value, valueTable, fromDotEnv) {
+  if (fromDotEnv) {
+    value = unescapeValue(value);
+  }
+  var trimmed = value.trim();
+  if (trimmed in valueTable) {
+    return valueTable[trimmed];
+  }
+  // Number
+  if (NUMBER_REGEX.test(trimmed)) {
+    return parseNumber(trimmed);
+  }
+  if (NUM_BOH_REGEX.test(trimmed)) {
+    return parseBohNumber(trimmed);
+  }
+  // BigInt
+  if (BIGINT_REGEX.test(trimmed)) {
+    return parseBigInt(trimmed);
+  }
+  if (BIG_BOH_REGEX.test(trimmed)) {
+    return parseBohBigInt(trimmed);
+  }
+  // Symbol
+  if (SYMBOL_REGEX.test(trimmed)) {
+    return parseSymbol(trimmed);
+  }
+  // Object
+  if (ARRAY_REGEX.test(trimmed) || OBJECT_REGEX.test(trimmed)) {
+    try {
+      return JSON.parse(trimmed);
+    } catch (e) {
+      return value;
+    }
+  }
+  // Empty
+  if (trimmed === '') {
+    return value;
+  }
+  // Unwrapped Object or String
+  try {
+    return JSON.parse("[".concat(trimmed, "]"));
+  } catch (e) {
+    try {
+      return JSON.parse("{".concat(trimmed, "}"));
+    } catch (e) {
+      return value;
+    }
+  }
+}
+
+/**
+ *
+ * @param {null|undefined|boolean|number|bigint|string|symbol|array|object|function} value
  * @returns {string}
  */
 function flattenValue(value) {
   var typeOf = _typeof(value);
-  switch (true) {
-    case value === null:
-    case typeOf === 'function':
-      return 'null';
-    case typeOf === 'undefined':
-      return 'undefined';
-    case typeOf === 'string':
-      return value;
-    case typeOf === 'number':
-    case value instanceof Number:
-    case typeOf === 'boolean':
-    case value instanceof Boolean:
-    case typeOf === 'symbol':
-    case value instanceof String:
-      return value.toString();
-    case typeOf === 'bigint':
-    case value instanceof BigInt:
-      return "".concat(value.toString(), "n");
-    default:
-      // `JSON.stringify` can wrap value with double quotes.
-      // E.g. `JSON.stringify(new Date)` will result a string looks like `'"2023-..."'`.
-      // We surely want the string to be without the double quotes. (Don't we?)
-      // But currently, the code won't reach that case.
-      // So we do not need to handle it now.
-      return JSON.stringify(value);
+  if (value === null) {
+    return 'null';
+  }
+  if (typeOf === 'string') {
+    return value;
+  }
+  if (typeOf === 'number' || typeOf === 'boolean' || typeOf === 'symbol' || value instanceof Number || value instanceof Boolean || value instanceof String || value instanceof Symbol) {
+    return value.toString();
+  }
+  if (typeOf === 'bigint' || value instanceof BigInt) {
+    return "".concat(value.toString(), "n");
+  }
+  if (typeOf === 'undefined' || typeOf === 'function' || value instanceof Function) {
+    return 'undefined';
+  }
+  try {
+    return function (str) {
+      return str === undefined ? 'undefined' : /^".*"$/.test(str) ? str.slice(1, -1) : str;
+    }(JSON.stringify(value));
+  } catch (e) {
+    return 'undefined';
   }
 }
-
-/* endregion */
-
-var INTEGER_REGEX = /^[+-]?\d+$/;
-var FORCING_FALSE_VALUES = [].concat(FALSE_VALUES, NULL_VALUES, UNDEFINED_VALUES, NAN_VALUES, ['not', 'Not', 'NOT', 'none', 'None', 'NONE']);
 function defaultConfig() {
   return {
     parsed: {},
@@ -130,7 +223,7 @@ function defaultConfig() {
     specs: {},
     methods: {
       auto: function auto(value, name, config) {
-        value = restoreValue(value, config.fromDotEnv);
+        value = restoreValue(value, config._cache.valueTables.forAutoForced, config.fromDotEnv);
         if (typeof value === 'string') {
           var lTrimmed = value.replace(/^\s+/, '');
           var findPossibleMethod = function findPossibleMethod(methods) {
@@ -153,58 +246,78 @@ function defaultConfig() {
         }
         return value;
       },
-      "boolean": function boolean(value) {
+      "boolean": function boolean(value, name, config) {
         value = value.trim();
-        if (!value) {
+        var valueTable = config._cache.valueTables.forBooleanForced;
+        if (value in valueTable) {
+          return valueTable[value];
+        }
+        if (ARRAY_EMPTY_REGEX.test(value) || OBJECT_EMPTY_REGEX.test(value)) {
           return false;
         }
-        return !FORCING_FALSE_VALUES.includes(value) && function (isNumber, isBigInt) {
-          return !isNumber && !isBigInt || isNumber && Number(value) !== 0 || isBigInt && BigInt(value.slice(0, -1)) !== 0n;
-        }(NUMBER_REGEX.test(value), BIGINT_REGEX.test(value));
-      },
-      number: function number(value) {
-        value = value.trim();
-        if (!value) {
-          return 0;
+        if (NUMBER_REGEX.test(value)) {
+          return parseNumber(value) !== 0;
         }
-        if (TRUE_VALUES.includes(value)) {
-          return 1;
-        }
-        if (FORCING_FALSE_VALUES.includes(value)) {
-          return 0;
-        }
-        value = Number.parseFloat(value);
-        return Number.isNaN(value) ? 0 : value;
-      },
-      bigint: function bigint(value) {
-        value = value.trim();
-        if (!value) {
-          return 0n;
-        }
-        if (TRUE_VALUES.includes(value)) {
-          return 1n;
-        }
-        if (FORCING_FALSE_VALUES.includes(value)) {
-          return 0n;
-        }
-        if (INFINITY_VALUES.includes(value)) {
-          return 0n;
-        }
-        if (INTEGER_REGEX.test(value)) {
-          return BigInt(value);
+        if (NUM_BOH_REGEX.test(value)) {
+          return parseBohNumber(value) !== 0;
         }
         if (BIGINT_REGEX.test(value)) {
-          return BigInt(value.slice(0, -1));
+          return parseBigInt(value) !== 0n;
         }
-        value = Number.parseFloat(value);
-        switch (true) {
-          case Number.isNaN(value):
-            return 0n;
-          case Number.isInteger(value):
-            return BigInt(value);
-          default:
-            return BigInt(Number.parseInt(value));
+        if (BIG_BOH_REGEX.test(value)) {
+          return parseBohBigInt(value) !== 0n;
         }
+        return true;
+      },
+      number: function number(value, name, config) {
+        value = value.trim();
+        var valueTable = config._cache.valueTables.forNumberForced;
+        if (value in valueTable) {
+          return valueTable[value];
+        }
+        if (ARRAY_EMPTY_REGEX.test(value) || OBJECT_EMPTY_REGEX.test(value)) {
+          return 0;
+        }
+        if (NUMBER_REGEX.test(value)) {
+          return parseNumber(value);
+        }
+        if (NUM_BOH_REGEX.test(value)) {
+          return parseBohNumber(value);
+        }
+        if (BIGINT_REGEX.test(value)) {
+          return parseNumber(value.slice(0, -1));
+        }
+        if (BIG_BOH_REGEX.test(value)) {
+          return parseBohNumber(value.slice(0, -1));
+        }
+        return function (number) {
+          return Number.isNaN(number) ? 0 : safeZero(number);
+        }(Number.parseFloat(value));
+      },
+      bigint: function bigint(value, name, config) {
+        value = value.trim();
+        var valueTable = config._cache.valueTables.forBigIntForced;
+        if (value in valueTable) {
+          return valueTable[value];
+        }
+        if (ARRAY_EMPTY_REGEX.test(value) || OBJECT_EMPTY_REGEX.test(value)) {
+          return 0n;
+        }
+        if (NUMBER_REGEX.test(value)) {
+          return numberAsBigInt(parseNumber(value));
+        }
+        if (NUM_BOH_REGEX.test(value)) {
+          return numberAsBigInt(parseBohNumber(value));
+        }
+        if (BIGINT_REGEX.test(value)) {
+          return parseBigInt(value);
+        }
+        if (BIG_BOH_REGEX.test(value)) {
+          return parseBohBigInt(value);
+        }
+        return function (number) {
+          return Number.isNaN(number) ? 0n : numberAsBigInt(safeZero(number));
+        }(Number.parseFloat(value));
       },
       string: function string(value) {
         return value;
@@ -212,13 +325,13 @@ function defaultConfig() {
       symbol: function symbol(value) {
         var trimmed = value.trim();
         if (SYMBOL_REGEX.test(trimmed)) {
-          return Symbol(trimmed.slice(7, -1));
+          return parseSymbol(trimmed);
         }
         return Symbol(value);
       },
       array: function array(value) {
         var trimmed = value.trim();
-        if (!trimmed) {
+        if (trimmed === '') {
           return [];
         }
         try {
@@ -229,11 +342,11 @@ function defaultConfig() {
       },
       object: function object(value) {
         var trimmed = value.trim();
-        if (!trimmed) {
+        if (trimmed === '') {
           return {};
         }
         try {
-          return JSON.parse(JSON_REGEX.test(trimmed) ? trimmed : "{".concat(trimmed, "}"));
+          return JSON.parse(OBJECT_REGEX.test(trimmed) ? trimmed : "{".concat(trimmed, "}"));
         } catch (e) {
           return this.string(value);
         }
@@ -280,7 +393,7 @@ function mergeConfig(config) {
       if (alias in mergingConfig.methodAliases) {
         continue;
       }
-      // not use name of existing methods or aliases
+      // not use name of existing methods
       if (alias in mergingConfig.methods) {
         continue;
       }
@@ -295,6 +408,21 @@ function mergeConfig(config) {
     }
   }
   return mergingConfig;
+}
+function beforeConfig(config) {
+  config._cache = {
+    valueTables: {
+      forAutoForced: makeValueTable(INFINITY_NEGATIVE_VALUES, Number.NEGATIVE_INFINITY, makeValueTable(INFINITY_POSITIVE_VALUES, Number.POSITIVE_INFINITY, makeValueTable(NAN_VALUES, Number.NaN, makeValueTable(FALSE_VALUES, false, makeValueTable(TRUE_VALUES, true, makeValueTable(UNDEFINED_VALUES, undefined, makeValueTable(NULL_VALUES, null))))))),
+      forBooleanForced: makeValueTable(INFINITY_NEGATIVE_VALUES, true, makeValueTable(INFINITY_POSITIVE_VALUES, true, makeValueTable(NAN_VALUES, false, makeValueTable(FALSE_VALUES, false, makeValueTable(TRUE_VALUES, true, makeValueTable(UNDEFINED_VALUES, false, makeValueTable([''].concat(NULL_VALUES), false))))))),
+      forNumberForced: makeValueTable(INFINITY_NEGATIVE_VALUES, Number.NEGATIVE_INFINITY, makeValueTable(INFINITY_POSITIVE_VALUES, Number.POSITIVE_INFINITY, makeValueTable(NAN_VALUES, Number.NaN, makeValueTable(FALSE_VALUES, 0, makeValueTable(TRUE_VALUES, 1, makeValueTable(UNDEFINED_VALUES, Number.NaN, makeValueTable([''].concat(NULL_VALUES), 0))))))),
+      forBigIntForced: makeValueTable(INFINITY_NEGATIVE_VALUES, -1n, makeValueTable(INFINITY_POSITIVE_VALUES, 1n, makeValueTable(NAN_VALUES, 0n, makeValueTable(FALSE_VALUES, 0n, makeValueTable(TRUE_VALUES, 1n, makeValueTable(UNDEFINED_VALUES, 0n, makeValueTable([''].concat(NULL_VALUES), 0n)))))))
+    }
+  };
+  return config;
+}
+function afterConfig(config) {
+  delete config._cache;
+  return config;
 }
 function convertValue(value, name, config) {
   if (config.prevents.includes(name)) {
@@ -321,7 +449,7 @@ function convertValue(value, name, config) {
 }
 function convert() {
   var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  config = mergeConfig(config);
+  config = beforeConfig(mergeConfig(config));
   var environment = config.ignoreProcessEnv ? {} : process.env;
   for (var configKey in config.parsed) {
     var value = Object.prototype.hasOwnProperty.call(environment, configKey) ? environment[configKey] : config.parsed[configKey];
@@ -330,7 +458,7 @@ function convert() {
   for (var processKey in config.parsed) {
     environment[processKey] = flattenValue(config.parsed[processKey]);
   }
-  return config;
+  return afterConfig(config);
 }
 var _default = exports["default"] = {
   convert: convert
