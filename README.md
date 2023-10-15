@@ -26,6 +26,9 @@ then `dotenv-conversion` is your tool.
     - [Custom Conversion for a Specific Variable](#custom-conversion-for-a-specific-variable)
     - [Prevent Variables from Conversion](#prevent-variables-from-conversion)
     - [Ignore `process.env`](#ignore-processenv)
+- [Documentation](#documentation)
+    - [`convert`](#convert)
+        - [Options](#options)
 
 ---
 
@@ -44,12 +47,14 @@ const dotenvConversion = require('dotenv-conversion')
 /* or ES6 */
 // import dotenvConversion from 'dotenv-conversion'
 
-const config = {
+const options = {
     parsed: {
         DEBUG: 'false',
     },
+    // rememeber to set this option to false if usage is `standalone`
+    fromDotEnv: false, 
 }
-const {parsed} = dotenvConversion.convert(config)
+const {parsed} = dotenvConversion.convert(options)
 console.log(parsed.DEBUG) // (boolean) false
 console.log(process.env.DEBUG) // (string) 'false' 
 ```
@@ -329,9 +334,11 @@ console.log(process.env.VARIABLE_2)     // (string) 'undefined'
 
 - **boolean**
 
-Values to be converted to true: `true`, `True`, `TRUE`, `yes`, `Yes`, `YES`.
+Values to be converted to true: `true`, `True`, `TRUE`, `yes`, `Yes`, `YES`,
+`ok`, `Ok`, `OK`.
 
-Values to be converted to false: `false`, `False`, `FALSE`, `no`, `No`, `NO`.
+Values to be converted to false: `false`, `False`, `FALSE`, `no`, `No`, `NO`,
+`not`, `Not`, `NOT`, `none`, `None`, `NONE`.
 
 *Spaces will be trimmed.*
 
@@ -366,6 +373,8 @@ console.log(process.env.VARIABLE_4)     // (string) 'false'
 
 Values to be converted to number: `NaN`, `±Infinity`
 and any string in valid number format (e.g. `±5`, `±5.`, `±.5`, `±4.5`, `±4.5e±123`, ...).
+Binary (e.g. `±0b1010`), octal (e.g. `±0o12`) and hexadecimal (e.g. `±0xa`) number format
+are also supported.
 
 *Spaces will be trimmed.*
 
@@ -390,6 +399,12 @@ VARIABLE_16=4.5E123
 VARIABLE_17=" NaN "
 VARIABLE_18=" Infinity "
 VARIABLE_19=" 4.5e+123 "
+VARIABLE_20=0b1010
+VARIABLE_21=-0B1010
+VARIABLE_22=0o12
+VARIABLE_23=-0O12
+VARIABLE_24=0xa
+VARIABLE_25=-0XA
 ```
 
 ```javascript
@@ -420,6 +435,12 @@ console.log(parsed.VARIABLE_16)         // (number) 4.5e+123
 console.log(parsed.VARIABLE_17)         // (number) NaN
 console.log(parsed.VARIABLE_18)         // (number) Infinity
 console.log(parsed.VARIABLE_19)         // (number) 4.5e+123
+console.log(parsed.VARIABLE_20)         // (number) 10
+console.log(parsed.VARIABLE_21)         // (number) -10
+console.log(parsed.VARIABLE_22)         // (number) 10
+console.log(parsed.VARIABLE_23)         // (number) -10
+console.log(parsed.VARIABLE_24)         // (number) 10
+console.log(parsed.VARIABLE_25)         // (number) -10
 console.log(process.env.VARIABLE_1)     // (string) 'NaN'
 console.log(process.env.VARIABLE_2)     // (string) 'Infinity'
 console.log(process.env.VARIABLE_3)     // (string) '-Infinity'
@@ -439,12 +460,19 @@ console.log(process.env.VARIABLE_16)    // (string) '4.5e+123'
 console.log(process.env.VARIABLE_17)    // (string) 'NaN'
 console.log(process.env.VARIABLE_18)    // (string) 'Infinity'
 console.log(process.env.VARIABLE_19)    // (string) '4.5e+123'
+console.log(process.env.VARIABLE_20)    // (string) '10'
+console.log(process.env.VARIABLE_21)    // (string) '-10'
+console.log(process.env.VARIABLE_22)    // (string) '10'
+console.log(process.env.VARIABLE_23)    // (string) '-10'
+console.log(process.env.VARIABLE_24)    // (string) '10'
+console.log(process.env.VARIABLE_25)    // (string) '-10'
 ```
 
 - **bigint**
 
 Values to be converted to bigint must match the format: `${value}n`;
-`value` must be an `integer`.
+`value` must be an `integer` in decimal (e.g. `±10`), binary (e.g. `±0b1010`),
+octal (e.g. `±0o12`) or hexadecimal (e.g. `±0xa`) number syntax.
 
 *Spaces will be trimmed.*
 
@@ -453,6 +481,12 @@ Values to be converted to bigint must match the format: `${value}n`;
 VARIABLE_1=5n
 VARIABLE_2=-5n
 VARIABLE_3=" 5n "
+VARIABLE_4=0b1010n
+VARIABLE_5=-0B1010n
+VARIABLE_6=0o12n
+VARIABLE_7=-0O12n
+VARIABLE_8=0xan
+VARIABLE_9=-0XAn
 ```
 
 ```javascript
@@ -467,9 +501,21 @@ const {parsed} = dotenvConversion.convert(config)
 console.log(parsed.VARIABLE_1)          // (bigint) 5n 
 console.log(parsed.VARIABLE_2)          // (bigint) -5n
 console.log(parsed.VARIABLE_3)          // (bigint) 5n
+console.log(parsed.VARIABLE_4)          // (bigint) 10n
+console.log(parsed.VARIABLE_5)          // (bigint) 10n
+console.log(parsed.VARIABLE_6)          // (bigint) 10n
+console.log(parsed.VARIABLE_7)          // (bigint) 10n
+console.log(parsed.VARIABLE_8)          // (bigint) 10n
+console.log(parsed.VARIABLE_9)          // (bigint) 10n
 console.log(process.env.VARIABLE_1)     // (string) '5n'
 console.log(process.env.VARIABLE_2)     // (string) '-5n'
 console.log(process.env.VARIABLE_3)     // (string) '5n'
+console.log(process.env.VARIABLE_4)     // (string) '10n'
+console.log(process.env.VARIABLE_5)     // (string) '10n'
+console.log(process.env.VARIABLE_6)     // (string) '10n'
+console.log(process.env.VARIABLE_7)     // (string) '10n'
+console.log(process.env.VARIABLE_8)     // (string) '10n'
+console.log(process.env.VARIABLE_9)     // (string) '10n'
 ```
 
 - **symbol**
@@ -591,27 +637,30 @@ How a variable indicates its conversion method:
 - Standalone:
 
 ```javascript
-const config = {
+const options = {
     parsed: {
         '${VARIABLE_1}': '${method}:${value}',
         '${VARIABLE_2}': ' ${method}: ${value} ',
     },
+    fromDotEnv: false,
 }
 
 // Example:
-const config = {
+const options = {
     parsed: {
         BOOLEAN: 'boolean:1',
         NUMBER: ' number: true ',
     },
+    fromDotEnv: false,
 }
 
 // Unaccepted (no conversion):
-const config = {
+const options = {
     parsed: {
         NOT_BOOLEAN: 'boolean :1',
         NOT_NUMBER: ' number : true ',
     },
+    fromDotEnv: false,
 }
 ```
 
@@ -652,9 +701,11 @@ VARIABLE_6="boolean:null"               # or: null, Null, NULL
 VARIABLE_7="boolean:undefined"          # or: undefined, UNDEFINED
 VARIABLE_8=boolean:NaN
 VARIABLE_9=boolean:0
-VARIABLE_10=boolean:0.0
+VARIABLE_10=boolean:0.0e+0
 VARIABLE_11=boolean:0n
-VARIABLE_12="boolean:anything else"
+VARIABLE_12=boolean:[]
+VARIABLE_13=boolean:{}
+VARIABLE_14="boolean:anything else"
 ```
 
 ```javascript
@@ -677,7 +728,9 @@ console.log(parsed.VARIABLE_8)          // (boolean) false
 console.log(parsed.VARIABLE_9)          // (boolean) false
 console.log(parsed.VARIABLE_10)         // (boolean) false
 console.log(parsed.VARIABLE_11)         // (boolean) false
-console.log(parsed.VARIABLE_12)         // (boolean) true
+console.log(parsed.VARIABLE_12)         // (boolean) false
+console.log(parsed.VARIABLE_13)         // (boolean) false
+console.log(parsed.VARIABLE_14)         // (boolean) true
 console.log(process.env.VARIABLE_1)     // (string) 'false'
 console.log(process.env.VARIABLE_2)     // (string) 'false'
 console.log(process.env.VARIABLE_3)     // (string) 'false'
@@ -689,7 +742,9 @@ console.log(process.env.VARIABLE_8)     // (string) 'false'
 console.log(process.env.VARIABLE_9)     // (string) 'false'
 console.log(process.env.VARIABLE_10)    // (string) 'false'
 console.log(process.env.VARIABLE_11)    // (string) 'false'
-console.log(process.env.VARIABLE_12)    // (string) 'true'
+console.log(process.env.VARIABLE_12)    // (string) 'false'
+console.log(process.env.VARIABLE_13)    // (string) 'false'
+console.log(process.env.VARIABLE_14)    // (string) 'true'
 ```
 
 - **number**
@@ -715,6 +770,14 @@ VARIABLE_14=number:-4.5e-1
 VARIABLE_15=number:4.5e123
 VARIABLE_16=number:123string
 VARIABLE_17=number:string
+VARIABLE_18=number:[]
+VARIABLE_19=number:{}
+VARIABLE_20=number:0b1010
+VARIABLE_21=number:0b1010string
+VARIABLE_22=number:0o12
+VARIABLE_23=number:0o12string
+VARIABLE_24=number:0xa
+VARIABLE_25=number:0xastring
 ```
 
 ```javascript
@@ -734,8 +797,8 @@ console.log(parsed.VARIABLE_5)          // (number) 0
 console.log(parsed.VARIABLE_6)          // (number) 0
 console.log(parsed.VARIABLE_7)          // (number) 0
 console.log(parsed.VARIABLE_8)          // (number) 0
-console.log(parsed.VARIABLE_9)          // (number) 0
-console.log(parsed.VARIABLE_10)         // (number) 0
+console.log(parsed.VARIABLE_9)          // (number) NaN
+console.log(parsed.VARIABLE_10)         // (number) NaN
 console.log(parsed.VARIABLE_11)         // (number) Infinity
 console.log(parsed.VARIABLE_12)         // (number) -Infinity
 console.log(parsed.VARIABLE_13)         // (number) 45
@@ -743,6 +806,14 @@ console.log(parsed.VARIABLE_14)         // (number) -0.45
 console.log(parsed.VARIABLE_15)         // (number) 4.5e+123
 console.log(parsed.VARIABLE_16)         // (number) 123
 console.log(parsed.VARIABLE_17)         // (number) 0
+console.log(parsed.VARIABLE_18)         // (number) 0
+console.log(parsed.VARIABLE_19)         // (number) 0
+console.log(parsed.VARIABLE_20)         // (number) 10
+console.log(parsed.VARIABLE_21)         // (number) 0
+console.log(parsed.VARIABLE_22)         // (number) 10
+console.log(parsed.VARIABLE_23)         // (number) 0
+console.log(parsed.VARIABLE_24)         // (number) 10
+console.log(parsed.VARIABLE_25)         // (number) 0
 console.log(process.env.VARIABLE_1)     // (string) '0'
 console.log(process.env.VARIABLE_2)     // (string) '1'
 console.log(process.env.VARIABLE_3)     // (string) '1'
@@ -751,8 +822,8 @@ console.log(process.env.VARIABLE_5)     // (string) '0'
 console.log(process.env.VARIABLE_6)     // (string) '0'
 console.log(process.env.VARIABLE_7)     // (string) '0'
 console.log(process.env.VARIABLE_8)     // (string) '0'
-console.log(process.env.VARIABLE_9)     // (string) '0'
-console.log(process.env.VARIABLE_10)    // (string) '0'
+console.log(process.env.VARIABLE_9)     // (string) 'NaN'
+console.log(process.env.VARIABLE_10)    // (string) 'NaN'
 console.log(process.env.VARIABLE_11)    // (string) 'Infinity'
 console.log(process.env.VARIABLE_12)    // (string) '-Infinity'
 console.log(process.env.VARIABLE_13)    // (string) '45'
@@ -760,6 +831,14 @@ console.log(process.env.VARIABLE_14)    // (string) '-0.45'
 console.log(process.env.VARIABLE_15)    // (string) '4.5e+123'
 console.log(process.env.VARIABLE_16)    // (string) '123'
 console.log(process.env.VARIABLE_17)    // (string) '0'
+console.log(process.env.VARIABLE_18)    // (string) '0'
+console.log(process.env.VARIABLE_19)    // (string) '0'
+console.log(process.env.VARIABLE_20)    // (string) '10'
+console.log(process.env.VARIABLE_21)    // (string) '0'
+console.log(process.env.VARIABLE_22)    // (string) '10'
+console.log(process.env.VARIABLE_23)    // (string) '0'
+console.log(process.env.VARIABLE_24)    // (string) '10'
+console.log(process.env.VARIABLE_25)    // (string) '0'
 ```
 
 - **bigint**
@@ -782,10 +861,18 @@ VARIABLE_11="bigint:Infinity"   # or: +Infinity, -Infinity
 VARIABLE_12=bigint:4
 VARIABLE_13=bigint:-4.5
 VARIABLE_14=bigint:4.5e1
-VARIABLE_15=bigint:4.5e12
+VARIABLE_15=bigint:4.5e10
 VARIABLE_16=bigint:4.5e-123
 VARIABLE_17=bigint:123string
 VARIABLE_18=bigint:string
+VARIABLE_19=bigint:[]
+VARIABLE_20=bigint:{}
+VARIABLE_21=bigint:0b1010
+VARIABLE_22=bigint:0b1010string
+VARIABLE_23=bigint:0o12
+VARIABLE_24=bigint:0o12string
+VARIABLE_25=bigint:0xa
+VARIABLE_26=bigint:0xastring
 ```
 
 ```javascript
@@ -815,6 +902,14 @@ console.log(parsed.VARIABLE_15)         // (bigint) 45000000000n
 console.log(parsed.VARIABLE_16)         // (bigint) 0n
 console.log(parsed.VARIABLE_17)         // (bigint) 123n
 console.log(parsed.VARIABLE_18)         // (bigint) 0n
+console.log(parsed.VARIABLE_19)         // (bigint) 0n
+console.log(parsed.VARIABLE_20)         // (bigint) 0n
+console.log(parsed.VARIABLE_21)         // (bigint) 10n
+console.log(parsed.VARIABLE_22)         // (bigint) 0n
+console.log(parsed.VARIABLE_23)         // (bigint) 10n
+console.log(parsed.VARIABLE_24)         // (bigint) 0n
+console.log(parsed.VARIABLE_25)         // (bigint) 10n
+console.log(parsed.VARIABLE_26)         // (bigint) 0n
 console.log(process.env.VARIABLE_1)     // (string) '0n'
 console.log(process.env.VARIABLE_2)     // (string) '1n'
 console.log(process.env.VARIABLE_3)     // (string) '1n'
@@ -833,6 +928,14 @@ console.log(process.env.VARIABLE_15)    // (string) '45000000000n'
 console.log(process.env.VARIABLE_16)    // (string) '0n'
 console.log(process.env.VARIABLE_17)    // (string) '123n'
 console.log(process.env.VARIABLE_18)    // (string) '0n'
+console.log(process.env.VARIABLE_19)    // (string) '0n'
+console.log(process.env.VARIABLE_20)    // (string) '0n'
+console.log(process.env.VARIABLE_21)    // (string) '10n'
+console.log(process.env.VARIABLE_22)    // (string) '0n'
+console.log(process.env.VARIABLE_23)    // (string) '10n'
+console.log(process.env.VARIABLE_24)    // (string) '0n'
+console.log(process.env.VARIABLE_25)    // (string) '10n'
+console.log(process.env.VARIABLE_26)    // (string) '0n'
 ```
 
 - **string**
@@ -1005,11 +1108,11 @@ Here you can extend the `dotenv-conversion` by defining your own custom conversi
 
 ```dotenv
 # .env file
-VARIABLE_1=custom:ok
-VARIABLE_2=custom:not_ok
+VARIABLE_1=custom:agree
+VARIABLE_2=custom:disagree
 VARIABLE_3=custom2:yes
-VARIABLE_4=custom2:ok
-VARIABLE_5=custom2:not_ok
+VARIABLE_4=custom2:agree
+VARIABLE_5=custom2:disagree
 VARIABLE_6=no_custom:yes
 ```
 
@@ -1026,12 +1129,14 @@ const config = dotenv.config()
 config.methods = {
     // brand new method
     custom(value) {
-        return value === 'ok' ? true : false
+        return value === 'agree' ? true : false
     },
     // or want to reuse methods via `this`
-    custom2(value) {
+    custom2(value, ...params) {
         // reuse built-in method
-        if (this.boolean(value)) {
+        // When reusing any conversion method, 
+        // make sure you pass all available params of the method to it
+        if (this.boolean(value, ...params)) {
             return true
         }
         // reuse custom method
@@ -1111,7 +1216,7 @@ const dotenvConversion = require('dotenv-conversion')
 const dotenvConfig = dotenv.config()
 
 // Override built-int methods `string`
-config.methods = {
+dotenvConfig.methods = {
     string(value, name, config) {
         console.log('value:', value)
         console.log('name:', name)
@@ -1376,7 +1481,8 @@ config.methods = {
                 value = originEnv.STOPPED_VALUE_1
                 break
         }
-        // When reusing `auto`, make sure you pass all available params of the method to it
+        // When reusing any conversion method, 
+        // make sure you pass all available params of the method to it
         return this.auto(value, ...params)
     },
 }
@@ -1393,13 +1499,13 @@ a string refers to a conversion method or alias as follows:
 
 ```dotenv
 # .env file
-VARIABLE_1=ok
-VARIABLE_2=ok
-VARIABLE_3=ok
-VARIABLE_4=not
-VARIABLE_5=not
-VARIABLE_6=not
-VARIABLE_7=not
+VARIABLE_1=agree
+VARIABLE_2=agree
+VARIABLE_3=agree
+VARIABLE_4=0
+VARIABLE_5=0
+VARIABLE_6=0
+VARIABLE_7=0
 VARIABLE_8=boolean:true
 ```
 
@@ -1410,13 +1516,13 @@ const dotenvConversion = require('dotenv-conversion')
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
 
-const dotenvConfig = dotenv.config()
+const config = dotenv.config()
 
 // Define custom conversion for specific variables
 config.specs = {
     // Custom conversion for `VARIABLE_2`
     VARIABLE_2(value) {
-        return value === 'ok' ? true : false
+        return value === 'agree' ? true : false
     },
 
     // Custom conversion for `VARIABLE_3`
@@ -1426,9 +1532,11 @@ config.specs = {
     },
 
     // Custom conversion for `VARIABLE_5
-    VARIABLE_5(value, name, config) {
+    VARIABLE_5(value, ...params) {
         // reuse conversion method
-        return config.methods.boolean(value)
+        // When reusing any conversion method, 
+        // make sure you pass all available params of the method to it
+        return config.methods.boolean(value, ...params)
     },
 
     // Custom conversion for `VARIABLE_6`
@@ -1441,19 +1549,19 @@ config.specs = {
     VARIABLE_8: 'anything-else', // the conversion method `string` will be used by default
 }
 
-const {parsed} = dotenvConversion.convert(dotenvConfig)
-console.log(parsed.VARIABLE_1)          // (string) 'ok'
+const {parsed} = dotenvConversion.convert(config)
+console.log(parsed.VARIABLE_1)          // (string) 'agree'
 console.log(parsed.VARIABLE_2)          // (boolean) true
 console.log(parsed.VARIABLE_3)          // (boolean) true
-console.log(parsed.VARIABLE_4)          // (string) 'not'
+console.log(parsed.VARIABLE_4)          // (number) 0
 console.log(parsed.VARIABLE_5)          // (boolean) false
 console.log(parsed.VARIABLE_6)          // (boolean) false
 console.log(parsed.VARIABLE_7)          // (boolean) false
 console.log(parsed.VARIABLE_8)          // (string) 'boolean:true'
-console.log(process.env.VARIABLE_1)     // (string) 'ok'
+console.log(process.env.VARIABLE_1)     // (string) 'agree'
 console.log(process.env.VARIABLE_2)     // (string) 'true'
 console.log(process.env.VARIABLE_3)     // (string) 'true'
-console.log(process.env.VARIABLE_4)     // (string) 'not'
+console.log(process.env.VARIABLE_4)     // (string) '0'
 console.log(process.env.VARIABLE_5)     // (string) 'false'
 console.log(process.env.VARIABLE_6)     // (string) 'false'
 console.log(process.env.VARIABLE_7)     // (string) 'false'
@@ -1511,16 +1619,17 @@ const dotenvConversion = require('dotenv-conversion')
 // import dotenv from 'dotenv'
 // import dotenvConversion from 'dotenv-conversion'
 
-const config = {
+const options = {
     parsed: {
         VARIABLE: 'yes',
     },
+    fromDotEnv: false,
 }
 
 // Ignore process.env
-config.ignoreProcessEnv = true
+options.ignoreProcessEnv = true
 
-const {parsed} = dotenvConversion.convert(config)
+const {parsed} = dotenvConversion.convert(options)
 console.log(parsed.VARIABLE)        // (boolean) true
 console.log(process.env.VARIABLE)   // (undefined) undefined // if not ignore, value will be 'true'
 ```
@@ -1548,3 +1657,99 @@ const {parsed} = dotenvConversion.convert(config)
 console.log(parsed.VARIABLE)        // (boolean) true
 console.log(process.env.VARIABLE)   // (string) 'yes' // if not ignore, value will be 'true'
 ```
+
+## Documentation
+
+`dotenv-conversion` exposes only 1 function:
+
+- `convert`
+
+### `convert`
+
+`convert` function will convert environment variables inside the `parsed` option.
+Its return value is the options used in conversion with the `parsed` option
+now containing the converted environment variables.
+
+```javascript
+const dotenvConversion = require('dotenv-conversion')
+/* or ES6 */
+// import dotenvConversion from 'dotenv-conversion'
+
+const options = {
+    parsed: {
+        // ... environment variables
+    },
+    fromDotEnv: false, // if usage is `standalone`
+}
+const result = dotenvConversion.convert(options)
+console.log(result)
+
+/* CONSOLE OUTPUT:
+{
+    parsed: {
+        // ... converted environment variables
+    },
+    fromDotEnv: false,
+    // ... other options
+}
+*/
+```
+
+#### Options
+
+##### `parsed`
+
+*Type:* `object`.
+
+This option contains environment variables before and after converting.
+
+##### `fromDotEnv`
+
+*Type:* `boolean`. *Default:* `true`.
+
+If using with `dotenv` or `dotenv-flow`, please do not set this option,
+or set it to `true`. Otherwise, remember to set it to `false`.
+
+See [usage](#usage).
+
+##### `ignoreProcessEnv`
+
+Type: `boolean`. *Default:* `false`.
+
+If this option is set to `false`, the environment variables' values
+after converting will be written back to `process.env`.
+If this option is set to `true`, they won't.
+
+See [this feature](#ignore-processenv).
+
+##### `prevents`
+
+Type: `array`. *Default:* `[]`.
+
+List of environment variables which won't be converted.
+
+See [this feature](#prevent-variables-from-conversion).
+
+##### `specs`
+
+Type: `object`. *Default:* `{}`.
+
+List of custom conversions for specific environment variables.
+
+See [this feature](#custom-conversion-for-a-specific-variable).
+
+##### `methods`
+
+Type: `object`. *Default:* `{}`.
+
+List of custom conversion methods.
+
+See [this feature](#custom-methods).
+
+##### `methodAliases`
+
+Type: `object`. *Default:* `{}`.
+
+List of conversion method aliases.
+
+See [this feature](#method-aliases).
