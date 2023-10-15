@@ -52,7 +52,7 @@ const options = {
         DEBUG: 'false',
     },
     // rememeber to set this option to false if usage is `standalone`
-    fromDotEnv: false, 
+    fromDotEnv: false,
 }
 const {parsed} = dotenvConversion.convert(options)
 console.log(parsed.DEBUG) // (boolean) false
@@ -1711,6 +1711,9 @@ If using with `dotenv` or `dotenv-flow`, please do not set this option,
 or set it to `true`. Otherwise, remember to set it to `false`.
 
 See [usage](#usage).
+
+This option is due to an [issue of `dotenv`](https://github.com/motdotla/dotenv/issues/521)
+that has not been resolved yet. When it is `true`, `dotenv-conversion` will apply its own fix.
 
 ##### `ignoreProcessEnv`
 
