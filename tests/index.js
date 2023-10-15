@@ -1439,6 +1439,7 @@ describe('dotenv-conversion', function () {
                 ARRAY_101: 'null,true,4.5e+123," x y "',
                 ARRAY_102: ' [null, true, 4.5e+123, " x y "] ',
                 ARRAY_103: ' null, true, 4.5e+123, " x y " ',
+                ARRAY_104: '"a"',
 
                 // No conversion
                 ARRAY_1001: '["a","b","c"',
@@ -1472,6 +1473,7 @@ describe('dotenv-conversion', function () {
                 ARRAY_101: [null, true, 4.5e+123, ' x y '],
                 ARRAY_102: [null, true, 4.5e+123, ' x y '],
                 ARRAY_103: [null, true, 4.5e+123, ' x y '],
+                ARRAY_104: ['a'],
 
                 // No conversion
                 ARRAY_1001: '["a","b","c"',
@@ -1503,6 +1505,7 @@ describe('dotenv-conversion', function () {
                 ARRAY_101: '[null,true,4.5e+123," x y "]',
                 ARRAY_102: '[null,true,4.5e+123," x y "]',
                 ARRAY_103: '[null,true,4.5e+123," x y "]',
+                ARRAY_104: '["a"]',
 
                 // No conversion
                 ARRAY_1001: '["a","b","c"',
@@ -4495,6 +4498,7 @@ describe('dotenv-conversion', function () {
                 ARRAY_102: [null, true, 4.5e+123, ' x y '],
                 ARRAY_101: [null, true, 4.5e+123, ' x y '],
                 ARRAY_103: [null, true, 4.5e+123, ' x y '],
+                ARRAY_104: ['a'],
 
                 // No conversion
                 ARRAY_1001: '["a","b","c"',
@@ -4526,6 +4530,7 @@ describe('dotenv-conversion', function () {
                 ARRAY_102: '[null,true,4.5e+123," x y "]',
                 ARRAY_101: '[null,true,4.5e+123," x y "]',
                 ARRAY_103: '[null,true,4.5e+123," x y "]',
+                ARRAY_104: '["a"]',
 
                 // No conversion
                 ARRAY_1001: '["a","b","c"',

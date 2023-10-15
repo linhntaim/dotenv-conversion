@@ -554,6 +554,9 @@ a string contains `${value}` separated by commas;
 the `value` could be `null`,`boolean`, `number`, `"string"`, `[..array..]` or `{..object..}`;
 and all could be wrapped or not wrapped by `[` and `]` (*must*, when the string is empty).
 
+*Special case:* Values that have only a string enclosed by double quotes 
+also match the above format.
+
 *Spaces will be trimmed.*
 
 ```dotenv
@@ -563,6 +566,7 @@ VARIABLE_2=null,true,1,"a",[-1,2.1,3e1,4.5e123],{"x":"y"}
 VARIABLE_3=" [null, true, 1, \" x y \"] "
 VARIABLE_4=" null, true, 1, \" x y \" "
 VARIABLE_5=" [ ] "
+VARIABLE_6="\"a\"" # Special case
 ```
 
 ```javascript
@@ -579,11 +583,13 @@ console.log(parsed.VARIABLE_2)          // (array) [null, true, 1, "a", [-1, 2.1
 console.log(parsed.VARIABLE_3)          // (array) [null, true, 1, " x y "]
 console.log(parsed.VARIABLE_4)          // (array) [null, true, 1, " x y "]
 console.log(parsed.VARIABLE_5)          // (array) []
+console.log(parsed.VARIABLE_6)          // (array) ["a"] // Special case
 console.log(process.env.VARIABLE_1)     // (string) '[null,true,1,"a",[-1,2.1,30,4.5e+123],{"x":"y"}]'
 console.log(process.env.VARIABLE_2)     // (string) '[null,true,1,"a",[-1,2.1,30,4.5e+123],{"x":"y"}]'
 console.log(process.env.VARIABLE_3)     // (string) '[null,true,1," x y "]'
 console.log(process.env.VARIABLE_4)     // (string) '[null,true,1," x y "]'
 console.log(process.env.VARIABLE_5)     // (string) '[]'
+console.log(process.env.VARIABLE_6)     // (string) '["a"]' // Special case
 ```
 
 - **object**
@@ -754,30 +760,31 @@ This method is to convert any value to number.
 ```dotenv
 # .env file
 VARIABLE_1="number:"            # <empty>
-VARIABLE_2="number:true"        # or: true, True, TRUE
-VARIABLE_3="number:yes"         # or: yes, Yes, YES
-VARIABLE_4="number:false"       # or: false, False, FALSE
-VARIABLE_5="number:no"          # or: no, No, NO
-VARIABLE_6="number:not"         # or: not, Not, NOT
-VARIABLE_7="number:none"        # or: none, None, NONE
-VARIABLE_8="number:null"        # or: null, Null, NULL
-VARIABLE_9="number:undefined"   # or: undefined, UNDEFINED
-VARIABLE_10=number:NaN
-VARIABLE_11="number:Infinity"   # or: +Infinity
-VARIABLE_12=number:-Infinity
-VARIABLE_13=number:4.5e1
-VARIABLE_14=number:-4.5e-1
-VARIABLE_15=number:4.5e123
-VARIABLE_16=number:123string
-VARIABLE_17=number:string
-VARIABLE_18=number:[]
-VARIABLE_19=number:{}
-VARIABLE_20=number:0b1010
-VARIABLE_21=number:0b1010string
-VARIABLE_22=number:0o12
-VARIABLE_23=number:0o12string
-VARIABLE_24=number:0xa
-VARIABLE_25=number:0xastring
+VARIABLE_2="number:true"        # or: True, TRUE
+VARIABLE_3="number:yes"         # or: Yes, YES
+VARIABLE_4="number:ok"          # or: Ok, OK
+VARIABLE_5="number:false"       # or: False, FALSE
+VARIABLE_6="number:no"          # or: No, NO
+VARIABLE_7="number:not"         # or: Not, NOT
+VARIABLE_8="number:none"        # or: None, NONE
+VARIABLE_9="number:null"        # or: Null, NULL
+VARIABLE_10="number:undefined"  # or: UNDEFINED
+VARIABLE_11=number:NaN
+VARIABLE_12="number:Infinity"   # or: +Infinity
+VARIABLE_13=number:-Infinity
+VARIABLE_14=number:4.5e1
+VARIABLE_15=number:-4.5e-1
+VARIABLE_16=number:4.5e123
+VARIABLE_17=number:123string
+VARIABLE_18=number:string
+VARIABLE_19=number:[]
+VARIABLE_20=number:{}
+VARIABLE_21=number:0b1010
+VARIABLE_22=number:0b1010string
+VARIABLE_23=number:0o12
+VARIABLE_24=number:0o12string
+VARIABLE_25=number:0xa
+VARIABLE_26=number:0xastring
 ```
 
 ```javascript
@@ -792,53 +799,55 @@ const {parsed} = dotenvConversion.convert(config)
 console.log(parsed.VARIABLE_1)          // (number) 0 
 console.log(parsed.VARIABLE_2)          // (number) 1
 console.log(parsed.VARIABLE_3)          // (number) 1
-console.log(parsed.VARIABLE_4)          // (number) 0
+console.log(parsed.VARIABLE_4)          // (number) 1
 console.log(parsed.VARIABLE_5)          // (number) 0
 console.log(parsed.VARIABLE_6)          // (number) 0
 console.log(parsed.VARIABLE_7)          // (number) 0
 console.log(parsed.VARIABLE_8)          // (number) 0
-console.log(parsed.VARIABLE_9)          // (number) NaN
+console.log(parsed.VARIABLE_9)          // (number) 0
 console.log(parsed.VARIABLE_10)         // (number) NaN
-console.log(parsed.VARIABLE_11)         // (number) Infinity
-console.log(parsed.VARIABLE_12)         // (number) -Infinity
-console.log(parsed.VARIABLE_13)         // (number) 45
-console.log(parsed.VARIABLE_14)         // (number) -0.45
-console.log(parsed.VARIABLE_15)         // (number) 4.5e+123
-console.log(parsed.VARIABLE_16)         // (number) 123
-console.log(parsed.VARIABLE_17)         // (number) 0
+console.log(parsed.VARIABLE_11)         // (number) NaN
+console.log(parsed.VARIABLE_12)         // (number) Infinity
+console.log(parsed.VARIABLE_13)         // (number) -Infinity
+console.log(parsed.VARIABLE_14)         // (number) 45
+console.log(parsed.VARIABLE_15)         // (number) -0.45
+console.log(parsed.VARIABLE_16)         // (number) 4.5e+123
+console.log(parsed.VARIABLE_17)         // (number) 123
 console.log(parsed.VARIABLE_18)         // (number) 0
 console.log(parsed.VARIABLE_19)         // (number) 0
-console.log(parsed.VARIABLE_20)         // (number) 10
-console.log(parsed.VARIABLE_21)         // (number) 0
-console.log(parsed.VARIABLE_22)         // (number) 10
-console.log(parsed.VARIABLE_23)         // (number) 0
-console.log(parsed.VARIABLE_24)         // (number) 10
-console.log(parsed.VARIABLE_25)         // (number) 0
+console.log(parsed.VARIABLE_20)         // (number) 0
+console.log(parsed.VARIABLE_21)         // (number) 10
+console.log(parsed.VARIABLE_22)         // (number) 0
+console.log(parsed.VARIABLE_23)         // (number) 10
+console.log(parsed.VARIABLE_24)         // (number) 0
+console.log(parsed.VARIABLE_25)         // (number) 10
+console.log(parsed.VARIABLE_26)         // (number) 0
 console.log(process.env.VARIABLE_1)     // (string) '0'
 console.log(process.env.VARIABLE_2)     // (string) '1'
 console.log(process.env.VARIABLE_3)     // (string) '1'
-console.log(process.env.VARIABLE_4)     // (string) '0'
+console.log(process.env.VARIABLE_4)     // (string) '1'
 console.log(process.env.VARIABLE_5)     // (string) '0'
 console.log(process.env.VARIABLE_6)     // (string) '0'
 console.log(process.env.VARIABLE_7)     // (string) '0'
 console.log(process.env.VARIABLE_8)     // (string) '0'
-console.log(process.env.VARIABLE_9)     // (string) 'NaN'
+console.log(process.env.VARIABLE_9)     // (string) '0'
 console.log(process.env.VARIABLE_10)    // (string) 'NaN'
-console.log(process.env.VARIABLE_11)    // (string) 'Infinity'
-console.log(process.env.VARIABLE_12)    // (string) '-Infinity'
-console.log(process.env.VARIABLE_13)    // (string) '45'
-console.log(process.env.VARIABLE_14)    // (string) '-0.45'
-console.log(process.env.VARIABLE_15)    // (string) '4.5e+123'
-console.log(process.env.VARIABLE_16)    // (string) '123'
-console.log(process.env.VARIABLE_17)    // (string) '0'
+console.log(process.env.VARIABLE_11)    // (string) 'NaN'
+console.log(process.env.VARIABLE_12)    // (string) 'Infinity'
+console.log(process.env.VARIABLE_13)    // (string) '-Infinity'
+console.log(process.env.VARIABLE_14)    // (string) '45'
+console.log(process.env.VARIABLE_15)    // (string) '-0.45'
+console.log(process.env.VARIABLE_16)    // (string) '4.5e+123'
+console.log(process.env.VARIABLE_17)    // (string) '123'
 console.log(process.env.VARIABLE_18)    // (string) '0'
 console.log(process.env.VARIABLE_19)    // (string) '0'
-console.log(process.env.VARIABLE_20)    // (string) '10'
-console.log(process.env.VARIABLE_21)    // (string) '0'
-console.log(process.env.VARIABLE_22)    // (string) '10'
-console.log(process.env.VARIABLE_23)    // (string) '0'
-console.log(process.env.VARIABLE_24)    // (string) '10'
-console.log(process.env.VARIABLE_25)    // (string) '0'
+console.log(process.env.VARIABLE_20)    // (string) '0'
+console.log(process.env.VARIABLE_21)    // (string) '10'
+console.log(process.env.VARIABLE_22)    // (string) '0'
+console.log(process.env.VARIABLE_23)    // (string) '10'
+console.log(process.env.VARIABLE_24)    // (string) '0'
+console.log(process.env.VARIABLE_25)    // (string) '10'
+console.log(process.env.VARIABLE_26)    // (string) '0'
 ```
 
 - **bigint**
@@ -848,31 +857,33 @@ This method is to convert any value to bigint.
 ```dotenv
 # .env file
 VARIABLE_1="bigint:"            # <empty>
-VARIABLE_2="bigint:true"        # or: true, True, TRUE
-VARIABLE_3="bigint:yes"         # or: yes, Yes, YES
-VARIABLE_4="bigint:false"       # or: false, False, FALSE
-VARIABLE_5="bigint:no"          # or: no, No, NO
-VARIABLE_6="bigint:not"         # or: not, Not, NOT
-VARIABLE_7="bigint:none"        # or: none, None, NONE
-VARIABLE_8="bigint:null"        # or: null, Null, NULL
-VARIABLE_9="bigint:undefined"   # or: undefined, UNDEFINED
-VARIABLE_10=bigint:NaN
-VARIABLE_11="bigint:Infinity"   # or: +Infinity, -Infinity
-VARIABLE_12=bigint:4
-VARIABLE_13=bigint:-4.5
-VARIABLE_14=bigint:4.5e1
-VARIABLE_15=bigint:4.5e10
-VARIABLE_16=bigint:4.5e-123
-VARIABLE_17=bigint:123string
-VARIABLE_18=bigint:string
-VARIABLE_19=bigint:[]
-VARIABLE_20=bigint:{}
-VARIABLE_21=bigint:0b1010
-VARIABLE_22=bigint:0b1010string
-VARIABLE_23=bigint:0o12
-VARIABLE_24=bigint:0o12string
-VARIABLE_25=bigint:0xa
-VARIABLE_26=bigint:0xastring
+VARIABLE_2="bigint:true"        # or: True, TRUE
+VARIABLE_3="bigint:yes"         # or: Yes, YES
+VARIABLE_4="bigint:ok"          # or: Ok, OK
+VARIABLE_5="bigint:false"       # or: False, FALSE
+VARIABLE_6="bigint:no"          # or: No, NO
+VARIABLE_7="bigint:not"         # or: Not, NOT
+VARIABLE_8="bigint:none"        # or: None, NONE
+VARIABLE_9="bigint:null"        # or: Null, NULL
+VARIABLE_10="bigint:undefined"  # or: UNDEFINED
+VARIABLE_11=bigint:NaN
+VARIABLE_12="bigint:Infinity"   # or: +Infinity
+VARIABLE_13=bigint:-Infinity
+VARIABLE_14=bigint:4
+VARIABLE_15=bigint:-4.5
+VARIABLE_16=bigint:4.5e1
+VARIABLE_17=bigint:4.5e10
+VARIABLE_18=bigint:4.5e-123
+VARIABLE_19=bigint:123string
+VARIABLE_20=bigint:string
+VARIABLE_21=bigint:[]
+VARIABLE_22=bigint:{}
+VARIABLE_23=bigint:0b1010
+VARIABLE_24=bigint:0b1010string
+VARIABLE_25=bigint:0o12
+VARIABLE_26=bigint:0o12string
+VARIABLE_27=bigint:0xa
+VARIABLE_28=bigint:0xastring
 ```
 
 ```javascript
@@ -887,7 +898,7 @@ const {parsed} = dotenvConversion.convert(config)
 console.log(parsed.VARIABLE_1)          // (bigint) 0n
 console.log(parsed.VARIABLE_2)          // (bigint) 1n
 console.log(parsed.VARIABLE_3)          // (bigint) 1n
-console.log(parsed.VARIABLE_4)          // (bigint) 0n
+console.log(parsed.VARIABLE_4)          // (bigint) 1n
 console.log(parsed.VARIABLE_5)          // (bigint) 0n
 console.log(parsed.VARIABLE_6)          // (bigint) 0n
 console.log(parsed.VARIABLE_7)          // (bigint) 0n
@@ -895,25 +906,27 @@ console.log(parsed.VARIABLE_8)          // (bigint) 0n
 console.log(parsed.VARIABLE_9)          // (bigint) 0n
 console.log(parsed.VARIABLE_10)         // (bigint) 0n
 console.log(parsed.VARIABLE_11)         // (bigint) 0n
-console.log(parsed.VARIABLE_12)         // (bigint) 4n
-console.log(parsed.VARIABLE_13)         // (bigint) -4n
-console.log(parsed.VARIABLE_14)         // (bigint) 45n
-console.log(parsed.VARIABLE_15)         // (bigint) 45000000000n
-console.log(parsed.VARIABLE_16)         // (bigint) 0n
-console.log(parsed.VARIABLE_17)         // (bigint) 123n
+console.log(parsed.VARIABLE_12)         // (bigint) 1n
+console.log(parsed.VARIABLE_13)         // (bigint) -1n
+console.log(parsed.VARIABLE_14)         // (bigint) 4n
+console.log(parsed.VARIABLE_15)         // (bigint) -4n
+console.log(parsed.VARIABLE_16)         // (bigint) 45n
+console.log(parsed.VARIABLE_17)         // (bigint) 45000000000n
 console.log(parsed.VARIABLE_18)         // (bigint) 0n
-console.log(parsed.VARIABLE_19)         // (bigint) 0n
+console.log(parsed.VARIABLE_19)         // (bigint) 123n
 console.log(parsed.VARIABLE_20)         // (bigint) 0n
-console.log(parsed.VARIABLE_21)         // (bigint) 10n
+console.log(parsed.VARIABLE_21)         // (bigint) 0n
 console.log(parsed.VARIABLE_22)         // (bigint) 0n
 console.log(parsed.VARIABLE_23)         // (bigint) 10n
 console.log(parsed.VARIABLE_24)         // (bigint) 0n
 console.log(parsed.VARIABLE_25)         // (bigint) 10n
 console.log(parsed.VARIABLE_26)         // (bigint) 0n
+console.log(parsed.VARIABLE_27)         // (bigint) 10n
+console.log(parsed.VARIABLE_28)         // (bigint) 0n
 console.log(process.env.VARIABLE_1)     // (string) '0n'
 console.log(process.env.VARIABLE_2)     // (string) '1n'
 console.log(process.env.VARIABLE_3)     // (string) '1n'
-console.log(process.env.VARIABLE_4)     // (string) '0n'
+console.log(process.env.VARIABLE_4)     // (string) '1n'
 console.log(process.env.VARIABLE_5)     // (string) '0n'
 console.log(process.env.VARIABLE_6)     // (string) '0n'
 console.log(process.env.VARIABLE_7)     // (string) '0n'
@@ -921,21 +934,23 @@ console.log(process.env.VARIABLE_8)     // (string) '0n'
 console.log(process.env.VARIABLE_9)     // (string) '0n'
 console.log(process.env.VARIABLE_10)    // (string) '0n'
 console.log(process.env.VARIABLE_11)    // (string) '0n'
-console.log(process.env.VARIABLE_12)    // (string) '4n'
-console.log(process.env.VARIABLE_13)    // (string) '-4n'
-console.log(process.env.VARIABLE_14)    // (string) '45n'
-console.log(process.env.VARIABLE_15)    // (string) '45000000000n'
-console.log(process.env.VARIABLE_16)    // (string) '0n'
-console.log(process.env.VARIABLE_17)    // (string) '123n'
+console.log(process.env.VARIABLE_12)    // (string) '1n'
+console.log(process.env.VARIABLE_13)    // (string) '-1n'
+console.log(process.env.VARIABLE_14)    // (string) '4n'
+console.log(process.env.VARIABLE_15)    // (string) '-4n'
+console.log(process.env.VARIABLE_16)    // (string) '45n'
+console.log(process.env.VARIABLE_17)    // (string) '45000000000n'
 console.log(process.env.VARIABLE_18)    // (string) '0n'
-console.log(process.env.VARIABLE_19)    // (string) '0n'
+console.log(process.env.VARIABLE_19)    // (string) '123n'
 console.log(process.env.VARIABLE_20)    // (string) '0n'
-console.log(process.env.VARIABLE_21)    // (string) '10n'
+console.log(process.env.VARIABLE_21)    // (string) '0n'
 console.log(process.env.VARIABLE_22)    // (string) '0n'
 console.log(process.env.VARIABLE_23)    // (string) '10n'
 console.log(process.env.VARIABLE_24)    // (string) '0n'
 console.log(process.env.VARIABLE_25)    // (string) '10n'
 console.log(process.env.VARIABLE_26)    // (string) '0n'
+console.log(process.env.VARIABLE_27)    // (string) '10n'
+console.log(process.env.VARIABLE_28)    // (string) '0n'
 ```
 
 - **string**
