@@ -10,9 +10,13 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
  */
 
 var NUMBER_REGEX = /^[+-]?(\d+(\.(\d*)?)?|\.\d+)([eE][+-]?\d+)?$/;
-var NUM_BOH_REGEX = /^[+-]?0([bB][01]+|[oO][0-8]+|[xX][0-9a-fA-F]+)$/;
+var NUM_BIN_REGEX = /^[+-]?0[bB][01]+$/;
+var NUM_OCT_REGEX = /^[+-]?0[oO][0-8]+$/;
+var NUM_HEX_REGEX = /^[+-]?0[xX][0-9a-fA-F]+$/;
 var BIGINT_REGEX = /^[+-]?\d+n$/;
-var BIG_BOH_REGEX = /^[+-]?0([bB][01]+|[oO][0-8]+|[xX][0-9a-fA-F]+)n$/;
+var BIG_BIN_REGEX = /^[+-]?0[bB][01]+n$/;
+var BIG_OCT_REGEX = /^[+-]?0[oO][0-8]+n$/;
+var BIG_HEX_REGEX = /^[+-]?0[xX][0-9a-fA-F]+n$/;
 var SYMBOL_REGEX = /^Symbol\(.*\)$/;
 var ARRAY_REGEX = /^\[.*]$/;
 var ARRAY_EMPTY_REGEX = /^\[\s*]$/;
@@ -71,9 +75,14 @@ function parseNumber(str) {
 /**
  *
  * @param {string} str
- * @returns {number}
+ * @param {boolean} parsed
+ * @returns {number|string}
  */
 function parseBohNumber(str) {
+  var parsed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+  if (!parsed) {
+    return str;
+  }
   switch (str[0]) {
     case '+':
       return Number(str.substring(1));
@@ -96,9 +105,14 @@ function parseBigInt(str) {
 /**
  *
  * @param {string} str
- * @returns {bigint}
+ * @param {boolean} parsed
+ * @returns {bigint|string}
  */
 function parseBohBigInt(str) {
+  var parsed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+  if (!parsed) {
+    return str;
+  }
   switch (str[0]) {
     case '+':
       return BigInt(str.slice(1, -1));
@@ -130,18 +144,19 @@ function parseSymbol(str) {
 /**
  *
  * @param {string|*} value
- * @param {object} valueTable
- * @param {boolean} fromDotEnv
+ * @param {object} config
  * @returns {null|undefined|boolean|number|bigint|string|symbol|array|object}
  */
-function restoreValue(value, valueTable, fromDotEnv) {
+function restoreValue(value, config) {
   if (!(typeof value == 'string' || value instanceof String)) {
     return value;
   }
-  if (fromDotEnv) {
+  if (config.fromDotEnv) {
     value = unescapeValue(value);
   }
   var trimmed = value.trim();
+  // defined values
+  var valueTable = config._cache.valueTables.forAutoForced;
   if (trimmed in valueTable) {
     return valueTable[trimmed];
   }
@@ -149,15 +164,27 @@ function restoreValue(value, valueTable, fromDotEnv) {
   if (NUMBER_REGEX.test(trimmed)) {
     return parseNumber(trimmed);
   }
-  if (NUM_BOH_REGEX.test(trimmed)) {
-    return parseBohNumber(trimmed);
+  if (NUM_BIN_REGEX.test(trimmed)) {
+    return parseBohNumber(trimmed, config.binaryNumber);
+  }
+  if (NUM_OCT_REGEX.test(trimmed)) {
+    return parseBohNumber(trimmed, config.octalNumber);
+  }
+  if (NUM_HEX_REGEX.test(trimmed)) {
+    return parseBohNumber(trimmed, config.hexadecimalNumber);
   }
   // BigInt
   if (BIGINT_REGEX.test(trimmed)) {
     return parseBigInt(trimmed);
   }
-  if (BIG_BOH_REGEX.test(trimmed)) {
-    return parseBohBigInt(trimmed);
+  if (BIG_BIN_REGEX.test(trimmed)) {
+    return parseBohBigInt(trimmed, config.binaryBigInt);
+  }
+  if (BIG_OCT_REGEX.test(trimmed)) {
+    return parseBohBigInt(trimmed, config.octalBigInt);
+  }
+  if (BIG_HEX_REGEX.test(trimmed)) {
+    return parseBohBigInt(trimmed, config.hexadecimalBigInt);
   }
   // Symbol
   if (SYMBOL_REGEX.test(trimmed)) {
@@ -222,11 +249,17 @@ function defaultConfig() {
     parsed: {},
     fromDotEnv: true,
     ignoreProcessEnv: false,
+    binaryNumber: true,
+    octalNumber: true,
+    hexadecimalNumber: true,
+    binaryBigInt: true,
+    octalBigInt: true,
+    hexadecimalBigInt: true,
     prevents: [],
     specs: {},
     methods: {
       auto: function auto(value, name, config) {
-        value = restoreValue(value, config._cache.valueTables.forAutoForced, config.fromDotEnv);
+        value = restoreValue(value, config);
         if (typeof value === 'string') {
           var lTrimmed = value.replace(/^\s+/, '');
           var findPossibleMethod = function findPossibleMethod(methods) {
@@ -261,13 +294,13 @@ function defaultConfig() {
         if (NUMBER_REGEX.test(value)) {
           return parseNumber(value) !== 0;
         }
-        if (NUM_BOH_REGEX.test(value)) {
+        if (NUM_BIN_REGEX.test(value) || NUM_OCT_REGEX.test(value) || NUM_HEX_REGEX.test(value)) {
           return parseBohNumber(value) !== 0;
         }
         if (BIGINT_REGEX.test(value)) {
           return parseBigInt(value) !== 0n;
         }
-        if (BIG_BOH_REGEX.test(value)) {
+        if (BIG_BIN_REGEX.test(value) || BIG_OCT_REGEX.test(value) || BIG_HEX_REGEX.test(value)) {
           return parseBohBigInt(value) !== 0n;
         }
         return true;
@@ -284,14 +317,26 @@ function defaultConfig() {
         if (NUMBER_REGEX.test(value)) {
           return parseNumber(value);
         }
-        if (NUM_BOH_REGEX.test(value)) {
-          return parseBohNumber(value);
+        if (NUM_BIN_REGEX.test(value)) {
+          return parseBohNumber(value, config.binaryNumber);
+        }
+        if (NUM_OCT_REGEX.test(value)) {
+          return parseBohNumber(value, config.octalNumber);
+        }
+        if (NUM_HEX_REGEX.test(value)) {
+          return parseBohNumber(value, config.hexadecimalNumber);
         }
         if (BIGINT_REGEX.test(value)) {
           return parseNumber(value.slice(0, -1));
         }
-        if (BIG_BOH_REGEX.test(value)) {
-          return parseBohNumber(value.slice(0, -1));
+        if (BIG_BIN_REGEX.test(value)) {
+          return parseBohNumber(value.slice(0, -1), config.binaryNumber);
+        }
+        if (BIG_OCT_REGEX.test(value)) {
+          return parseBohNumber(value.slice(0, -1), config.octalNumber);
+        }
+        if (BIG_HEX_REGEX.test(value)) {
+          return parseBohNumber(value.slice(0, -1), config.hexadecimalNumber);
         }
         return function (number) {
           return Number.isNaN(number) ? 0 : safeZero(number);
@@ -309,14 +354,26 @@ function defaultConfig() {
         if (NUMBER_REGEX.test(value)) {
           return numberAsBigInt(parseNumber(value));
         }
-        if (NUM_BOH_REGEX.test(value)) {
-          return numberAsBigInt(parseBohNumber(value));
+        if (NUM_BIN_REGEX.test(value)) {
+          return parseBohBigInt("".concat(value, "n"), config.binaryBigInt);
+        }
+        if (NUM_OCT_REGEX.test(value)) {
+          return parseBohBigInt("".concat(value, "n"), config.octalBigInt);
+        }
+        if (NUM_HEX_REGEX.test(value)) {
+          return parseBohBigInt("".concat(value, "n"), config.hexadecimalBigInt);
         }
         if (BIGINT_REGEX.test(value)) {
           return parseBigInt(value);
         }
-        if (BIG_BOH_REGEX.test(value)) {
-          return parseBohBigInt(value);
+        if (BIG_BIN_REGEX.test(value)) {
+          return parseBohBigInt(value, config.binaryBigInt);
+        }
+        if (BIG_OCT_REGEX.test(value)) {
+          return parseBohBigInt(value, config.octalBigInt);
+        }
+        if (BIG_HEX_REGEX.test(value)) {
+          return parseBohBigInt(value, config.hexadecimalBigInt);
         }
         return function (number) {
           return Number.isNaN(number) ? 0n : numberAsBigInt(safeZero(number));
@@ -375,6 +432,24 @@ function mergeConfig(config) {
   }
   if ('ignoreProcessEnv' in config) {
     mergingConfig.ignoreProcessEnv = config.ignoreProcessEnv;
+  }
+  if ('binaryNumber' in config) {
+    mergingConfig.binaryNumber = config.binaryNumber;
+  }
+  if ('octalNumber' in config) {
+    mergingConfig.octalNumber = config.octalNumber;
+  }
+  if ('hexadecimalNumber' in config) {
+    mergingConfig.hexadecimalNumber = config.hexadecimalNumber;
+  }
+  if ('binaryBigInt' in config) {
+    mergingConfig.binaryBigInt = config.binaryBigInt;
+  }
+  if ('octalBigInt' in config) {
+    mergingConfig.octalBigInt = config.octalBigInt;
+  }
+  if ('hexadecimalBigInt' in config) {
+    mergingConfig.hexadecimalBigInt = config.hexadecimalBigInt;
   }
   if ('prevents' in config) {
     mergingConfig.prevents = config.prevents;
