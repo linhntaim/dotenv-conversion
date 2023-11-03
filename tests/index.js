@@ -6,16 +6,23 @@ import dotenvConversion from '../src'
 import fs from 'fs'
 import mocha from 'mocha'
 
+// const before = mocha.after
+// const beforeEach = mocha.beforeEach
 const after = mocha.after
 const afterEach = mocha.afterEach
 const describe = mocha.describe
 const it = mocha.it
 const expect = chai.expect
-chai.should()
 
 const originEnv = {...process.env}
 
 describe('dotenv-conversion', function () {
+    // before(() => {
+    // })
+    // beforeEach(() => {
+    // })
+    // after(() => {
+    // })
     afterEach(() => {
         process.env = {...originEnv}
     })
@@ -24,7 +31,7 @@ describe('dotenv-conversion', function () {
         it('default', function (done) {
             // input
 
-            // output
+            // expected output
             const expectedParsed = {}
             const expectedFromDotEnv = true
             const expectedIgnoreProcessEnv = false
@@ -49,24 +56,26 @@ describe('dotenv-conversion', function () {
                 obj: 'object',
             }
 
+            // executes
             const dotenvConversionConfig = dotenvConversion.convert()
 
-            dotenvConversionConfig.should.be.an('object')
-            dotenvConversionConfig.should.have.property('parsed')
-            dotenvConversionConfig.should.have.property('fromDotEnv')
-            dotenvConversionConfig.should.have.property('ignoreProcessEnv')
-            dotenvConversionConfig.should.have.property('prevents')
-            dotenvConversionConfig.should.have.property('specs')
-            dotenvConversionConfig.should.have.property('methods')
-            dotenvConversionConfig.should.have.property('methodAliases')
+            // asserts
+            expect(dotenvConversionConfig).to.be.an('object')
+            expect(dotenvConversionConfig).to.have.property('parsed')
+            expect(dotenvConversionConfig).to.have.property('fromDotEnv')
+            expect(dotenvConversionConfig).to.have.property('ignoreProcessEnv')
+            expect(dotenvConversionConfig).to.have.property('prevents')
+            expect(dotenvConversionConfig).to.have.property('specs')
+            expect(dotenvConversionConfig).to.have.property('methods')
+            expect(dotenvConversionConfig).to.have.property('methodAliases')
 
-            dotenvConversionConfig.parsed.should.deep.equal(expectedParsed)
-            dotenvConversionConfig.fromDotEnv.should.equal(expectedFromDotEnv)
-            dotenvConversionConfig.ignoreProcessEnv.should.equal(expectedIgnoreProcessEnv)
-            dotenvConversionConfig.prevents.should.deep.equal(expectedPrevents)
-            dotenvConversionConfig.specs.should.deep.equal(expectedSpecs)
-            Object.keys(dotenvConversionConfig.methods).should.deep.equal(expectedMethods)
-            dotenvConversionConfig.methodAliases.should.deep.equal(expectedMethodAliases)
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expectedParsed)
+            expect(dotenvConversionConfig.fromDotEnv).to.equal(expectedFromDotEnv)
+            expect(dotenvConversionConfig.ignoreProcessEnv).to.equal(expectedIgnoreProcessEnv)
+            expect(dotenvConversionConfig.prevents).to.deep.equal(expectedPrevents)
+            expect(dotenvConversionConfig.specs).to.deep.equal(expectedSpecs)
+            expect(Object.keys(dotenvConversionConfig.methods)).to.deep.equal(expectedMethods)
+            expect(dotenvConversionConfig.methodAliases).to.deep.equal(expectedMethodAliases)
 
             done()
         })
@@ -105,7 +114,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expectedParsed = {
                 TRUE: true,
                 FALSE: false,
@@ -140,26 +149,28 @@ describe('dotenv-conversion', function () {
                 raw: 'basic', // only raw added
             }
 
+            // executes
             const dotenvConversionConfig = dotenvConversion.convert(inputConfig)
 
-            dotenvConversionConfig.should.be.an('object')
-            dotenvConversionConfig.should.have.property('parsed')
-            dotenvConversionConfig.should.have.property('fromDotEnv')
-            dotenvConversionConfig.should.have.property('ignoreProcessEnv')
-            dotenvConversionConfig.should.have.property('prevents')
-            dotenvConversionConfig.should.have.property('specs')
-            dotenvConversionConfig.should.have.property('methods')
-            dotenvConversionConfig.should.have.property('methodAliases')
+            // asserts
+            expect(dotenvConversionConfig).to.be.an('object')
+            expect(dotenvConversionConfig).to.have.property('parsed')
+            expect(dotenvConversionConfig).to.have.property('fromDotEnv')
+            expect(dotenvConversionConfig).to.have.property('ignoreProcessEnv')
+            expect(dotenvConversionConfig).to.have.property('prevents')
+            expect(dotenvConversionConfig).to.have.property('specs')
+            expect(dotenvConversionConfig).to.have.property('methods')
+            expect(dotenvConversionConfig).to.have.property('methodAliases')
 
-            dotenvConversionConfig.parsed.should.deep.equal(expectedParsed)
-            dotenvConversionConfig.fromDotEnv.should.equal(expectedFromDotEnv)
-            dotenvConversionConfig.ignoreProcessEnv.should.equal(expectedIgnoreProcessEnv)
-            dotenvConversionConfig.prevents.should.deep.equal(expectedPrevents)
-            dotenvConversionConfig.specs.should.deep.equal(expectedSpecs)
-            Object.keys(dotenvConversionConfig.methods).should.deep.equal(expectedMethods)
-            dotenvConversionConfig.methodAliases.should.deep.equal(expectedMethodAliases)
-            dotenvConversionConfig.methods.number('value').should.equal(expectedMethodNumberReturn)
-            dotenvConversionConfig.methods.basic('value').should.equal(expectedMethodBasicReturn)
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expectedParsed)
+            expect(dotenvConversionConfig.fromDotEnv).to.equal(expectedFromDotEnv)
+            expect(dotenvConversionConfig.ignoreProcessEnv).to.equal(expectedIgnoreProcessEnv)
+            expect(dotenvConversionConfig.prevents).to.deep.equal(expectedPrevents)
+            expect(dotenvConversionConfig.specs).to.deep.equal(expectedSpecs)
+            expect(Object.keys(dotenvConversionConfig.methods)).to.deep.equal(expectedMethods)
+            expect(dotenvConversionConfig.methodAliases).to.deep.equal(expectedMethodAliases)
+            expect(dotenvConversionConfig.methods.number('value')).to.equal(expectedMethodNumberReturn)
+            expect(dotenvConversionConfig.methods.basic('value')).to.equal(expectedMethodBasicReturn)
 
             done()
         })
@@ -174,14 +185,16 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expectedError = 'Method: Invalid format'
 
             try {
+                // executes
                 dotenvConversion.convert(inputConfig)
             }
             catch (e) {
-                e.should.equal(expectedError)
+                // asserts
+                expect(e).to.equal(expectedError)
             }
 
             done()
@@ -195,14 +208,16 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expectedError = 'Alias: Invalid format'
 
             try {
+                // executes
                 dotenvConversion.convert(inputConfig)
             }
             catch (e) {
-                e.should.equal(expectedError)
+                // asserts
+                expect(e).to.equal(expectedError)
             }
 
             done()
@@ -226,7 +241,7 @@ describe('dotenv-conversion', function () {
                 ignoreProcessEnv: false,
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: true,
             }
@@ -234,11 +249,13 @@ describe('dotenv-conversion', function () {
                 OK: 'true',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -252,17 +269,19 @@ describe('dotenv-conversion', function () {
                 ignoreProcessEnv: true,
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: true,
             }
             const notExpectedForEnv = 'OK'
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.not.have.property(notExpectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.not.have.property(notExpectedForEnv)
 
             done()
         })
@@ -276,7 +295,7 @@ describe('dotenv-conversion', function () {
                 prevents: [],
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: true,
             }
@@ -284,11 +303,13 @@ describe('dotenv-conversion', function () {
                 OK: 'true',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -302,7 +323,7 @@ describe('dotenv-conversion', function () {
                 prevents: ['OK'],
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: 'yes',
             }
@@ -310,11 +331,13 @@ describe('dotenv-conversion', function () {
                 OK: 'yes',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -325,7 +348,7 @@ describe('dotenv-conversion', function () {
                 OK: 'yes',
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: true,
             }
@@ -333,11 +356,13 @@ describe('dotenv-conversion', function () {
                 OK: 'true',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -353,7 +378,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: 1,
             }
@@ -361,11 +386,13 @@ describe('dotenv-conversion', function () {
                 OK: '1',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -381,7 +408,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: 1,
             }
@@ -389,11 +416,13 @@ describe('dotenv-conversion', function () {
                 OK: '1',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -409,7 +438,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: 'yes',
             }
@@ -417,11 +446,13 @@ describe('dotenv-conversion', function () {
                 OK: 'yes',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -439,7 +470,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: 'custom:yes',
             }
@@ -447,11 +478,13 @@ describe('dotenv-conversion', function () {
                 OK: 'custom:yes',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -467,7 +500,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: 'yes',
             }
@@ -475,11 +508,13 @@ describe('dotenv-conversion', function () {
                 OK: 'yes',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -556,7 +591,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 FUNCTION: inputFunction,
                 CLASS: inputClass,
@@ -578,11 +613,13 @@ describe('dotenv-conversion', function () {
                 JSON_BIGINT: 'undefined',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -600,7 +637,7 @@ describe('dotenv-conversion', function () {
                 NULL_1001: 'NuLL',
             }
 
-            // output
+            // expected output
             const expected = {
                 NULL_1: null,
                 NULL_2: null,
@@ -622,11 +659,13 @@ describe('dotenv-conversion', function () {
                 NULL_1001: 'NuLL',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -643,7 +682,7 @@ describe('dotenv-conversion', function () {
                 UNDEFINED_1001: 'Undefined',
             }
 
-            // output
+            // expected output
             const expected = {
                 UNDEFINED_1: undefined,
                 UNDEFINED_2: undefined,
@@ -663,11 +702,13 @@ describe('dotenv-conversion', function () {
                 UNDEFINED_1001: 'Undefined',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -711,7 +752,7 @@ describe('dotenv-conversion', function () {
                 BOOLEAN_1007: 'NonE',
             }
 
-            // output
+            // expected output
             const expected = {
                 BOOLEAN_1: true,
                 BOOLEAN_2: true,
@@ -785,11 +826,13 @@ describe('dotenv-conversion', function () {
                 BOOLEAN_1007: 'NonE',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -903,7 +946,7 @@ describe('dotenv-conversion', function () {
                 NUMBER_1012: '4.5e+123any',
             }
 
-            // output
+            // expected output
             const expected = {
                 NUMBER_1: NaN,
                 NUMBER_2: Infinity,
@@ -1117,11 +1160,13 @@ describe('dotenv-conversion', function () {
                 NUMBER_1012: '4.5e+123any',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -1205,7 +1250,7 @@ describe('dotenv-conversion', function () {
                 BIGINT_1326: '-0XAnany',
             }
 
-            // output
+            // expected output
             const expected = {
                 BIGINT_1: 0n,
                 BIGINT_2: 0n,
@@ -1359,11 +1404,13 @@ describe('dotenv-conversion', function () {
                 BIGINT_1326: '-0XAnany',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -1385,7 +1432,7 @@ describe('dotenv-conversion', function () {
                 SYMBOL_1002: 'Symbol(any)any',
             }
 
-            // output
+            // expected output
             const expected = {
                 SYMBOL_1: Symbol(),
                 SYMBOL_2: Symbol('any'),
@@ -1418,21 +1465,21 @@ describe('dotenv-conversion', function () {
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.SYMBOL_1.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_1.toString().should.equal(expected.SYMBOL_1.toString())
-            dotenvConversionConfig.parsed.SYMBOL_2.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_2.toString().should.equal(expected.SYMBOL_2.toString())
-            dotenvConversionConfig.parsed.SYMBOL_3.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_3.toString().should.equal(expected.SYMBOL_3.toString())
-            dotenvConversionConfig.parsed.SYMBOL_4.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_4.toString().should.equal(expected.SYMBOL_4.toString())
-            dotenvConversionConfig.parsed.SYMBOL_5.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_5.toString().should.equal(expected.SYMBOL_5.toString())
-            dotenvConversionConfig.parsed.SYMBOL_6.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_6.toString().should.equal(expected.SYMBOL_6.toString())
-            dotenvConversionConfig.parsed.SYMBOL_101.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_101.toString().should.equal(expected.SYMBOL_101.toString())
-            process.env.should.deep.include(expectedForEnv)
+            expect(dotenvConversionConfig.parsed.SYMBOL_1).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_1.toString()).to.equal(expected.SYMBOL_1.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_2).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_2.toString()).to.equal(expected.SYMBOL_2.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_3).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_3.toString()).to.equal(expected.SYMBOL_3.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_4).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_4.toString()).to.equal(expected.SYMBOL_4.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_5).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_5.toString()).to.equal(expected.SYMBOL_5.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_6).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_6.toString()).to.equal(expected.SYMBOL_6.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_101).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_101.toString()).to.equal(expected.SYMBOL_101.toString())
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -1472,7 +1519,7 @@ describe('dotenv-conversion', function () {
                 ARRAY_1033: '[-Infinity]',
             }
 
-            // output
+            // expected output
             const expected = {
                 ARRAY_1: [null, true, false, 1, 'x', [-1, 2.1, 30, 4.5e+123], {'y': 'z'}],
 
@@ -1538,11 +1585,13 @@ describe('dotenv-conversion', function () {
                 ARRAY_1033: '[-Infinity]',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -1582,7 +1631,7 @@ describe('dotenv-conversion', function () {
                 OBJECT_1033: '{"a":-Infinity}',
             }
 
-            // output
+            // expected output
             const expected = {
                 OBJECT_1: {'a': null, 'b': true, 'c': false, 'd': 1, 'e': 'x', 'f': [-1, 2.1, 30, 4.5e+123], 'g': {'y': 'z'}},
 
@@ -1648,11 +1697,13 @@ describe('dotenv-conversion', function () {
                 OBJECT_1033: '{"a":-Infinity}',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -1801,7 +1852,7 @@ describe('dotenv-conversion', function () {
                 BOOLEAN_1006: ' bool : any ',
             }
 
-            // output
+            // expected output
             const expected = {
                 BOOLEAN_1: false,
                 BOOLEAN_2: false,
@@ -2085,11 +2136,13 @@ describe('dotenv-conversion', function () {
                 BOOLEAN_1006: ' bool : any ',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -2227,7 +2280,7 @@ describe('dotenv-conversion', function () {
                 NUMBER_1006: ' num : any ',
             }
 
-            // output
+            // expected output
             const expected = {
                 NUMBER_1: 1,
                 NUMBER_2: 1,
@@ -2489,11 +2542,13 @@ describe('dotenv-conversion', function () {
                 NUMBER_1006: ' num : any ',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -2651,7 +2706,7 @@ describe('dotenv-conversion', function () {
                 BIGINT_1006: ' big : any ',
             }
 
-            // output
+            // expected output
             const expected = {
                 BIGINT_1: 1n,
                 BIGINT_2: 1n,
@@ -2953,11 +3008,13 @@ describe('dotenv-conversion', function () {
                 BIGINT_1006: ' big : any ',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3001,7 +3058,7 @@ describe('dotenv-conversion', function () {
                 STRING_1006: ' str : any ',
             }
 
-            // output
+            // expected output
             const expected = {
                 STRING_1: 'null',
                 STRING_2: 'undefined',
@@ -3075,11 +3132,13 @@ describe('dotenv-conversion', function () {
                 STRING_1006: ' str : any ',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3103,7 +3162,7 @@ describe('dotenv-conversion', function () {
                 SYMBOL_1003: ' symbol : any ',
             }
 
-            // output
+            // expected output
             const expected = {
                 SYMBOL_1: Symbol(),
                 SYMBOL_2: Symbol(' '),
@@ -3137,24 +3196,26 @@ describe('dotenv-conversion', function () {
                 SYMBOL_1003: ' symbol : any ',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.SYMBOL_1.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_1.toString().should.equal(expected.SYMBOL_1.toString())
-            dotenvConversionConfig.parsed.SYMBOL_2.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_2.toString().should.equal(expected.SYMBOL_2.toString())
-            dotenvConversionConfig.parsed.SYMBOL_11.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_11.toString().should.equal(expected.SYMBOL_11.toString())
-            dotenvConversionConfig.parsed.SYMBOL_12.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_12.toString().should.equal(expected.SYMBOL_12.toString())
-            dotenvConversionConfig.parsed.SYMBOL_21.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_21.toString().should.equal(expected.SYMBOL_21.toString())
-            dotenvConversionConfig.parsed.SYMBOL_22.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_22.toString().should.equal(expected.SYMBOL_22.toString())
-            dotenvConversionConfig.parsed.SYMBOL_23.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_23.toString().should.equal(expected.SYMBOL_23.toString())
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed.SYMBOL_1).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_1.toString()).to.equal(expected.SYMBOL_1.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_2).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_2.toString()).to.equal(expected.SYMBOL_2.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_11).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_11.toString()).to.equal(expected.SYMBOL_11.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_12).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_12.toString()).to.equal(expected.SYMBOL_12.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_21).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_21.toString()).to.equal(expected.SYMBOL_21.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_22).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_22.toString()).to.equal(expected.SYMBOL_22.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_23).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_23.toString()).to.equal(expected.SYMBOL_23.toString())
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3210,7 +3271,7 @@ describe('dotenv-conversion', function () {
                 ARRAY_2006: ' arr : ',
             }
 
-            // output
+            // expected output
             const expected = {
                 ARRAY_1: [null, true, false, 1, 'x', [-1, 2.1, 30, 4.5e+123], {'y': 'z'}],
                 ARRAY_2: [null, true, false, 1, 'x', [-1, 2.1, 30, 4.5e+123], {'y': 'z'}],
@@ -3308,11 +3369,13 @@ describe('dotenv-conversion', function () {
                 ARRAY_2006: ' arr : ',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3369,7 +3432,7 @@ describe('dotenv-conversion', function () {
                 OBJECT_2006: ' obj : ',
             }
 
-            // output
+            // expected output
             const expected = {
                 OBJECT_1: {'a': null, 'b': true, 'c': false, 'd': 1, 'e': 'x', 'f': [-1, 2.1, 30, 4.5e+123], 'g': {'y': 'z'}},
                 OBJECT_2: {'a': null, 'b': true, 'c': false, 'd': 1, 'e': 'x', 'f': [-1, 2.1, 30, 4.5e+123], 'g': {'y': 'z'}},
@@ -3469,11 +3532,13 @@ describe('dotenv-conversion', function () {
                 OBJECT_2006: ' obj : ',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3485,7 +3550,7 @@ describe('dotenv-conversion', function () {
                 NOT_OK: 'custom:no',
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: 'custom:yes',
                 NOT_OK: 'custom:no',
@@ -3495,11 +3560,13 @@ describe('dotenv-conversion', function () {
                 NOT_OK: 'custom:no',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3518,7 +3585,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: 1,
                 NOT_OK: 0,
@@ -3528,11 +3595,13 @@ describe('dotenv-conversion', function () {
                 NOT_OK: '0',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3551,7 +3620,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: true,
                 NOT_OK: false,
@@ -3561,11 +3630,13 @@ describe('dotenv-conversion', function () {
                 NOT_OK: 'false',
             }
 
+            // asserts
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3578,7 +3649,7 @@ describe('dotenv-conversion', function () {
                 OK_ALIAS_MORE: 'bl:yes',
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: true,
                 OK_ALIAS: true,
@@ -3590,11 +3661,13 @@ describe('dotenv-conversion', function () {
                 OK_ALIAS_MORE: 'bl:yes',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3612,7 +3685,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: true,
                 OK_ALIAS: true,
@@ -3624,11 +3697,13 @@ describe('dotenv-conversion', function () {
                 OK_ALIAS_MORE: 'true',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3649,7 +3724,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'ignore-process-env'
 
-            // output
+            // expected output
             const expected = {
                 OK: true,
             }
@@ -3657,11 +3732,13 @@ describe('dotenv-conversion', function () {
                 OK: 'true',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3673,7 +3750,7 @@ describe('dotenv-conversion', function () {
                 ignoreProcessEnv: true,
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: true,
             }
@@ -3681,11 +3758,13 @@ describe('dotenv-conversion', function () {
                 OK: 'yes',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3694,7 +3773,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'prevents'
 
-            // output
+            // expected output
             const expected = {
                 OK: true,
             }
@@ -3702,11 +3781,13 @@ describe('dotenv-conversion', function () {
                 OK: 'true',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3718,7 +3799,7 @@ describe('dotenv-conversion', function () {
                 prevents: ['OK'],
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: 'yes',
             }
@@ -3726,11 +3807,13 @@ describe('dotenv-conversion', function () {
                 OK: 'yes',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3739,7 +3822,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'specs'
 
-            // output
+            // expected output
             const expected = {
                 OK: true,
             }
@@ -3747,11 +3830,13 @@ describe('dotenv-conversion', function () {
                 OK: 'true',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3765,7 +3850,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: 1,
             }
@@ -3773,11 +3858,13 @@ describe('dotenv-conversion', function () {
                 OK: '1',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3791,7 +3878,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: 1,
             }
@@ -3799,11 +3886,13 @@ describe('dotenv-conversion', function () {
                 OK: '1',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3817,7 +3906,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: 'yes',
             }
@@ -3825,11 +3914,13 @@ describe('dotenv-conversion', function () {
                 OK: 'yes',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3845,7 +3936,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: 'custom:yes',
             }
@@ -3853,11 +3944,13 @@ describe('dotenv-conversion', function () {
                 OK: 'custom:yes',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3871,7 +3964,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: 'yes',
             }
@@ -3879,11 +3972,13 @@ describe('dotenv-conversion', function () {
                 OK: 'yes',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3892,7 +3987,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.auto.null'
 
-            // output
+            // expected output
             const expected = {
                 NULL_1: null,
                 NULL_2: null,
@@ -3914,11 +4009,13 @@ describe('dotenv-conversion', function () {
                 NULL_1001: 'NuLL',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3927,7 +4024,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.auto.undefined'
 
-            // output
+            // expected output
             const expected = {
                 UNDEFINED_1: undefined,
                 UNDEFINED_2: undefined,
@@ -3947,11 +4044,13 @@ describe('dotenv-conversion', function () {
                 UNDEFINED_1001: 'Undefined',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -3960,7 +4059,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.auto.boolean'
 
-            // output
+            // expected output
             const expected = {
                 BOOLEAN_1: true,
                 BOOLEAN_2: true,
@@ -4034,11 +4133,13 @@ describe('dotenv-conversion', function () {
                 BOOLEAN_1007: 'NonE',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -4047,7 +4148,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.auto.number'
 
-            // output
+            // expected output
             const expected = {
                 NUMBER_1: NaN,
                 NUMBER_2: Infinity,
@@ -4261,11 +4362,13 @@ describe('dotenv-conversion', function () {
                 NUMBER_1012: '4.5e+123any',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -4274,7 +4377,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.auto.bigint'
 
-            // output
+            // expected output
             const expected = {
                 BIGINT_1: 0n,
                 BIGINT_2: 0n,
@@ -4428,11 +4531,13 @@ describe('dotenv-conversion', function () {
                 BIGINT_1326: '-0XAnany',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -4441,7 +4546,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.auto.symbol'
 
-            // output
+            // expected output
             const expected = {
                 SYMBOL_1: Symbol(),
                 SYMBOL_2: Symbol('any'),
@@ -4471,24 +4576,26 @@ describe('dotenv-conversion', function () {
                 SYMBOL_1002: 'Symbol(any)any',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.SYMBOL_1.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_1.toString().should.equal(expected.SYMBOL_1.toString())
-            dotenvConversionConfig.parsed.SYMBOL_2.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_2.toString().should.equal(expected.SYMBOL_2.toString())
-            dotenvConversionConfig.parsed.SYMBOL_3.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_3.toString().should.equal(expected.SYMBOL_3.toString())
-            dotenvConversionConfig.parsed.SYMBOL_4.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_4.toString().should.equal(expected.SYMBOL_4.toString())
-            dotenvConversionConfig.parsed.SYMBOL_5.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_5.toString().should.equal(expected.SYMBOL_5.toString())
-            dotenvConversionConfig.parsed.SYMBOL_6.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_6.toString().should.equal(expected.SYMBOL_6.toString())
-            dotenvConversionConfig.parsed.SYMBOL_101.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_101.toString().should.equal(expected.SYMBOL_101.toString())
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed.SYMBOL_1).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_1.toString()).to.equal(expected.SYMBOL_1.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_2).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_2.toString()).to.equal(expected.SYMBOL_2.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_3).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_3.toString()).to.equal(expected.SYMBOL_3.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_4).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_4.toString()).to.equal(expected.SYMBOL_4.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_5).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_5.toString()).to.equal(expected.SYMBOL_5.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_6).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_6.toString()).to.equal(expected.SYMBOL_6.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_101).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_101.toString()).to.equal(expected.SYMBOL_101.toString())
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -4497,7 +4604,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.auto.array'
 
-            // output
+            // expected output
             const expected = {
                 ARRAY_1: [null, true, false, 1, 'x', [-1, 2.1, 30, 4.5e+123], {'y': 'z'}],
 
@@ -4563,11 +4670,13 @@ describe('dotenv-conversion', function () {
                 ARRAY_1033: '[-Infinity]',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -4576,7 +4685,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.auto.object'
 
-            // output
+            // expected output
             const expected = {
                 OBJECT_1: {'a': null, 'b': true, 'c': false, 'd': 1, 'e': 'x', 'f': [-1, 2.1, 30, 4.5e+123], 'g': {'y': 'z'}},
 
@@ -4642,11 +4751,13 @@ describe('dotenv-conversion', function () {
                 OBJECT_1033: '{"a":-Infinity}',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -4655,7 +4766,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.boolean'
 
-            // output
+            // expected output
             const expected = {
                 BOOLEAN_1: false,
                 BOOLEAN_2: false,
@@ -4939,11 +5050,13 @@ describe('dotenv-conversion', function () {
                 BOOLEAN_1006: ' bool : any ',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -4952,7 +5065,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.number'
 
-            // output
+            // expected output
             const expected = {
                 NUMBER_1: 1,
                 NUMBER_2: 1,
@@ -5214,11 +5327,13 @@ describe('dotenv-conversion', function () {
                 NUMBER_1006: ' num : any ',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -5227,7 +5342,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.bigint'
 
-            // output
+            // expected output
             const expected = {
                 BIGINT_1: 1n,
                 BIGINT_2: 1n,
@@ -5529,11 +5644,13 @@ describe('dotenv-conversion', function () {
                 BIGINT_1006: ' big : any ',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -5542,7 +5659,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.string'
 
-            // output
+            // expected output
             const expected = {
                 STRING_1: 'null',
                 STRING_2: 'undefined',
@@ -5616,11 +5733,13 @@ describe('dotenv-conversion', function () {
                 STRING_1006: ' str : any ',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -5629,7 +5748,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.symbol'
 
-            // output
+            // expected output
             const expected = {
                 SYMBOL_1: Symbol(),
                 SYMBOL_2: Symbol(' '),
@@ -5663,24 +5782,26 @@ describe('dotenv-conversion', function () {
                 SYMBOL_1003: ' symbol : any ',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.SYMBOL_1.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_1.toString().should.equal(expected.SYMBOL_1.toString())
-            dotenvConversionConfig.parsed.SYMBOL_2.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_2.toString().should.equal(expected.SYMBOL_2.toString())
-            dotenvConversionConfig.parsed.SYMBOL_11.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_11.toString().should.equal(expected.SYMBOL_11.toString())
-            dotenvConversionConfig.parsed.SYMBOL_12.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_12.toString().should.equal(expected.SYMBOL_12.toString())
-            dotenvConversionConfig.parsed.SYMBOL_21.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_21.toString().should.equal(expected.SYMBOL_21.toString())
-            dotenvConversionConfig.parsed.SYMBOL_22.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_22.toString().should.equal(expected.SYMBOL_22.toString())
-            dotenvConversionConfig.parsed.SYMBOL_23.should.be.a('symbol')
-            dotenvConversionConfig.parsed.SYMBOL_23.toString().should.equal(expected.SYMBOL_23.toString())
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed.SYMBOL_1).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_1.toString()).to.equal(expected.SYMBOL_1.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_2).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_2.toString()).to.equal(expected.SYMBOL_2.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_11).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_11.toString()).to.equal(expected.SYMBOL_11.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_12).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_12.toString()).to.equal(expected.SYMBOL_12.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_21).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_21.toString()).to.equal(expected.SYMBOL_21.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_22).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_22.toString()).to.equal(expected.SYMBOL_22.toString())
+            expect(dotenvConversionConfig.parsed.SYMBOL_23).to.be.a('symbol')
+            expect(dotenvConversionConfig.parsed.SYMBOL_23.toString()).to.equal(expected.SYMBOL_23.toString())
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -5689,7 +5810,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.array'
 
-            // output
+            // expected output
             const expected = {
                 ARRAY_1: [null, true, false, 1, 'x', [-1, 2.1, 30, 4.5e+123], {'y': 'z'}],
                 ARRAY_2: [null, true, false, 1, 'x', [-1, 2.1, 30, 4.5e+123], {'y': 'z'}],
@@ -5787,11 +5908,13 @@ describe('dotenv-conversion', function () {
                 ARRAY_2006: ' arr : ',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -5800,7 +5923,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.object'
 
-            // output
+            // expected output
             const expected = {
                 OBJECT_1: {'a': null, 'b': true, 'c': false, 'd': 1, 'e': 'x', 'f': [-1, 2.1, 30, 4.5e+123], 'g': {'y': 'z'}},
                 OBJECT_2: {'a': null, 'b': true, 'c': false, 'd': 1, 'e': 'x', 'f': [-1, 2.1, 30, 4.5e+123], 'g': {'y': 'z'}},
@@ -5900,11 +6023,13 @@ describe('dotenv-conversion', function () {
                 OBJECT_2006: ' obj : ',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -5913,7 +6038,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method.custom'
 
-            // output
+            // expected output
             const expected = {
                 OK: 'custom:yes',
                 NOT_OK: 'custom:no',
@@ -5926,8 +6051,8 @@ describe('dotenv-conversion', function () {
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -5943,7 +6068,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: 1,
                 NOT_OK: 0,
@@ -5953,11 +6078,13 @@ describe('dotenv-conversion', function () {
                 NOT_OK: '0',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -5973,7 +6100,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: true,
                 NOT_OK: false,
@@ -5983,11 +6110,13 @@ describe('dotenv-conversion', function () {
                 NOT_OK: 'false',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -5996,7 +6125,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'method-aliases'
 
-            // output
+            // expected output
             const expected = {
                 OK: true,
                 OK_ALIAS: true,
@@ -6008,11 +6137,13 @@ describe('dotenv-conversion', function () {
                 OK_ALIAS_MORE: 'bl:yes',
             }
 
+            // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -6026,7 +6157,7 @@ describe('dotenv-conversion', function () {
                 },
             }
 
-            // output
+            // expected output
             const expected = {
                 OK: true,
                 OK_ALIAS: true,
@@ -6038,11 +6169,13 @@ describe('dotenv-conversion', function () {
                 OK_ALIAS_MORE: 'true',
             }
 
+            // executes
             const dotenvConfig = Object.assign({}, useEnv(input), inputConfig)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -6065,7 +6198,7 @@ describe('dotenv-conversion', function () {
                 NUMBER: '1e$EXPONENTIAL',
             }
 
-            // output
+            // expected output
             const expected = {
                 DEBUG_LEVEL: 0,
                 DEBUG: false,
@@ -6081,11 +6214,13 @@ describe('dotenv-conversion', function () {
                 NUMBER: '100',
             }
 
+            // executes
             const dotenvExpandConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvExpandConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -6106,7 +6241,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 'expand'
 
-            // output
+            // expected output
             const expected = {
                 DEBUG_LEVEL: 0,
                 DEBUG: false,
@@ -6122,11 +6257,13 @@ describe('dotenv-conversion', function () {
                 NUMBER: '100',
             }
 
+            // executes
             const dotenvExpandConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvExpandConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -6153,7 +6290,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 1
 
-            // output
+            // expected output
             const expected = {
                 SIGNAL: 0,
                 OK: false,
@@ -6163,11 +6300,13 @@ describe('dotenv-conversion', function () {
                 OK: 'false',
             }
 
+            // executes
             const dotenvExpandConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvExpandConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -6176,7 +6315,7 @@ describe('dotenv-conversion', function () {
             // input
             const input = 2
 
-            // output
+            // expected output
             const expected = {
                 SIGNAL: 1,
                 OK: true,
@@ -6186,11 +6325,13 @@ describe('dotenv-conversion', function () {
                 OK: 'true',
             }
 
+            // executes
             const dotenvExpandConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvExpandConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -6200,7 +6341,7 @@ describe('dotenv-conversion', function () {
             process.env.NODE_ENV = 'test'
             const input = 3
 
-            // output
+            // expected output
             const expected = {
                 SIGNAL: 1n,
                 OK: true,
@@ -6210,11 +6351,13 @@ describe('dotenv-conversion', function () {
                 OK: 'true',
             }
 
+            // executes
             const dotenvExpandConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvExpandConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })
@@ -6224,7 +6367,7 @@ describe('dotenv-conversion', function () {
             process.env.NODE_ENV = 'test'
             const input = 4
 
-            // output
+            // expected output
             const expected = {
                 SIGNAL: null,
                 OK: null,
@@ -6234,11 +6377,13 @@ describe('dotenv-conversion', function () {
                 OK: 'null',
             }
 
+            // executes
             const dotenvExpandConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvExpandConfig)
 
-            dotenvConversionConfig.parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedForEnv)
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
 
             done()
         })

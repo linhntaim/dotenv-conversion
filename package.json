@@ -1,6 +1,6 @@
 {
     "name": "dotenv-conversion",
-    "version": "3.0.1",
+    "version": "3.1.0",
     "description": "An extension for dotenv is to help converting environment variables to anything more useful than strings.",
     "main": "dist/index.js",
     "exports": {
@@ -21,8 +21,11 @@
     "scripts": {
         "build": "babel ./src -d ./dist -D --delete-dir-on-start",
         "test": "nyc mocha ./tests --require @babel/register",
-        "coverage": "nyc report --reporter=text-lcov | coveralls",
-        "ready": "npm i && npm run build && npm test"
+        "test:report": "nyc report --reporter=text-lcov",
+        "test:publish": "npm run test:report | coveralls",
+        "ci": "npm i && npm run build && npm test",
+        "cia": "npm run ci && npm run test:publish",
+        "cd": "npm run ci && npm publish"
     },
     "repository": {
         "type": "git",
@@ -31,6 +34,7 @@
     "keywords": [
         "dotenv",
         "conversion",
+        "environment",
         "variables",
         "automatic",
         "customized",
@@ -50,7 +54,7 @@
         "@babel/register": "^7.22.15",
         "babel-plugin-add-module-exports": "^1.0.4",
         "chai": "^4.3.10",
-        "coveralls": "^3.1.1",
+        "coveralls-next": "^4.2.0",
         "dotenv": "^16.3.1",
         "dotenv-expand": "^10.0.0",
         "dotenv-flow": "^4.0.0",

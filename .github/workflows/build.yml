@@ -1,0 +1,33 @@
+name: build
+run-name: ${{ github.actor }} is making a build
+on:
+  push:
+    branches:
+      - master
+jobs:
+  test-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+      - name: Information
+        run: |
+          echo "Node.js"
+          node -v
+          echo "npm"
+          npm -v
+      - name: Install
+        run: npm ci
+      - name: Test
+        run: |
+          npm test
+          mkdir coverage
+          npm run test:report > coverage/test.lcov
+      - name: Publish test result to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

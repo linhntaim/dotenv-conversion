@@ -1,9 +1,9 @@
 # dotenv-conversion
 
 [![NPM version](https://img.shields.io/npm/v/dotenv-conversion.svg?style=flat-square)](https://www.npmjs.com/package/dotenv-conversion)
-[![Travis (.org)](https://img.shields.io/travis/com/linhntaim/dotenv-conversion?style=flat-square)](https://app.travis-ci.com/github/linhntaim/dotenv-conversion)
-[![Coveralls github](https://img.shields.io/coveralls/github/linhntaim/dotenv-conversion?style=flat-square)](https://coveralls.io/github/linhntaim/dotenv-conversion)
-[![NPM](https://img.shields.io/npm/l/dotenv-conversion?style=flat-square)](https://github.com/linhntaim/dotenv-conversion/blob/master/LICENSE)
+[![Github Actions](https://img.shields.io/github/actions/workflow/status/linhntaim/dotenv-conversion/build.yml?style=flat-square)](https://github.com/linhntaim/dotenv-conversion/actions/workflows/build.yml)
+[![Coveralls](https://img.shields.io/coveralls/github/linhntaim/dotenv-conversion?style=flat-square)](https://coveralls.io/github/linhntaim/dotenv-conversion)
+[![License](https://img.shields.io/npm/l/dotenv-conversion?style=flat-square)](https://github.com/linhntaim/dotenv-conversion/blob/master/LICENSE)
 
 `dotenv-conversion` adds variable conversion on top of `dotenv`. If you find yourself
 needing to convert/transform environment variables to anything more useful than strings,
