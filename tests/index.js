@@ -2,9 +2,9 @@ import chai from 'chai'
 import dotenv from 'dotenv'
 import dotenvExpand from 'dotenv-expand'
 import dotenvFlow from 'dotenv-flow'
-import dotenvConversion from '../src'
 import fs from 'fs'
 import mocha from 'mocha'
+import dotenvConversion from '../src'
 
 // const before = mocha.after
 // const beforeEach = mocha.beforeEach
@@ -35,6 +35,12 @@ describe('dotenv-conversion', function () {
             const expectedParsed = {}
             const expectedFromDotEnv = true
             const expectedIgnoreProcessEnv = false
+            const expectedBinaryNumber = true
+            const expectedOctalNumber = true
+            const expectedHexadecimalNumber = true
+            const expectedBinaryBigInt = true
+            const expectedOctalBigInt = true
+            const expectedHexadecimalBigInt = true
             const expectedPrevents = []
             const expectedSpecs = {}
             const expectedMethods = [
@@ -64,6 +70,12 @@ describe('dotenv-conversion', function () {
             expect(dotenvConversionConfig).to.have.property('parsed')
             expect(dotenvConversionConfig).to.have.property('fromDotEnv')
             expect(dotenvConversionConfig).to.have.property('ignoreProcessEnv')
+            expect(dotenvConversionConfig).to.have.property('binaryNumber')
+            expect(dotenvConversionConfig).to.have.property('octalNumber')
+            expect(dotenvConversionConfig).to.have.property('hexadecimalNumber')
+            expect(dotenvConversionConfig).to.have.property('binaryBigInt')
+            expect(dotenvConversionConfig).to.have.property('octalBigInt')
+            expect(dotenvConversionConfig).to.have.property('hexadecimalBigInt')
             expect(dotenvConversionConfig).to.have.property('prevents')
             expect(dotenvConversionConfig).to.have.property('specs')
             expect(dotenvConversionConfig).to.have.property('methods')
@@ -72,6 +84,12 @@ describe('dotenv-conversion', function () {
             expect(dotenvConversionConfig.parsed).to.deep.equal(expectedParsed)
             expect(dotenvConversionConfig.fromDotEnv).to.equal(expectedFromDotEnv)
             expect(dotenvConversionConfig.ignoreProcessEnv).to.equal(expectedIgnoreProcessEnv)
+            expect(dotenvConversionConfig.binaryNumber).to.equal(expectedBinaryNumber)
+            expect(dotenvConversionConfig.octalNumber).to.equal(expectedOctalNumber)
+            expect(dotenvConversionConfig.hexadecimalNumber).to.equal(expectedHexadecimalNumber)
+            expect(dotenvConversionConfig.binaryBigInt).to.equal(expectedBinaryBigInt)
+            expect(dotenvConversionConfig.octalBigInt).to.equal(expectedOctalBigInt)
+            expect(dotenvConversionConfig.hexadecimalBigInt).to.equal(expectedHexadecimalBigInt)
             expect(dotenvConversionConfig.prevents).to.deep.equal(expectedPrevents)
             expect(dotenvConversionConfig.specs).to.deep.equal(expectedSpecs)
             expect(Object.keys(dotenvConversionConfig.methods)).to.deep.equal(expectedMethods)
@@ -90,6 +108,12 @@ describe('dotenv-conversion', function () {
                 },
                 fromDotEnv: false,
                 ignoreProcessEnv: true,
+                binaryNumber: false,
+                octalNumber: false,
+                hexadecimalNumber: false,
+                binaryBigInt: false,
+                octalBigInt: false,
+                hexadecimalBigInt: false,
                 prevents: ['BASIC'],
                 specs: {
                     BASIC(value) {
@@ -122,6 +146,12 @@ describe('dotenv-conversion', function () {
             }
             const expectedFromDotEnv = inputConfig.fromDotEnv
             const expectedIgnoreProcessEnv = inputConfig.ignoreProcessEnv
+            const expectedBinaryNumber = inputConfig.binaryNumber
+            const expectedOctalNumber = inputConfig.octalNumber
+            const expectedHexadecimalNumber = inputConfig.hexadecimalNumber
+            const expectedBinaryBigInt = inputConfig.binaryBigInt
+            const expectedOctalBigInt = inputConfig.octalBigInt
+            const expectedHexadecimalBigInt = inputConfig.hexadecimalBigInt
             const expectedPrevents = inputConfig.prevents
             const expectedSpecs = inputConfig.specs
             const expectedMethods = [
@@ -157,6 +187,12 @@ describe('dotenv-conversion', function () {
             expect(dotenvConversionConfig).to.have.property('parsed')
             expect(dotenvConversionConfig).to.have.property('fromDotEnv')
             expect(dotenvConversionConfig).to.have.property('ignoreProcessEnv')
+            expect(dotenvConversionConfig).to.have.property('binaryNumber')
+            expect(dotenvConversionConfig).to.have.property('octalNumber')
+            expect(dotenvConversionConfig).to.have.property('hexadecimalNumber')
+            expect(dotenvConversionConfig).to.have.property('binaryBigInt')
+            expect(dotenvConversionConfig).to.have.property('octalBigInt')
+            expect(dotenvConversionConfig).to.have.property('hexadecimalBigInt')
             expect(dotenvConversionConfig).to.have.property('prevents')
             expect(dotenvConversionConfig).to.have.property('specs')
             expect(dotenvConversionConfig).to.have.property('methods')
@@ -165,6 +201,12 @@ describe('dotenv-conversion', function () {
             expect(dotenvConversionConfig.parsed).to.deep.equal(expectedParsed)
             expect(dotenvConversionConfig.fromDotEnv).to.equal(expectedFromDotEnv)
             expect(dotenvConversionConfig.ignoreProcessEnv).to.equal(expectedIgnoreProcessEnv)
+            expect(dotenvConversionConfig.binaryNumber).to.equal(expectedBinaryNumber)
+            expect(dotenvConversionConfig.octalNumber).to.equal(expectedOctalNumber)
+            expect(dotenvConversionConfig.hexadecimalNumber).to.equal(expectedHexadecimalNumber)
+            expect(dotenvConversionConfig.binaryBigInt).to.equal(expectedBinaryBigInt)
+            expect(dotenvConversionConfig.octalBigInt).to.equal(expectedOctalBigInt)
+            expect(dotenvConversionConfig.hexadecimalBigInt).to.equal(expectedHexadecimalBigInt)
             expect(dotenvConversionConfig.prevents).to.deep.equal(expectedPrevents)
             expect(dotenvConversionConfig.specs).to.deep.equal(expectedSpecs)
             expect(Object.keys(dotenvConversionConfig.methods)).to.deep.equal(expectedMethods)
@@ -225,11 +267,11 @@ describe('dotenv-conversion', function () {
     })
 
     describe('convert:standalone', function () {
-        function useEnv(env) {
-            return {
+        function useEnv(env, options = {}) {
+            return Object.assign(options, {
                 fromDotEnv: false,
                 parsed: env,
-            }
+            })
         }
 
         it('ignoreProcessEnv:no', function (done) {
@@ -1171,6 +1213,87 @@ describe('dotenv-conversion', function () {
             done()
         })
 
+        it('method:auto:number:boh>>false', function (done) {
+            // input
+            const options = {
+                binaryNumber: false,
+                octalNumber: false,
+                hexadecimalNumber: false,
+            }
+            const input = {
+                NUMBER_301: '0b1010',
+                NUMBER_302: '+0b1010',
+                NUMBER_303: '-0b1010',
+                NUMBER_304: '0B1010',
+                NUMBER_305: '+0B1010',
+                NUMBER_306: '-0B1010',
+                NUMBER_311: '0o12',
+                NUMBER_312: '+0o12',
+                NUMBER_313: '-0o12',
+                NUMBER_314: '0O12',
+                NUMBER_315: '+0O12',
+                NUMBER_316: '-0O12',
+                NUMBER_321: '0xa',
+                NUMBER_322: '+0xa',
+                NUMBER_323: '-0xa',
+                NUMBER_324: '0XA',
+                NUMBER_325: '+0XA',
+                NUMBER_326: '-0XA',
+            }
+
+            // expected output
+            const expected = {
+                NUMBER_301: '0b1010',
+                NUMBER_302: '+0b1010',
+                NUMBER_303: '-0b1010',
+                NUMBER_304: '0B1010',
+                NUMBER_305: '+0B1010',
+                NUMBER_306: '-0B1010',
+                NUMBER_311: '0o12',
+                NUMBER_312: '+0o12',
+                NUMBER_313: '-0o12',
+                NUMBER_314: '0O12',
+                NUMBER_315: '+0O12',
+                NUMBER_316: '-0O12',
+                NUMBER_321: '0xa',
+                NUMBER_322: '+0xa',
+                NUMBER_323: '-0xa',
+                NUMBER_324: '0XA',
+                NUMBER_325: '+0XA',
+                NUMBER_326: '-0XA',
+            }
+            const expectedForEnv = {
+                NUMBER_301: '0b1010',
+                NUMBER_302: '+0b1010',
+                NUMBER_303: '-0b1010',
+                NUMBER_304: '0B1010',
+                NUMBER_305: '+0B1010',
+                NUMBER_306: '-0B1010',
+                NUMBER_311: '0o12',
+                NUMBER_312: '+0o12',
+                NUMBER_313: '-0o12',
+                NUMBER_314: '0O12',
+                NUMBER_315: '+0O12',
+                NUMBER_316: '-0O12',
+                NUMBER_321: '0xa',
+                NUMBER_322: '+0xa',
+                NUMBER_323: '-0xa',
+                NUMBER_324: '0XA',
+                NUMBER_325: '+0XA',
+                NUMBER_326: '-0XA',
+            }
+
+            // executes
+            const dotenvConfig = useEnv(input, options)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
+
+            done()
+        })
+
         it('method:auto:bigint', function (done) {
             // input
             const input = {
@@ -1406,6 +1529,87 @@ describe('dotenv-conversion', function () {
 
             // executes
             const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('method:auto:bigint:boh>>false', function (done) {
+            // input
+            const options = {
+                binaryBigInt: false,
+                octalBigInt: false,
+                hexadecimalBigInt: false,
+            }
+            const input = {
+                BIGINT_201: '0b1010n',
+                BIGINT_202: '+0b1010n',
+                BIGINT_203: '-0b1010n',
+                BIGINT_204: '0B1010n',
+                BIGINT_205: '+0B1010n',
+                BIGINT_206: '-0B1010n',
+                BIGINT_211: '0o12n',
+                BIGINT_212: '+0o12n',
+                BIGINT_213: '-0o12n',
+                BIGINT_214: '0O12n',
+                BIGINT_215: '+0O12n',
+                BIGINT_216: '-0O12n',
+                BIGINT_221: '0xan',
+                BIGINT_222: '+0xan',
+                BIGINT_223: '-0xan',
+                BIGINT_224: '0XAn',
+                BIGINT_225: '+0XAn',
+                BIGINT_226: '-0XAn',
+            }
+
+            // expected output
+            const expected = {
+                BIGINT_201: '0b1010n',
+                BIGINT_202: '+0b1010n',
+                BIGINT_203: '-0b1010n',
+                BIGINT_204: '0B1010n',
+                BIGINT_205: '+0B1010n',
+                BIGINT_206: '-0B1010n',
+                BIGINT_211: '0o12n',
+                BIGINT_212: '+0o12n',
+                BIGINT_213: '-0o12n',
+                BIGINT_214: '0O12n',
+                BIGINT_215: '+0O12n',
+                BIGINT_216: '-0O12n',
+                BIGINT_221: '0xan',
+                BIGINT_222: '+0xan',
+                BIGINT_223: '-0xan',
+                BIGINT_224: '0XAn',
+                BIGINT_225: '+0XAn',
+                BIGINT_226: '-0XAn',
+            }
+            const expectedForEnv = {
+                BIGINT_201: '0b1010n',
+                BIGINT_202: '+0b1010n',
+                BIGINT_203: '-0b1010n',
+                BIGINT_204: '0B1010n',
+                BIGINT_205: '+0B1010n',
+                BIGINT_206: '-0B1010n',
+                BIGINT_211: '0o12n',
+                BIGINT_212: '+0o12n',
+                BIGINT_213: '-0o12n',
+                BIGINT_214: '0O12n',
+                BIGINT_215: '+0O12n',
+                BIGINT_216: '-0O12n',
+                BIGINT_221: '0xan',
+                BIGINT_222: '+0xan',
+                BIGINT_223: '-0xan',
+                BIGINT_224: '0XAn',
+                BIGINT_225: '+0XAn',
+                BIGINT_226: '-0XAn',
+            }
+
+            // executes
+            const dotenvConfig = useEnv(input, options)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
             // asserts
@@ -2147,6 +2351,261 @@ describe('dotenv-conversion', function () {
             done()
         })
 
+        it('method:boolean:boh>>false', function (done) {
+            // input
+            const options = {
+                binaryNumber: false,
+                octalNumber: false,
+                hexadecimalNumber: false,
+                binaryBigInt: false,
+                octalBigInt: false,
+                hexadecimalBigInt: false,
+            }
+            const input = {
+                BOOLEAN_401: 'boolean:0b1010',
+                BOOLEAN_402: 'boolean:+0b1010',
+                BOOLEAN_403: 'boolean:-0b1010',
+                BOOLEAN_404: 'boolean:0B1010',
+                BOOLEAN_405: 'boolean:+0B1010',
+                BOOLEAN_406: 'boolean:-0B1010',
+                BOOLEAN_411: 'boolean:0o12',
+                BOOLEAN_412: 'boolean:+0o12',
+                BOOLEAN_413: 'boolean:-0o12',
+                BOOLEAN_414: 'boolean:0O12',
+                BOOLEAN_415: 'boolean:+0O12',
+                BOOLEAN_416: 'boolean:-0O12',
+                BOOLEAN_421: 'boolean:0xa',
+                BOOLEAN_422: 'boolean:+0xa',
+                BOOLEAN_423: 'boolean:-0xa',
+                BOOLEAN_424: 'boolean:0XA',
+                BOOLEAN_425: 'boolean:+0XA',
+                BOOLEAN_426: 'boolean:-0XA',
+
+                BOOLEAN_501: 'boolean:0b0',
+                BOOLEAN_502: 'boolean:+0b0',
+                BOOLEAN_503: 'boolean:-0b0',
+                BOOLEAN_504: 'boolean:0B0',
+                BOOLEAN_505: 'boolean:+0B0',
+                BOOLEAN_506: 'boolean:-0B0',
+                BOOLEAN_511: 'boolean:0o0',
+                BOOLEAN_512: 'boolean:+0o0',
+                BOOLEAN_513: 'boolean:-0o0',
+                BOOLEAN_514: 'boolean:0O0',
+                BOOLEAN_515: 'boolean:+0O0',
+                BOOLEAN_516: 'boolean:-0O0',
+                BOOLEAN_521: 'boolean:0x0',
+                BOOLEAN_522: 'boolean:+0x0',
+                BOOLEAN_523: 'boolean:-0x0',
+                BOOLEAN_524: 'boolean:0X0',
+                BOOLEAN_525: 'boolean:+0X0',
+                BOOLEAN_526: 'boolean:-0X0',
+
+                BOOLEAN_601: 'boolean:0b1010n',
+                BOOLEAN_602: 'boolean:+0b1010n',
+                BOOLEAN_603: 'boolean:-0b1010n',
+                BOOLEAN_604: 'boolean:0B1010n',
+                BOOLEAN_605: 'boolean:+0B1010n',
+                BOOLEAN_606: 'boolean:-0B1010n',
+                BOOLEAN_611: 'boolean:0o12n',
+                BOOLEAN_612: 'boolean:+0o12n',
+                BOOLEAN_613: 'boolean:-0o12n',
+                BOOLEAN_614: 'boolean:0O12n',
+                BOOLEAN_615: 'boolean:+0O12n',
+                BOOLEAN_616: 'boolean:-0O12n',
+                BOOLEAN_621: 'boolean:0xan',
+                BOOLEAN_622: 'boolean:+0xan',
+                BOOLEAN_623: 'boolean:-0xan',
+                BOOLEAN_624: 'boolean:0XAn',
+                BOOLEAN_625: 'boolean:+0XAn',
+                BOOLEAN_626: 'boolean:-0XAn',
+
+                BOOLEAN_701: 'boolean:0b0n',
+                BOOLEAN_702: 'boolean:+0b0n',
+                BOOLEAN_703: 'boolean:-0b0n',
+                BOOLEAN_704: 'boolean:0B0n',
+                BOOLEAN_705: 'boolean:+0B0n',
+                BOOLEAN_706: 'boolean:-0B0n',
+                BOOLEAN_711: 'boolean:0o0n',
+                BOOLEAN_712: 'boolean:+0o0n',
+                BOOLEAN_713: 'boolean:-0o0n',
+                BOOLEAN_714: 'boolean:0O0n',
+                BOOLEAN_715: 'boolean:+0O0n',
+                BOOLEAN_716: 'boolean:-0O0n',
+                BOOLEAN_721: 'boolean:0x0n',
+                BOOLEAN_722: 'boolean:+0x0n',
+                BOOLEAN_723: 'boolean:-0x0n',
+                BOOLEAN_724: 'boolean:0X0n',
+                BOOLEAN_725: 'boolean:+0X0n',
+                BOOLEAN_726: 'boolean:-0X0n',
+            }
+
+            // expected output
+            const expected = {
+                BOOLEAN_401: true,
+                BOOLEAN_402: true,
+                BOOLEAN_403: true,
+                BOOLEAN_404: true,
+                BOOLEAN_405: true,
+                BOOLEAN_406: true,
+                BOOLEAN_411: true,
+                BOOLEAN_412: true,
+                BOOLEAN_413: true,
+                BOOLEAN_414: true,
+                BOOLEAN_415: true,
+                BOOLEAN_416: true,
+                BOOLEAN_421: true,
+                BOOLEAN_422: true,
+                BOOLEAN_423: true,
+                BOOLEAN_424: true,
+                BOOLEAN_425: true,
+                BOOLEAN_426: true,
+
+                BOOLEAN_501: false,
+                BOOLEAN_502: false,
+                BOOLEAN_503: false,
+                BOOLEAN_504: false,
+                BOOLEAN_505: false,
+                BOOLEAN_506: false,
+                BOOLEAN_511: false,
+                BOOLEAN_512: false,
+                BOOLEAN_513: false,
+                BOOLEAN_514: false,
+                BOOLEAN_515: false,
+                BOOLEAN_516: false,
+                BOOLEAN_521: false,
+                BOOLEAN_522: false,
+                BOOLEAN_523: false,
+                BOOLEAN_524: false,
+                BOOLEAN_525: false,
+                BOOLEAN_526: false,
+
+                BOOLEAN_601: true,
+                BOOLEAN_602: true,
+                BOOLEAN_603: true,
+                BOOLEAN_604: true,
+                BOOLEAN_605: true,
+                BOOLEAN_606: true,
+                BOOLEAN_611: true,
+                BOOLEAN_612: true,
+                BOOLEAN_613: true,
+                BOOLEAN_614: true,
+                BOOLEAN_615: true,
+                BOOLEAN_616: true,
+                BOOLEAN_621: true,
+                BOOLEAN_622: true,
+                BOOLEAN_623: true,
+                BOOLEAN_624: true,
+                BOOLEAN_625: true,
+                BOOLEAN_626: true,
+
+                BOOLEAN_701: false,
+                BOOLEAN_702: false,
+                BOOLEAN_703: false,
+                BOOLEAN_704: false,
+                BOOLEAN_705: false,
+                BOOLEAN_706: false,
+                BOOLEAN_711: false,
+                BOOLEAN_712: false,
+                BOOLEAN_713: false,
+                BOOLEAN_714: false,
+                BOOLEAN_715: false,
+                BOOLEAN_716: false,
+                BOOLEAN_721: false,
+                BOOLEAN_722: false,
+                BOOLEAN_723: false,
+                BOOLEAN_724: false,
+                BOOLEAN_725: false,
+                BOOLEAN_726: false,
+            }
+            const expectedForEnv = {
+                BOOLEAN_401: 'true',
+                BOOLEAN_402: 'true',
+                BOOLEAN_403: 'true',
+                BOOLEAN_404: 'true',
+                BOOLEAN_405: 'true',
+                BOOLEAN_406: 'true',
+                BOOLEAN_411: 'true',
+                BOOLEAN_412: 'true',
+                BOOLEAN_413: 'true',
+                BOOLEAN_414: 'true',
+                BOOLEAN_415: 'true',
+                BOOLEAN_416: 'true',
+                BOOLEAN_421: 'true',
+                BOOLEAN_422: 'true',
+                BOOLEAN_423: 'true',
+                BOOLEAN_424: 'true',
+                BOOLEAN_425: 'true',
+                BOOLEAN_426: 'true',
+
+                BOOLEAN_501: 'false',
+                BOOLEAN_502: 'false',
+                BOOLEAN_503: 'false',
+                BOOLEAN_504: 'false',
+                BOOLEAN_505: 'false',
+                BOOLEAN_506: 'false',
+                BOOLEAN_511: 'false',
+                BOOLEAN_512: 'false',
+                BOOLEAN_513: 'false',
+                BOOLEAN_514: 'false',
+                BOOLEAN_515: 'false',
+                BOOLEAN_516: 'false',
+                BOOLEAN_521: 'false',
+                BOOLEAN_522: 'false',
+                BOOLEAN_523: 'false',
+                BOOLEAN_524: 'false',
+                BOOLEAN_525: 'false',
+                BOOLEAN_526: 'false',
+
+                BOOLEAN_601: 'true',
+                BOOLEAN_602: 'true',
+                BOOLEAN_603: 'true',
+                BOOLEAN_604: 'true',
+                BOOLEAN_605: 'true',
+                BOOLEAN_606: 'true',
+                BOOLEAN_611: 'true',
+                BOOLEAN_612: 'true',
+                BOOLEAN_613: 'true',
+                BOOLEAN_614: 'true',
+                BOOLEAN_615: 'true',
+                BOOLEAN_616: 'true',
+                BOOLEAN_621: 'true',
+                BOOLEAN_622: 'true',
+                BOOLEAN_623: 'true',
+                BOOLEAN_624: 'true',
+                BOOLEAN_625: 'true',
+                BOOLEAN_626: 'true',
+
+                BOOLEAN_701: 'false',
+                BOOLEAN_702: 'false',
+                BOOLEAN_703: 'false',
+                BOOLEAN_704: 'false',
+                BOOLEAN_705: 'false',
+                BOOLEAN_706: 'false',
+                BOOLEAN_711: 'false',
+                BOOLEAN_712: 'false',
+                BOOLEAN_713: 'false',
+                BOOLEAN_714: 'false',
+                BOOLEAN_715: 'false',
+                BOOLEAN_716: 'false',
+                BOOLEAN_721: 'false',
+                BOOLEAN_722: 'false',
+                BOOLEAN_723: 'false',
+                BOOLEAN_724: 'false',
+                BOOLEAN_725: 'false',
+                BOOLEAN_726: 'false',
+            }
+
+            // executes
+            const dotenvConfig = useEnv(input, options)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
+
+            done()
+        })
+
         it('method:number', function (done) {
             // input
             const input = {
@@ -2544,6 +3003,144 @@ describe('dotenv-conversion', function () {
 
             // executes
             const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('method:number:boh>>false', function (done) {
+            // input
+            const options = {
+                binaryNumber: false,
+                octalNumber: false,
+                hexadecimalNumber: false,
+            }
+            const input = {
+                NUMBER_301: 'number:0b1010',
+                NUMBER_302: 'number:+0b1010',
+                NUMBER_303: 'number:-0b1010',
+                NUMBER_304: 'number:0B1010',
+                NUMBER_305: 'number:+0B1010',
+                NUMBER_306: 'number:-0B1010',
+                NUMBER_311: 'number:0o12',
+                NUMBER_312: 'number:+0o12',
+                NUMBER_313: 'number:-0o12',
+                NUMBER_314: 'number:0O12',
+                NUMBER_315: 'number:+0O12',
+                NUMBER_316: 'number:-0O12',
+                NUMBER_321: 'number:0xa',
+                NUMBER_322: 'number:+0xa',
+                NUMBER_323: 'number:-0xa',
+                NUMBER_324: 'number:0XA',
+                NUMBER_325: 'number:+0XA',
+                NUMBER_326: 'number:-0XA',
+
+                NUMBER_401: 'number:0b1010n',
+                NUMBER_402: 'number:+0b1010n',
+                NUMBER_403: 'number:-0b1010n',
+                NUMBER_404: 'number:0B1010n',
+                NUMBER_405: 'number:+0B1010n',
+                NUMBER_406: 'number:-0B1010n',
+                NUMBER_411: 'number:0o12n',
+                NUMBER_412: 'number:+0o12n',
+                NUMBER_413: 'number:-0o12n',
+                NUMBER_414: 'number:0O12n',
+                NUMBER_415: 'number:+0O12n',
+                NUMBER_416: 'number:-0O12n',
+                NUMBER_421: 'number:0xan',
+                NUMBER_422: 'number:+0xan',
+                NUMBER_423: 'number:-0xan',
+                NUMBER_424: 'number:0XAn',
+                NUMBER_425: 'number:+0XAn',
+                NUMBER_426: 'number:-0XAn',
+            }
+
+            // expected output
+            const expected = {
+                NUMBER_301: '0b1010',
+                NUMBER_302: '+0b1010',
+                NUMBER_303: '-0b1010',
+                NUMBER_304: '0B1010',
+                NUMBER_305: '+0B1010',
+                NUMBER_306: '-0B1010',
+                NUMBER_311: '0o12',
+                NUMBER_312: '+0o12',
+                NUMBER_313: '-0o12',
+                NUMBER_314: '0O12',
+                NUMBER_315: '+0O12',
+                NUMBER_316: '-0O12',
+                NUMBER_321: '0xa',
+                NUMBER_322: '+0xa',
+                NUMBER_323: '-0xa',
+                NUMBER_324: '0XA',
+                NUMBER_325: '+0XA',
+                NUMBER_326: '-0XA',
+
+                NUMBER_401: '0b1010',
+                NUMBER_402: '+0b1010',
+                NUMBER_403: '-0b1010',
+                NUMBER_404: '0B1010',
+                NUMBER_405: '+0B1010',
+                NUMBER_406: '-0B1010',
+                NUMBER_411: '0o12',
+                NUMBER_412: '+0o12',
+                NUMBER_413: '-0o12',
+                NUMBER_414: '0O12',
+                NUMBER_415: '+0O12',
+                NUMBER_416: '-0O12',
+                NUMBER_421: '0xa',
+                NUMBER_422: '+0xa',
+                NUMBER_423: '-0xa',
+                NUMBER_424: '0XA',
+                NUMBER_425: '+0XA',
+                NUMBER_426: '-0XA',
+            }
+            const expectedForEnv = {
+                NUMBER_301: '0b1010',
+                NUMBER_302: '+0b1010',
+                NUMBER_303: '-0b1010',
+                NUMBER_304: '0B1010',
+                NUMBER_305: '+0B1010',
+                NUMBER_306: '-0B1010',
+                NUMBER_311: '0o12',
+                NUMBER_312: '+0o12',
+                NUMBER_313: '-0o12',
+                NUMBER_314: '0O12',
+                NUMBER_315: '+0O12',
+                NUMBER_316: '-0O12',
+                NUMBER_321: '0xa',
+                NUMBER_322: '+0xa',
+                NUMBER_323: '-0xa',
+                NUMBER_324: '0XA',
+                NUMBER_325: '+0XA',
+                NUMBER_326: '-0XA',
+
+                NUMBER_401: '0b1010',
+                NUMBER_402: '+0b1010',
+                NUMBER_403: '-0b1010',
+                NUMBER_404: '0B1010',
+                NUMBER_405: '+0B1010',
+                NUMBER_406: '-0B1010',
+                NUMBER_411: '0o12',
+                NUMBER_412: '+0o12',
+                NUMBER_413: '-0o12',
+                NUMBER_414: '0O12',
+                NUMBER_415: '+0O12',
+                NUMBER_416: '-0O12',
+                NUMBER_421: '0xa',
+                NUMBER_422: '+0xa',
+                NUMBER_423: '-0xa',
+                NUMBER_424: '0XA',
+                NUMBER_425: '+0XA',
+                NUMBER_426: '-0XA',
+            }
+
+            // executes
+            const dotenvConfig = useEnv(input, options)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
             // asserts
@@ -3010,6 +3607,144 @@ describe('dotenv-conversion', function () {
 
             // executes
             const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('method:bigint:bod>>false', function (done) {
+            // input
+            const options = {
+                binaryBigInt: false,
+                octalBigInt: false,
+                hexadecimalBigInt: false,
+            }
+            const input = {
+                BIGINT_301: 'bigint:0b1010n',
+                BIGINT_302: 'bigint:+0b1010n',
+                BIGINT_303: 'bigint:-0b1010n',
+                BIGINT_304: 'bigint:0B1010n',
+                BIGINT_305: 'bigint:+0B1010n',
+                BIGINT_306: 'bigint:-0B1010n',
+                BIGINT_311: 'bigint:0o12n',
+                BIGINT_312: 'bigint:+0o12n',
+                BIGINT_313: 'bigint:-0o12n',
+                BIGINT_314: 'bigint:0O12n',
+                BIGINT_315: 'bigint:+0O12n',
+                BIGINT_316: 'bigint:-0O12n',
+                BIGINT_321: 'bigint:0xan',
+                BIGINT_322: 'bigint:+0xan',
+                BIGINT_323: 'bigint:-0xan',
+                BIGINT_324: 'bigint:0XAn',
+                BIGINT_325: 'bigint:+0XAn',
+                BIGINT_326: 'bigint:-0XAn',
+
+                BIGINT_401: 'bigint:0b1010',
+                BIGINT_402: 'bigint:+0b1010',
+                BIGINT_403: 'bigint:-0b1010',
+                BIGINT_404: 'bigint:0B1010',
+                BIGINT_405: 'bigint:+0B1010',
+                BIGINT_406: 'bigint:-0B1010',
+                BIGINT_411: 'bigint:0o12',
+                BIGINT_412: 'bigint:+0o12',
+                BIGINT_413: 'bigint:-0o12',
+                BIGINT_414: 'bigint:0O12',
+                BIGINT_415: 'bigint:+0O12',
+                BIGINT_416: 'bigint:-0O12',
+                BIGINT_421: 'bigint:0xa',
+                BIGINT_422: 'bigint:+0xa',
+                BIGINT_423: 'bigint:-0xa',
+                BIGINT_424: 'bigint:0XA',
+                BIGINT_425: 'bigint:+0XA',
+                BIGINT_426: 'bigint:-0XA',
+            }
+
+            // expected output
+            const expected = {
+                BIGINT_301: '0b1010n',
+                BIGINT_302: '+0b1010n',
+                BIGINT_303: '-0b1010n',
+                BIGINT_304: '0B1010n',
+                BIGINT_305: '+0B1010n',
+                BIGINT_306: '-0B1010n',
+                BIGINT_311: '0o12n',
+                BIGINT_312: '+0o12n',
+                BIGINT_313: '-0o12n',
+                BIGINT_314: '0O12n',
+                BIGINT_315: '+0O12n',
+                BIGINT_316: '-0O12n',
+                BIGINT_321: '0xan',
+                BIGINT_322: '+0xan',
+                BIGINT_323: '-0xan',
+                BIGINT_324: '0XAn',
+                BIGINT_325: '+0XAn',
+                BIGINT_326: '-0XAn',
+
+                BIGINT_401: '0b1010n',
+                BIGINT_402: '+0b1010n',
+                BIGINT_403: '-0b1010n',
+                BIGINT_404: '0B1010n',
+                BIGINT_405: '+0B1010n',
+                BIGINT_406: '-0B1010n',
+                BIGINT_411: '0o12n',
+                BIGINT_412: '+0o12n',
+                BIGINT_413: '-0o12n',
+                BIGINT_414: '0O12n',
+                BIGINT_415: '+0O12n',
+                BIGINT_416: '-0O12n',
+                BIGINT_421: '0xan',
+                BIGINT_422: '+0xan',
+                BIGINT_423: '-0xan',
+                BIGINT_424: '0XAn',
+                BIGINT_425: '+0XAn',
+                BIGINT_426: '-0XAn',
+            }
+            const expectedForEnv = {
+                BIGINT_301: '0b1010n',
+                BIGINT_302: '+0b1010n',
+                BIGINT_303: '-0b1010n',
+                BIGINT_304: '0B1010n',
+                BIGINT_305: '+0B1010n',
+                BIGINT_306: '-0B1010n',
+                BIGINT_311: '0o12n',
+                BIGINT_312: '+0o12n',
+                BIGINT_313: '-0o12n',
+                BIGINT_314: '0O12n',
+                BIGINT_315: '+0O12n',
+                BIGINT_316: '-0O12n',
+                BIGINT_321: '0xan',
+                BIGINT_322: '+0xan',
+                BIGINT_323: '-0xan',
+                BIGINT_324: '0XAn',
+                BIGINT_325: '+0XAn',
+                BIGINT_326: '-0XAn',
+
+                BIGINT_401: '0b1010n',
+                BIGINT_402: '+0b1010n',
+                BIGINT_403: '-0b1010n',
+                BIGINT_404: '0B1010n',
+                BIGINT_405: '+0B1010n',
+                BIGINT_406: '-0B1010n',
+                BIGINT_411: '0o12n',
+                BIGINT_412: '+0o12n',
+                BIGINT_413: '-0o12n',
+                BIGINT_414: '0O12n',
+                BIGINT_415: '+0O12n',
+                BIGINT_416: '-0O12n',
+                BIGINT_421: '0xan',
+                BIGINT_422: '+0xan',
+                BIGINT_423: '-0xan',
+                BIGINT_424: '0XAn',
+                BIGINT_425: '+0XAn',
+                BIGINT_426: '-0XAn',
+            }
+
+            // executes
+            const dotenvConfig = useEnv(input, options)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
 
             // asserts
@@ -4373,6 +5108,68 @@ describe('dotenv-conversion', function () {
             done()
         })
 
+        it('method:auto:number:boh>>false', function (done) {
+            // input
+            const options = {
+                binaryNumber: false,
+                octalNumber: false,
+                hexadecimalNumber: false,
+            }
+            const input = 'method.auto.number.boh.false'
+
+            // expected output
+            const expected = {
+                NUMBER_301: '0b1010',
+                NUMBER_302: '+0b1010',
+                NUMBER_303: '-0b1010',
+                NUMBER_304: '0B1010',
+                NUMBER_305: '+0B1010',
+                NUMBER_306: '-0B1010',
+                NUMBER_311: '0o12',
+                NUMBER_312: '+0o12',
+                NUMBER_313: '-0o12',
+                NUMBER_314: '0O12',
+                NUMBER_315: '+0O12',
+                NUMBER_316: '-0O12',
+                NUMBER_321: '0xa',
+                NUMBER_322: '+0xa',
+                NUMBER_323: '-0xa',
+                NUMBER_324: '0XA',
+                NUMBER_325: '+0XA',
+                NUMBER_326: '-0XA',
+            }
+            const expectedForEnv = {
+                NUMBER_301: '0b1010',
+                NUMBER_302: '+0b1010',
+                NUMBER_303: '-0b1010',
+                NUMBER_304: '0B1010',
+                NUMBER_305: '+0B1010',
+                NUMBER_306: '-0B1010',
+                NUMBER_311: '0o12',
+                NUMBER_312: '+0o12',
+                NUMBER_313: '-0o12',
+                NUMBER_314: '0O12',
+                NUMBER_315: '+0O12',
+                NUMBER_316: '-0O12',
+                NUMBER_321: '0xa',
+                NUMBER_322: '+0xa',
+                NUMBER_323: '-0xa',
+                NUMBER_324: '0XA',
+                NUMBER_325: '+0XA',
+                NUMBER_326: '-0XA',
+            }
+
+            // executes
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(Object.assign(options, dotenvConfig))
+
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
+
+            done()
+        })
+
         it('method:auto:bigint', function (done) {
             // input
             const input = 'method.auto.bigint'
@@ -4534,6 +5331,68 @@ describe('dotenv-conversion', function () {
             // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('method:auto:bigint:boh>>false', function (done) {
+            // input
+            const options = {
+                binaryBigInt: false,
+                octalBigInt: false,
+                hexadecimalBigInt: false,
+            }
+            const input = 'method.auto.bigint.boh.false'
+
+            // expected output
+            const expected = {
+                BIGINT_201: '0b1010n',
+                BIGINT_202: '+0b1010n',
+                BIGINT_203: '-0b1010n',
+                BIGINT_204: '0B1010n',
+                BIGINT_205: '+0B1010n',
+                BIGINT_206: '-0B1010n',
+                BIGINT_211: '0o12n',
+                BIGINT_212: '+0o12n',
+                BIGINT_213: '-0o12n',
+                BIGINT_214: '0O12n',
+                BIGINT_215: '+0O12n',
+                BIGINT_216: '-0O12n',
+                BIGINT_221: '0xan',
+                BIGINT_222: '+0xan',
+                BIGINT_223: '-0xan',
+                BIGINT_224: '0XAn',
+                BIGINT_225: '+0XAn',
+                BIGINT_226: '-0XAn',
+            }
+            const expectedForEnv = {
+                BIGINT_201: '0b1010n',
+                BIGINT_202: '+0b1010n',
+                BIGINT_203: '-0b1010n',
+                BIGINT_204: '0B1010n',
+                BIGINT_205: '+0B1010n',
+                BIGINT_206: '-0B1010n',
+                BIGINT_211: '0o12n',
+                BIGINT_212: '+0o12n',
+                BIGINT_213: '-0o12n',
+                BIGINT_214: '0O12n',
+                BIGINT_215: '+0O12n',
+                BIGINT_216: '-0O12n',
+                BIGINT_221: '0xan',
+                BIGINT_222: '+0xan',
+                BIGINT_223: '-0xan',
+                BIGINT_224: '0XAn',
+                BIGINT_225: '+0XAn',
+                BIGINT_226: '-0XAn',
+            }
+
+            // executes
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(Object.assign(options, dotenvConfig))
 
             // asserts
             expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
@@ -5061,6 +5920,185 @@ describe('dotenv-conversion', function () {
             done()
         })
 
+        it('method:boolean:boh>>false', function (done) {
+            // input
+            const options = {
+                binaryNumber: false,
+                octalNumber: false,
+                hexadecimalNumber: false,
+                binaryBigInt: false,
+                octalBigInt: false,
+                hexadecimalBigInt: false,
+            }
+            const input = 'method.boolean.boh.false'
+
+            // expected output
+            const expected = {
+                BOOLEAN_401: true,
+                BOOLEAN_402: true,
+                BOOLEAN_403: true,
+                BOOLEAN_404: true,
+                BOOLEAN_405: true,
+                BOOLEAN_406: true,
+                BOOLEAN_411: true,
+                BOOLEAN_412: true,
+                BOOLEAN_413: true,
+                BOOLEAN_414: true,
+                BOOLEAN_415: true,
+                BOOLEAN_416: true,
+                BOOLEAN_421: true,
+                BOOLEAN_422: true,
+                BOOLEAN_423: true,
+                BOOLEAN_424: true,
+                BOOLEAN_425: true,
+                BOOLEAN_426: true,
+
+                BOOLEAN_501: false,
+                BOOLEAN_502: false,
+                BOOLEAN_503: false,
+                BOOLEAN_504: false,
+                BOOLEAN_505: false,
+                BOOLEAN_506: false,
+                BOOLEAN_511: false,
+                BOOLEAN_512: false,
+                BOOLEAN_513: false,
+                BOOLEAN_514: false,
+                BOOLEAN_515: false,
+                BOOLEAN_516: false,
+                BOOLEAN_521: false,
+                BOOLEAN_522: false,
+                BOOLEAN_523: false,
+                BOOLEAN_524: false,
+                BOOLEAN_525: false,
+                BOOLEAN_526: false,
+
+                BOOLEAN_601: true,
+                BOOLEAN_602: true,
+                BOOLEAN_603: true,
+                BOOLEAN_604: true,
+                BOOLEAN_605: true,
+                BOOLEAN_606: true,
+                BOOLEAN_611: true,
+                BOOLEAN_612: true,
+                BOOLEAN_613: true,
+                BOOLEAN_614: true,
+                BOOLEAN_615: true,
+                BOOLEAN_616: true,
+                BOOLEAN_621: true,
+                BOOLEAN_622: true,
+                BOOLEAN_623: true,
+                BOOLEAN_624: true,
+                BOOLEAN_625: true,
+                BOOLEAN_626: true,
+
+                BOOLEAN_701: false,
+                BOOLEAN_702: false,
+                BOOLEAN_703: false,
+                BOOLEAN_704: false,
+                BOOLEAN_705: false,
+                BOOLEAN_706: false,
+                BOOLEAN_711: false,
+                BOOLEAN_712: false,
+                BOOLEAN_713: false,
+                BOOLEAN_714: false,
+                BOOLEAN_715: false,
+                BOOLEAN_716: false,
+                BOOLEAN_721: false,
+                BOOLEAN_722: false,
+                BOOLEAN_723: false,
+                BOOLEAN_724: false,
+                BOOLEAN_725: false,
+                BOOLEAN_726: false,
+            }
+            const expectedForEnv = {
+                BOOLEAN_401: 'true',
+                BOOLEAN_402: 'true',
+                BOOLEAN_403: 'true',
+                BOOLEAN_404: 'true',
+                BOOLEAN_405: 'true',
+                BOOLEAN_406: 'true',
+                BOOLEAN_411: 'true',
+                BOOLEAN_412: 'true',
+                BOOLEAN_413: 'true',
+                BOOLEAN_414: 'true',
+                BOOLEAN_415: 'true',
+                BOOLEAN_416: 'true',
+                BOOLEAN_421: 'true',
+                BOOLEAN_422: 'true',
+                BOOLEAN_423: 'true',
+                BOOLEAN_424: 'true',
+                BOOLEAN_425: 'true',
+                BOOLEAN_426: 'true',
+
+                BOOLEAN_501: 'false',
+                BOOLEAN_502: 'false',
+                BOOLEAN_503: 'false',
+                BOOLEAN_504: 'false',
+                BOOLEAN_505: 'false',
+                BOOLEAN_506: 'false',
+                BOOLEAN_511: 'false',
+                BOOLEAN_512: 'false',
+                BOOLEAN_513: 'false',
+                BOOLEAN_514: 'false',
+                BOOLEAN_515: 'false',
+                BOOLEAN_516: 'false',
+                BOOLEAN_521: 'false',
+                BOOLEAN_522: 'false',
+                BOOLEAN_523: 'false',
+                BOOLEAN_524: 'false',
+                BOOLEAN_525: 'false',
+                BOOLEAN_526: 'false',
+
+                BOOLEAN_601: 'true',
+                BOOLEAN_602: 'true',
+                BOOLEAN_603: 'true',
+                BOOLEAN_604: 'true',
+                BOOLEAN_605: 'true',
+                BOOLEAN_606: 'true',
+                BOOLEAN_611: 'true',
+                BOOLEAN_612: 'true',
+                BOOLEAN_613: 'true',
+                BOOLEAN_614: 'true',
+                BOOLEAN_615: 'true',
+                BOOLEAN_616: 'true',
+                BOOLEAN_621: 'true',
+                BOOLEAN_622: 'true',
+                BOOLEAN_623: 'true',
+                BOOLEAN_624: 'true',
+                BOOLEAN_625: 'true',
+                BOOLEAN_626: 'true',
+
+                BOOLEAN_701: 'false',
+                BOOLEAN_702: 'false',
+                BOOLEAN_703: 'false',
+                BOOLEAN_704: 'false',
+                BOOLEAN_705: 'false',
+                BOOLEAN_706: 'false',
+                BOOLEAN_711: 'false',
+                BOOLEAN_712: 'false',
+                BOOLEAN_713: 'false',
+                BOOLEAN_714: 'false',
+                BOOLEAN_715: 'false',
+                BOOLEAN_716: 'false',
+                BOOLEAN_721: 'false',
+                BOOLEAN_722: 'false',
+                BOOLEAN_723: 'false',
+                BOOLEAN_724: 'false',
+                BOOLEAN_725: 'false',
+                BOOLEAN_726: 'false',
+            }
+
+            // executes
+            const dotenvConfig = useEnv(input, options)
+            const dotenvConversionConfig = dotenvConversion.convert(Object.assign(options, dotenvConfig))
+
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
+
+            done()
+        })
+
         it('method:number', function (done) {
             // input
             const input = 'method.number'
@@ -5330,6 +6368,106 @@ describe('dotenv-conversion', function () {
             // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('method:number:boh>>false', function (done) {
+            // input
+            const options = {
+                binaryNumber: false,
+                octalNumber: false,
+                hexadecimalNumber: false,
+            }
+            const input = 'method.number.boh.false'
+
+            // expected output
+            const expected = {
+                NUMBER_301: '0b1010',
+                NUMBER_302: '+0b1010',
+                NUMBER_303: '-0b1010',
+                NUMBER_304: '0B1010',
+                NUMBER_305: '+0B1010',
+                NUMBER_306: '-0B1010',
+                NUMBER_311: '0o12',
+                NUMBER_312: '+0o12',
+                NUMBER_313: '-0o12',
+                NUMBER_314: '0O12',
+                NUMBER_315: '+0O12',
+                NUMBER_316: '-0O12',
+                NUMBER_321: '0xa',
+                NUMBER_322: '+0xa',
+                NUMBER_323: '-0xa',
+                NUMBER_324: '0XA',
+                NUMBER_325: '+0XA',
+                NUMBER_326: '-0XA',
+
+                NUMBER_401: '0b1010',
+                NUMBER_402: '+0b1010',
+                NUMBER_403: '-0b1010',
+                NUMBER_404: '0B1010',
+                NUMBER_405: '+0B1010',
+                NUMBER_406: '-0B1010',
+                NUMBER_411: '0o12',
+                NUMBER_412: '+0o12',
+                NUMBER_413: '-0o12',
+                NUMBER_414: '0O12',
+                NUMBER_415: '+0O12',
+                NUMBER_416: '-0O12',
+                NUMBER_421: '0xa',
+                NUMBER_422: '+0xa',
+                NUMBER_423: '-0xa',
+                NUMBER_424: '0XA',
+                NUMBER_425: '+0XA',
+                NUMBER_426: '-0XA',
+            }
+            const expectedForEnv = {
+                NUMBER_301: '0b1010',
+                NUMBER_302: '+0b1010',
+                NUMBER_303: '-0b1010',
+                NUMBER_304: '0B1010',
+                NUMBER_305: '+0B1010',
+                NUMBER_306: '-0B1010',
+                NUMBER_311: '0o12',
+                NUMBER_312: '+0o12',
+                NUMBER_313: '-0o12',
+                NUMBER_314: '0O12',
+                NUMBER_315: '+0O12',
+                NUMBER_316: '-0O12',
+                NUMBER_321: '0xa',
+                NUMBER_322: '+0xa',
+                NUMBER_323: '-0xa',
+                NUMBER_324: '0XA',
+                NUMBER_325: '+0XA',
+                NUMBER_326: '-0XA',
+
+                NUMBER_401: '0b1010',
+                NUMBER_402: '+0b1010',
+                NUMBER_403: '-0b1010',
+                NUMBER_404: '0B1010',
+                NUMBER_405: '+0B1010',
+                NUMBER_406: '-0B1010',
+                NUMBER_411: '0o12',
+                NUMBER_412: '+0o12',
+                NUMBER_413: '-0o12',
+                NUMBER_414: '0O12',
+                NUMBER_415: '+0O12',
+                NUMBER_416: '-0O12',
+                NUMBER_421: '0xa',
+                NUMBER_422: '+0xa',
+                NUMBER_423: '-0xa',
+                NUMBER_424: '0XA',
+                NUMBER_425: '+0XA',
+                NUMBER_426: '-0XA',
+            }
+
+            // executes
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(Object.assign(options, dotenvConfig))
 
             // asserts
             expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
@@ -5647,6 +6785,106 @@ describe('dotenv-conversion', function () {
             // executes
             const dotenvConfig = useEnv(input)
             const dotenvConversionConfig = dotenvConversion.convert(dotenvConfig)
+
+            // asserts
+            expect(dotenvConversionConfig.parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedForEnv)
+
+            done()
+        })
+
+        it('method:bigint:boh>>false', function (done) {
+            // input
+            const options = {
+                binaryBigInt: false,
+                octalBigInt: false,
+                hexadecimalBigInt: false,
+            }
+            const input = 'method.bigint.boh.false'
+
+            // expected output
+            const expected = {
+                BIGINT_301: '0b1010n',
+                BIGINT_302: '+0b1010n',
+                BIGINT_303: '-0b1010n',
+                BIGINT_304: '0B1010n',
+                BIGINT_305: '+0B1010n',
+                BIGINT_306: '-0B1010n',
+                BIGINT_311: '0o12n',
+                BIGINT_312: '+0o12n',
+                BIGINT_313: '-0o12n',
+                BIGINT_314: '0O12n',
+                BIGINT_315: '+0O12n',
+                BIGINT_316: '-0O12n',
+                BIGINT_321: '0xan',
+                BIGINT_322: '+0xan',
+                BIGINT_323: '-0xan',
+                BIGINT_324: '0XAn',
+                BIGINT_325: '+0XAn',
+                BIGINT_326: '-0XAn',
+
+                BIGINT_401: '0b1010n',
+                BIGINT_402: '+0b1010n',
+                BIGINT_403: '-0b1010n',
+                BIGINT_404: '0B1010n',
+                BIGINT_405: '+0B1010n',
+                BIGINT_406: '-0B1010n',
+                BIGINT_411: '0o12n',
+                BIGINT_412: '+0o12n',
+                BIGINT_413: '-0o12n',
+                BIGINT_414: '0O12n',
+                BIGINT_415: '+0O12n',
+                BIGINT_416: '-0O12n',
+                BIGINT_421: '0xan',
+                BIGINT_422: '+0xan',
+                BIGINT_423: '-0xan',
+                BIGINT_424: '0XAn',
+                BIGINT_425: '+0XAn',
+                BIGINT_426: '-0XAn',
+            }
+            const expectedForEnv = {
+                BIGINT_301: '0b1010n',
+                BIGINT_302: '+0b1010n',
+                BIGINT_303: '-0b1010n',
+                BIGINT_304: '0B1010n',
+                BIGINT_305: '+0B1010n',
+                BIGINT_306: '-0B1010n',
+                BIGINT_311: '0o12n',
+                BIGINT_312: '+0o12n',
+                BIGINT_313: '-0o12n',
+                BIGINT_314: '0O12n',
+                BIGINT_315: '+0O12n',
+                BIGINT_316: '-0O12n',
+                BIGINT_321: '0xan',
+                BIGINT_322: '+0xan',
+                BIGINT_323: '-0xan',
+                BIGINT_324: '0XAn',
+                BIGINT_325: '+0XAn',
+                BIGINT_326: '-0XAn',
+
+                BIGINT_401: '0b1010n',
+                BIGINT_402: '+0b1010n',
+                BIGINT_403: '-0b1010n',
+                BIGINT_404: '0B1010n',
+                BIGINT_405: '+0B1010n',
+                BIGINT_406: '-0B1010n',
+                BIGINT_411: '0o12n',
+                BIGINT_412: '+0o12n',
+                BIGINT_413: '-0o12n',
+                BIGINT_414: '0O12n',
+                BIGINT_415: '+0O12n',
+                BIGINT_416: '-0O12n',
+                BIGINT_421: '0xan',
+                BIGINT_422: '+0xan',
+                BIGINT_423: '-0xan',
+                BIGINT_424: '0XAn',
+                BIGINT_425: '+0XAn',
+                BIGINT_426: '-0XAn',
+            }
+
+            // executes
+            const dotenvConfig = useEnv(input)
+            const dotenvConversionConfig = dotenvConversion.convert(Object.assign(options, dotenvConfig))
 
             // asserts
             expect(dotenvConversionConfig.parsed).to.deep.equal(expected)

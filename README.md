@@ -468,6 +468,10 @@ console.log(process.env.VARIABLE_24)    // (string) '10'
 console.log(process.env.VARIABLE_25)    // (string) '-10'
 ```
 
+***Note:* You can disable the support for binary, octal or hexadecimal number format 
+by setting the option [`binaryNumber`](#binarynumber), 
+[`octalNumber`](#octalnumber) or [`hexadecimalNumber`](#hexadecimalnumber) to false. 
+
 - **bigint**
 
 Values to be converted to bigint must match the format: `${value}n`;
@@ -517,6 +521,10 @@ console.log(process.env.VARIABLE_7)     // (string) '10n'
 console.log(process.env.VARIABLE_8)     // (string) '10n'
 console.log(process.env.VARIABLE_9)     // (string) '10n'
 ```
+
+***Note:* You can disable the support for binary, octal or hexadecimal bigint format
+by setting the option [`binaryBigInt`](#binarybigint),
+[`octalBigInt`](#octalbigint) or [`hexadecimalBigInt`](#hexadecimalbigint) to false.
 
 - **symbol**
 
@@ -850,6 +858,10 @@ console.log(process.env.VARIABLE_25)    // (string) '10'
 console.log(process.env.VARIABLE_26)    // (string) '0'
 ```
 
+***Note:* You can disable the conversion for binary, octal or hexadecimal number format
+by setting the option [`binaryNumber`](#binarynumber),
+[`octalNumber`](#octalnumber) or [`hexadecimalNumber`](#hexadecimalnumber) to false.
+
 - **bigint**
 
 This method is to convert any value to bigint.
@@ -952,6 +964,10 @@ console.log(process.env.VARIABLE_26)    // (string) '0n'
 console.log(process.env.VARIABLE_27)    // (string) '10n'
 console.log(process.env.VARIABLE_28)    // (string) '0n'
 ```
+
+***Note:* You can disable the conversion for binary, octal or hexadecimal bigint format
+by setting the option [`binaryBigInt`](#binarybigint),
+[`octalBigInt`](#octalbigint) or [`hexadecimalBigInt`](#hexadecimalbigint) to false.
 
 - **string**
 
@@ -1739,6 +1755,48 @@ after converting will be written back to `process.env`.
 If this option is set to `true`, they won't.
 
 See [this feature](#ignore-processenv).
+
+##### `binaryNumber`
+
+*Type:* `boolean`. *Default:* `true`.
+
+If this option is set to `false`, the string in binary number format
+will not be converted to number.
+
+##### `octalNumber`
+
+*Type:* `boolean`. *Default:* `true`.
+
+If this option is set to `false`, the string in octal number format
+will not be converted to number.
+
+##### `hexadecimalNumber`
+
+*Type:* `boolean`. *Default:* `true`.
+
+If this option is set to `false`, the string in hexadecimal number format
+will not be converted to number.
+
+##### `binaryBigInt`
+
+*Type:* `boolean`. *Default:* `true`.
+
+If this option is set to `false`, the string in binary bigint format
+will not be converted to bigint.
+
+##### `octalBigInt`
+
+*Type:* `boolean`. *Default:* `true`.
+
+If this option is set to `false`, the string in octal bigint format
+will not be converted to bigint.
+
+##### `hexadecimalBigInt`
+
+*Type:* `boolean`. *Default:* `true`.
+
+If this option is set to `false`, the string in hexadecimal bigint format
+will not be converted to bigint.
 
 ##### `prevents`
 
